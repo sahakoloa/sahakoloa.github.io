@@ -179,7 +179,10 @@ async function gget(force){
   if(res.status===304)return null;
   if(res.status===404){G.sha=null;G.etag=null;return{text:''}}
   if(!res.ok)throw await gerr(res);
-  const j=await res.json();G.sha=j.sha;G.etag=res.headers.get('ETag');
+  const j=await res.json();
+  // GitHub อาจส่งไฟล์เวอร์ชันเก่ากลับมาสักครู่หลังเขียน → ใช้ข้อมูลที่เพิ่งเขียนแทน ไม่ให้ข้อมูลหาย
+  if(G.wsha&&j.sha!==G.wsha&&Date.now()-G.wat<15000){G.sha=G.wsha;G.etag=null;return force?{text:G.wtext}:null}
+  G.sha=j.sha;G.etag=res.headers.get('ETag');
   if(j.content)return{text:unb64(j.content)};
   const r2=await fetch(gurl()+gq(),{headers:gh({Accept:'application/vnd.github.raw+json'}),cache:'no-store'});
   return{text:await r2.text()};
@@ -190,7 +193,7 @@ async function gput(text){
   const res=await fetch(gurl(),{method:'PUT',headers:gh({'Content-Type':'application/json'}),body:JSON.stringify(body)});
   if(res.status===409||res.status===422){const e=new Error('conflict');e.conflict=true;throw e}
   if(!res.ok)throw await gerr(res);
-  const j=await res.json();G.sha=j.content.sha;G.etag=null;
+  const j=await res.json();G.sha=G.wsha=j.content.sha;G.wtext=text;G.wat=Date.now();G.etag=null;
 }
 function apply(text){
   const d=text.trim()?JSON.parse(text):empty();
@@ -219,7 +222,7 @@ async function commit(fn){
   try{
     for(let i=0;i<4;i++){
       await load();fn();assignSeq();
-      try{await write();break}catch(e){if(!e.conflict||i===3)throw e}
+      try{await write();break}catch(e){if(G)G.wsha=null;if(!e.conflict||i===3)throw e}
     }
     render();return true;
   }catch(e){alert('บันทึกไม่สำเร็จ: '+e.message);return false}
@@ -395,6 +398,7 @@ $('#fileX').onchange=async e=>{
       all.forEach(r=>{if(!have.has(key(r))){r.imp=b.id;D.records.push(r);have.add(key(r));added++}});
       if(added)D.meta.imports.push(b);
     });
+    const ms=all.map(mk).filter(m=>/^\d{4}-/.test(m)).sort();if(ms.length)cur=ms[ms.length-1];render();
     alert(`นำเข้าสำเร็จ ${added} รายการ (ข้ามรายการซ้ำ ${all.length-added})`);
   }catch(err){alert('อ่านไฟล์ไม่ได้: '+err.message)}
 };
