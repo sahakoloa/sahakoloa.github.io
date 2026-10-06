@@ -47,6 +47,7 @@ dialog{border:0;border-radius:18px;background:var(--card);color:var(--tx);width:
 dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
 .pr{display:grid;grid-template-columns:2fr 1fr 2fr 1fr auto;gap:8px;margin-bottom:8px}
 .full{grid-column:1/-1}
+.hint{background:var(--soft);border:1px dashed var(--bd);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.9}.hrow{display:flex;justify-content:space-between;gap:8px;align-items:center;border-top:1px solid var(--bd);padding:3px 0}
 .empty{padding:50px;text-align:center;color:var(--mu)}
 #warn{color:var(--dg)}
 @media(max-width:600px){.pr{grid-template-columns:1fr 1fr}main{padding:14px}}
@@ -106,7 +107,8 @@ dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
   <h3 id="dT" style="margin-top:0;font-size:19px">เพิ่มรายการซ่อม</h3>
   <div class="g">
     <div><label>ว/ด/ป</label><input type="date" id="fDate"></div>
-    <div><label>ชื่อลูกค้า</label><input id="fCus"></div>
+    <div><label>ชื่อลูกค้า</label><input id="fCus" autocomplete="off"></div>
+    <div class="full" id="cusHint" style="display:none"></div>
     <div><label>เลขที่ SV.</label><input id="fSv"></div>
     <div><label>ประเภทเครื่อง</label><input id="fType" list="dlType"></div>
     <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
@@ -137,7 +139,7 @@ dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
   </div>
   <p style="font-size:13px;color:var(--mu);line-height:1.6">สร้าง token ที่ GitHub → Settings → Developer settings → Fine-grained tokens เลือกเฉพาะ repo นี้ และให้สิทธิ์ Contents = Read and write. Token จะถูกเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น (ต้องใส่ทุกเครื่องที่ใช้งาน)<br>⚠ ถ้า repo เป็น public ทุกคนจะอ่านไฟล์ข้อมูล (รวมรหัสหลังบ้าน) ได้ แนะนำให้ใช้ repo แบบ private</p>
   <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
-    <button class="d" id="gOff">ยกเลิกการเชื่อมต่อ</button><button id="gCancel">ปิด</button><button class="p" id="gGo">ทดสอบและเชื่อมต่อ</button>
+    <button class="d" id="gOff">ยกเลิกการเชื่อมต่อ</button><button id="gCancel">ปิด</button><button id="gNew">➕ สร้างไฟล์ข้อมูลใหม่ใน GitHub</button><button class="p" id="gGo">เชื่อมต่อไฟล์ที่มีอยู่</button>
   </div>
 </dialog>
 <datalist id="dlType"></datalist><datalist id="dlTech"></datalist>
@@ -227,9 +229,15 @@ async function connect(h,isNew){
   if(isNew){D=empty();await write()}else await load();
   $('#bRe').style.display='none';$('#st').textContent='✔ '+H.name+' · ซิงค์อัตโนมัติ';render();
 }
-async function connectGH(cfg,save){
+async function connectGH(cfg,save,mode){
   const old=G;G=Object.assign({sha:null,etag:null},cfg);
-  try{await load();if(!G.sha){D=empty();await write()}}catch(e){G=old;throw e}
+  try{
+    await load();
+    if(!G.sha){
+      if(mode==='create'||(mode==='open'&&confirm('ไม่พบไฟล์ "'+G.path+'" ใน repo นี้ ต้องการสร้างไฟล์ข้อมูลใหม่หรือไม่?'))){D=empty();await write()}
+      else throw new Error('ไม่พบไฟล์ข้อมูลใน repo');
+    }
+  }catch(e){G=old;throw e}
   H=null;if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
   $('#bRe').style.display='none';$('#st').textContent='☁ GitHub: '+G.owner+'/'+G.repo+' · ซิงค์อัตโนมัติ';render();
 }
@@ -284,6 +292,27 @@ function partRow(p={}){
   d.querySelector('button').onclick=()=>d.remove();$('#parts').append(d);
 }
 $('#bPart').onclick=()=>partRow();
+function showCus(){
+  const box=$('#cusHint'),v=$('#fCus').value.trim().toLowerCase();
+  if(editId||!v){box.style.display='none';return}
+  const m=new Map();D.records.filter(r=>!r.del&&r.cus).forEach(r=>{const k=r.cus.trim();if(!m.has(k))m.set(k,[]);m.get(k).push(r)});
+  const names=[...m.keys()],ex=names.find(n=>n.toLowerCase()===v);let h='';
+  if(ex){
+    const rs=m.get(ex).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    h=`<div class="hint"><b>📜 ประวัติของ ${esc(ex)}</b> · ซ่อมมาแล้ว ${rs.length} ครั้ง (ล่าสุด ${fdate(rs[0].date)})`+
+      rs.slice(0,5).map(r=>`<div class="hrow"><span>${fdate(r.date)} · ${esc(r.type)} ${esc(r.sn)} · ${esc(r.sym)}</span>${(r.type||r.sn)?`<button class="s" type="button" data-use="${r.id}">ใช้เครื่องนี้</button>`:''}</div>`).join('')+'</div>';
+  }else{
+    const ms=names.filter(n=>n.toLowerCase().includes(v)).slice(0,8);
+    if(ms.length)h='<div class="hint">ลูกค้าในประวัติ: '+ms.map(n=>`<button class="s" type="button" data-cus="${esc(n)}">${esc(n)} · ${m.get(n).length} ครั้ง</button>`).join(' ')+'</div>';
+  }
+  box.innerHTML=h;box.style.display=h?'':'none';
+}
+$('#fCus').oninput=showCus;
+$('#cusHint').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.cus!=null){$('#fCus').value=b.dataset.cus;showCus()}
+  if(b.dataset.use){const r=D.records.find(x=>x.id===b.dataset.use);if(r){$('#fType').value=r.type||'';$('#fSn').value=r.sn||''}}
+};
 function openForm(id){
   if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return}
   editId=id;const r=D.records.find(x=>x.id===id)||{date:new Date().toISOString().slice(0,10),parts:[{}]};
@@ -291,7 +320,7 @@ function openForm(id){
   $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';$('#fType').value=r.type||'';
   $('#fSn').value=r.sn||'';$('#fTech').value=r.tech||'';$('#fSym').value=r.sym||'';$('#fWork').value=r.work||'';
   $('#fLab').value=r.labor||'';$('#fRem').value=r.rem||'';
-  $('#parts').innerHTML='';(r.parts?.length?r.parts:[{}]).forEach(partRow);$('#dlg').showModal();
+  $('#parts').innerHTML='';(r.parts?.length?r.parts:[{}]).forEach(partRow);showCus();$('#dlg').showModal();
 }
 $('#bAdd').onclick=()=>openForm(null);
 $('#bCancel').onclick=()=>$('#dlg').close();
@@ -417,13 +446,28 @@ $('#bGh').onclick=()=>{const c=G||gcfg()||{};
   $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gdlg').showModal()};
 $('#gCancel').onclick=()=>$('#gdlg').close();
 $('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';render();$('#gdlg').close()};
-$('#gGo').onclick=async()=>{
+function readCfg(){
   const cfg={owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:$('#gBr').value.trim(),path:$('#gPath').value.trim().replace(/^\/+/,''),token:$('#gTok').value.trim()};
-  if(!cfg.owner||!cfg.repo||!cfg.path||!cfg.token){alert('กรุณากรอกข้อมูลให้ครบ (ยกเว้น branch)');return}
-  $('#gGo').disabled=true;
-  try{await connectGH(cfg,true);$('#gdlg').close()}catch(e){alert('เชื่อมต่อไม่สำเร็จ: '+e.message)}
-  $('#gGo').disabled=false;
-};
+  if(!cfg.owner||!cfg.repo||!cfg.path||!cfg.token){alert('กรุณากรอกข้อมูลให้ครบ (ยกเว้น branch)');return null}
+  return cfg;
+}
+async function ghAction(fn){
+  $('#gGo').disabled=$('#gNew').disabled=true;
+  try{await fn()}catch(e){alert('ทำรายการไม่สำเร็จ: '+e.message)}
+  $('#gGo').disabled=$('#gNew').disabled=false;
+}
+$('#gGo').onclick=()=>{const cfg=readCfg();if(cfg)ghAction(async()=>{await connectGH(cfg,true,'open');$('#gdlg').close()})};
+$('#gNew').onclick=()=>{const cfg=readCfg();if(!cfg)return;ghAction(async()=>{
+  const old=G;G=Object.assign({sha:null,etag:null},cfg);let exists;
+  try{await gget(true);exists=!!G.sha}finally{G=old}
+  if(exists){
+    if(!confirm('มีไฟล์ "'+cfg.path+'" อยู่แล้ว ระบบจะไม่สร้างทับ\nต้องการเชื่อมต่อกับไฟล์เดิมหรือไม่?'))return;
+    await connectGH(cfg,true,'open');
+  }else{
+    await connectGH(cfg,true,'create');alert('สร้างไฟล์ข้อมูล "'+cfg.path+'" ใน GitHub เรียบร้อย');
+  }
+  $('#gdlg').close();
+})};
 
 /* ---------- เริ่มต้น ---------- */
 (async()=>{
@@ -432,7 +476,7 @@ $('#gGo').onclick=async()=>{
     $('#warn').textContent='เบราว์เซอร์นี้ไม่รองรับการเปิดไฟล์โดยตรง ให้ใช้โหมด GitHub หรือเปิดด้วย Chrome/Edge';$('#warn').style.display='';
   }
   const c=gcfg();
-  if(c){try{await connectGH(c,false)}catch(e){$('#st').textContent='⚠ เชื่อมต่อ GitHub ไม่ได้: '+e.message}}
+  if(c){try{await connectGH(c,false,'auto')}catch(e){$('#st').textContent='⚠ เชื่อมต่อ GitHub ไม่ได้: '+e.message}}
   else{
     const h=window.showOpenFilePicker&&await kv('get');
     if(h){H=h;$('#bRe').textContent='↻ เชื่อมต่อ '+h.name+' ต่อ';$('#bRe').style.display='';
