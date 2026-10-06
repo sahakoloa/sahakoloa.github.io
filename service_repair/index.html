@@ -74,7 +74,7 @@ dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
       <button id="bImp">📥 นำเข้า Excel</button>
       <button id="bExp">📤 ส่งออก Excel</button>
       <button class="p" id="bAdd">+ เพิ่มรายการซ่อม</button>
-      <input type="file" id="fileX" accept=".xlsx,.xls,.csv" style="display:none">
+      <input type="file" id="fileX" accept=".xlsx,.xls,.csv,.json" style="display:none">
     </div>
     <div class="wrap" id="list"></div>
   </section>
@@ -195,12 +195,50 @@ async function gput(text){
   if(!res.ok)throw await gerr(res);
   const j=await res.json();G.sha=G.wsha=j.content.sha;G.wtext=text;G.wat=Date.now();G.etag=null;
 }
+let CONV=false,base='';
+const FMAP=[['seq',/ลำดับ|^no\.?$|^seq/i],['date',/ว\/ด\/ป|วันที่|date/i],['cus',/ลูกค้า|customer|^cus/i],['sv',/sv/i],['type',/ประเภท|type/i],['sn',/s\/n|หมายเลข|serial|^sn/i],['sym',/อาการ|symptom/i],['work',/รายการซ่อม|work/i],['o',/เก่า|old/i],['n',/ใหม่|new/i],['labor',/ค่าแรง|labor/i],['tech',/ช่าง|tech/i],['rem',/remark|หมายเหตุ|^rem/i]];
+const str=v=>String(v??'').trim();
+function rowFromObj(o){
+  if(o.id&&'cus' in o)return o; // เป็นรูปแบบของระบบอยู่แล้ว
+  const m={};let last=null;
+  for(const [k,v] of Object.entries(o)){
+    let key=null;
+    if(k==='parts'&&Array.isArray(v)){m.parts=v;continue}
+    if(/ราคา|price/i.test(k))key=/เก่า|old/i.test(k)?'op':/ใหม่|new/i.test(k)?'np':last==='o'?'op':last==='n'?'np':null;
+    else{const f=FMAP.find(([,re])=>re.test(k));if(f){key=f[0];if(key==='o'||key==='n')last=key}}
+    if(key&&!(key in m))m[key]=v;
+  }
+  const parts=m.parts||((str(m.o)||str(m.n)||m.op||m.np)?[{o:str(m.o),op:m.op??'',n:str(m.n),np:m.np??''}]:[]);
+  return{id:crypto.randomUUID(),seq:0,date:pdate(m.date),cus:str(m.cus),sv:str(m.sv),type:str(m.type),sn:str(m.sn),sym:str(m.sym),work:str(m.work),parts,labor:m.labor??'',tech:str(m.tech),rem:str(m.rem),upd:Date.now()};
+}
+// แปลงข้อมูล .json รูปแบบใดๆ (array ของแถว, array ของ array, หลายชีต, ฯลฯ) ให้เป็นโครงสร้างของระบบ
+function normalizeData(raw){
+  let rows=[],meta=null,own=false;
+  if(Array.isArray(raw))rows=raw;
+  else if(raw&&typeof raw==='object'){
+    if(Array.isArray(raw.records)){rows=raw.records;meta=raw.meta;own=true}
+    else Object.values(raw).forEach(v=>{if(Array.isArray(v))rows=rows.concat(v)});
+  }
+  let recs,fixed=!own;
+  if(rows.length&&rows.every(r=>Array.isArray(r)))recs=parseSheet(rows)||[];
+  else{
+    fixed=fixed||rows.some(r=>!(r&&r.id&&'cus' in r));
+    recs=rows.filter(r=>r&&typeof r==='object'&&!Array.isArray(r)).map(rowFromObj).filter(r=>r.cus);
+  }
+  const size=Array.isArray(raw)?raw.length:Object.keys(raw||{}).length;
+  if(!recs.length&&size&&!own)throw new Error('ไฟล์ .json นี้ไม่ใช่ข้อมูลงานซ่อม (ไม่พบคอลัมน์ "ชื่อลูกค้า") ระบบจึงไม่แก้ไขไฟล์');
+  return{d:{v:1,meta:Object.assign(empty().meta,meta||{}),records:recs},fixed:fixed&&size>0};
+}
 function apply(text){
-  const d=text.trim()?JSON.parse(text):empty();
-  d.meta=Object.assign(empty().meta,d.meta||{});d.records=d.records||[];
+  const{d,fixed}=normalizeData(text.trim()?JSON.parse(text):{});
   // แก้ข้อมูลเดิมที่ปีถูกเก็บเป็น พ.ศ. (เช่น 2569) ให้เป็น ค.ศ.
   d.records.forEach(r=>{const y=+(r.date||'').slice(0,4);if(y>2400){r.date=(y-543)+r.date.slice(4);r.seq=0}});
+  if(fixed)CONV=true;
   D=d;
+}
+async function persistConv(){
+  if(!CONV)return;CONV=false;assignSeq();await write();
+  alert('แปลงไฟล์ข้อมูลเป็นรูปแบบของระบบเรียบร้อย ('+D.records.length+' รายการ)');
 }
 async function load(){
   if(G){apply((await gget(true)).text);return}
@@ -229,20 +267,20 @@ async function commit(fn){
 }
 async function connect(h,isNew){
   G=null;H=h;await kv('put',h);
-  if(isNew){D=empty();await write()}else await load();
-  $('#bRe').style.display='none';$('#st').textContent='✔ '+H.name+' · ซิงค์อัตโนมัติ';render();
+  if(isNew){D=empty();await write()}else{await load();await persistConv()}
+  $('#bRe').style.display='none';base='✔ '+H.name+' · ซิงค์อัตโนมัติ';render();
 }
 async function connectGH(cfg,save,mode){
   const old=G;G=Object.assign({sha:null,etag:null},cfg);
   try{
-    await load();
+    await load();await persistConv();
     if(!G.sha){
       if(mode==='create'||(mode==='open'&&confirm('ไม่พบไฟล์ "'+G.path+'" ใน repo นี้ ต้องการสร้างไฟล์ข้อมูลใหม่หรือไม่?'))){D=empty();await write()}
       else throw new Error('ไม่พบไฟล์ข้อมูลใน repo');
     }
   }catch(e){G=old;throw e}
   H=null;if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
-  $('#bRe').style.display='none';$('#st').textContent='☁ GitHub: '+G.owner+'/'+G.repo+' · ซิงค์อัตโนมัติ';render();
+  $('#bRe').style.display='none';base='☁ GitHub: '+G.owner+'/'+G.repo+' · ซิงค์อัตโนมัติ';render();
 }
 const ft=[{description:'JSON',accept:{'application/json':['.json']}}];
 $('#bOpen').onclick=async()=>{try{const[h]=await showOpenFilePicker({types:ft});await connect(h,false)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
@@ -250,8 +288,8 @@ $('#bNew').onclick=async()=>{try{const h=await showSaveFilePicker({suggestedName
 $('#bRe').onclick=async()=>{try{if(await H.requestPermission({mode:'readwrite'})==='granted')await connect(H,false)}catch(e){alert(e.message)}};
 setInterval(async()=>{
   try{
-    if(G){const r=await gget(false);if(r){apply(r.text);render()}}
-    else if(H){const f=await H.getFile();if(f.lastModified!==lastMod){await load();render()}}
+    if(G){const r=await gget(false);if(r){apply(r.text);await persistConv();render()}}
+    else if(H){const f=await H.getFile();if(f.lastModified!==lastMod){await load();await persistConv();render()}}
   }catch{}
 },4000);
 
@@ -267,6 +305,7 @@ function table(rows,mode){
 }
 function render(){
   const live=D.records.filter(r=>!r.del);
+  if(base)$('#st').textContent=base+' · '+live.length+' รายการ';
   const nowM=new Date().toISOString().slice(0,7), cnt={};
   live.forEach(r=>cnt[mk(r)]=(cnt[mk(r)]||0)+1);
   const months=[...new Set([nowM,...Object.keys(cnt)])].sort().reverse();
@@ -353,6 +392,7 @@ const HEAD=['ลำดับที่','ว/ด/ป','ชื่อลูกค�
 const iso=d=>d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
 function pdate(v){
   if(v===''||v==null)return '';
+  const i0=String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);if(i0&&typeof v!=='number'){let y=+i0[1];if(y>2400)y-=543;return y+'-'+i0[2]+'-'+i0[3]}
   if(typeof v==='number'){const d=new Date(Math.round((v-25569)*864e5));if(d.getUTCFullYear()>2400)d.setUTCFullYear(d.getUTCFullYear()-543);return iso(d)}
   const m=String(v).match(/(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);if(!m)return '';
   let y=+m[3];if(y>2400)y-=543;else if(y<100){y+=2000;if(y>new Date().getFullYear()+20)y-=43}
@@ -388,8 +428,10 @@ $('#bImp').onclick=()=>{if(!ready()){alert('กรุณาเชื่อมต
 $('#fileX').onchange=async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
   try{
-    const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});let all=[];
-    wb.SheetNames.forEach(n=>{const rs=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''});const p=parseSheet(rs);if(p)all=all.concat(p)});
+    let all=[];
+    if(/\.json$/i.test(f.name))all=normalizeData(JSON.parse(await f.text())).d.records;
+    else{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
+      wb.SheetNames.forEach(n=>{const rs=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''});const p=parseSheet(rs);if(p)all=all.concat(p)})}
     if(!all.length){alert('ไม่พบข้อมูล (ต้องมีหัวตารางที่มีคำว่า "ชื่อลูกค้า") ดาวน์โหลดแม่แบบได้ในระบบหลังบ้าน');return}
     let added=0;
     await commit(()=>{
@@ -449,7 +491,7 @@ $('#bGh').onclick=()=>{const c=G||gcfg()||{};
   $('#gOwner').value=c.owner||'sahakoloa';$('#gRepo').value=c.repo||'sahakoloa.github.io';$('#gBr').value=c.branch||'';
   $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gdlg').showModal()};
 $('#gCancel').onclick=()=>$('#gdlg').close();
-$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';render();$('#gdlg').close()};
+$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';render();$('#gdlg').close()};
 function readCfg(){
   const cfg={owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:$('#gBr').value.trim(),path:$('#gPath').value.trim().replace(/^\/+/,''),token:$('#gTok').value.trim()};
   if(!cfg.owner||!cfg.repo||!cfg.path||!cfg.token){alert('กรุณากรอกข้อมูลให้ครบ (ยกเว้น branch)');return null}
