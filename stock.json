@@ -158,7 +158,7 @@
   },
   {
    "id": "c2",
-   "name": "ระบบงานจอ LED",
+   "name": "งานจอ LED",
    "icon": "📺",
    "items": [
     {
@@ -207,8 +207,8 @@
      "id": "i2_7",
      "name": "สาย LAN CAT6 Indoor / Outdoor",
      "code": "",
-     "unit": "กล่อง",
-     "qty": 20
+     "unit": "",
+     "qty": 0
     },
     {
      "id": "i2_8",
@@ -263,7 +263,7 @@
   },
   {
    "id": "c3",
-   "name": "ระบบงาน CCTV",
+   "name": "งาน CCTV",
    "icon": "📹",
    "items": [
     {
@@ -277,8 +277,8 @@
      "id": "i3_2",
      "name": "สาย LAN (CAT6) Indoor / Outdoor",
      "code": "",
-     "unit": "กล่อง",
-     "qty": 20
+     "unit": "",
+     "qty": 0
     },
     {
      "id": "i3_3",
@@ -344,25 +344,8 @@
      "qty": 0
     }
    ]
-  },
-  {
-   "id": "vj1hd175",
-   "name": "ระบบงาน Network",
-   "icon": "🧱",
-   "items": [
-    {
-     "id": "dlalb5h0",
-     "name": "สาย LAN (CAT6) Indoor / Outdoor",
-     "code": "",
-     "unit": "กล่อง",
-     "qty": 20
-    }
-   ]
   }
  ],
  "log": [],
- "admin": {
-  "salt": "u3c9ej4mrr5u9nfz",
-  "hash": "5ceb8d6d570c563f41877829b80fc2db113ac1811519098d5cdc96b0a3f3b8fc"
- }
+ "users": []
 }

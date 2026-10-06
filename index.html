@@ -45,14 +45,14 @@
 #pr .sg{display:flex;justify-content:space-around;margin-top:60px;text-align:center}#pr .sg div{width:30%}#pr .sg i{display:block;border-top:1px dotted #000;margin-top:40px;padding-top:4px;font-style:normal}}
 </style></head><body>
 <header class="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white/90 px-5 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/90"><div class="mr-auto flex items-center gap-3"><div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl shadow-lg shadow-indigo-500/30">📦</div><div><h1 class="text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1><span id="st"></span></div></div>
-<button id="gh">☁ ออนไลน์</button><button id="rf" title="รีเฟรชข้อมูลจากออนไลน์">🔄</button><button id="adm">🔒 หลังบ้าน</button><button id="pw" style="display:none">🔑 เปลี่ยนรหัส</button><button id="open">📂 เปิดไฟล์</button><button id="saveas" class="p">💾 บันทึกเป็น…</button><button id="csv">⬇ ส่งออก CSV</button></header>
+<button id="gh">☁ ออนไลน์</button><button id="rf" title="รีเฟรชข้อมูลจากออนไลน์">🔄</button><button id="lg">👤 เข้าสู่ระบบ</button><button id="adm">🔒 หลังบ้าน</button><button id="pw" style="display:none">🔑 เปลี่ยนรหัส</button><button id="open">📂 เปิดไฟล์</button><button id="saveas" class="p">💾 บันทึกเป็น…</button><button id="csv">⬇ ส่งออก CSV</button></header>
 <main class="mx-auto max-w-6xl px-4 py-6 pb-24"><div class="tabs" id="tabs"></div><div id="view"></div></main>
 <div id="pr"></div><div id="cartbar"></div><dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
 <script>
 const ICONS=['⚡','💡','🔌','🔧','🛠️','📺','🖥️','📹','📡','🌐','🔗','🔋','🧰','📦','🏗️','🪛','🔩','📷','🚪','❄️','🚰','🧱','🛡️','📍'],IMAP={'ระบบงานไฟฟ้า':'⚡','งานจอ LED':'📺','งาน CCTV':'📹'},ico=c=>c.icon||IMAP[c.name]||'📦';
 const uid=()=>Math.random().toString(36).slice(2,10);
 let cart=[],ci={},admin=false,lf={who:'',slip:'',from:'',to:''},S,tab,q="",fh=null,dirty=false;
-S={cats:[],log:[]};let loaded=false,lastH=null,src=null,ghSha=null,ghBusy=false,ghMissing=false,ghWarned=false,ghQ=Promise.resolve();
+S={cats:[],log:[]};let user=null,loaded=false,lastH=null,src=null,ghSha=null,ghBusy=false,ghMissing=false,ghWarned=false,ghQ=Promise.resolve();
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const used=id=>S.log.filter(l=>l.item===id).reduce((a,l)=>a+l.amt,0);
 const find=id=>{for(const c of S.cats){const i=c.items.find(x=>x.id===id);if(i)return{c,i}}};
@@ -74,11 +74,11 @@ const idbSet=async h=>{try{(await idb()).transaction("h","readwrite").objectStor
 const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{const q=d.transaction("h").objectStore("h").get("fh");q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}};
 async function useData(txt,h,sr){
   const d=JSON.parse(txt);if(!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง");
-  d.log||=[];d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid()})});d.log.forEach(l=>{l.id||=uid()});S=d;fh=h||null;src=sr||(h?"file":null);loaded=true;tab=S.cats[0]?.id;admin=false;cart=[];ci={};
+  d.log||=[];d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid()})});d.log.forEach(l=>{l.id||=uid()});d.users||=[];d.users.forEach(u=>{u.id||=uid()});user=sessionStorage.getItem('uid');if(!d.users.some(u=>u.id===user))user=null;S=d;fh=h||null;src=sr||(h?"file":null);loaded=true;tab=S.cats[0]?.id;admin=false;cart=[];ci={};
   $("#adm").textContent="🔒 หลังบ้าน";$("#pw").style.display="none";
   try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
   if(fh){idbSet(fh);status("✓ เชื่อมไฟล์ "+fh.name+" แล้ว (บันทึกอัตโนมัติ)","ok")}else if(src!=="gh")status("โหลดข้อมูลแล้ว (ยังไม่ได้เชื่อมไฟล์ — กด “บันทึกเป็น…”)","wa");
-  cartBar();render()}
+  lgBtn();cartBar();render()}
 $("#open").onclick=async()=>{
   try{let f,h=null;
     if(window.showOpenFilePicker){[h]=await showOpenFilePicker(FP);f=await h.getFile()}
@@ -116,7 +116,7 @@ async function ghPush(retry){
   ghSha=(await r.json()).content.sha;ghStatus()}
 async function ghMerge(){const g=await ghGet();ghSha=g.sha;if(!g.txt)return;const R=JSON.parse(g.txt),ids=new Set(S.log.map(l=>l.id));
   (R.log||[]).forEach(l=>{if(!ids.has(l.id))S.log.push(l)});S.seq=Math.max(S.seq||0,R.seq||0);
-  if(!admin){S.cats=R.cats;if(R.admin)S.admin=R.admin}render()}
+  if(!admin){S.cats=R.cats;if(R.admin)S.admin=R.admin;if(R.users)S.users=R.users}render()}
 function ghDlg(){const c=ghCfg();
   ask("☁ ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}"><label>ไฟล์ข้อมูล</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint">ใช้ Fine-grained token สิทธิ์ Contents: Read and write เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว</div>`,
   ()=>{localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim(),token:v("g4").trim()}));ghWarned=true;ghLoad(false).catch(e=>status("⚠ "+e.message,"wa"))})}
@@ -134,7 +134,8 @@ $("#csv").onclick=()=>{
   const t="\ufeff"+r.map(x=>x.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="stock-"+today()+".csv";a.click()};
 function render(){if(!loaded)return renderWelcome();
-  $("#tabs").innerHTML=S.cats.map(c=>`<button class="${c.id===tab?"on":""}" data-act="tab" data-id="${c.id}">${esc(ico(c))} ${esc(c.name)}</button>`).join("")+`<button class="${tab==="log"?"on":""}" data-act="tab" data-id="log">📜 ประวัติการเบิก</button>${admin?'<button data-act="addcat">＋ หมวดใหม่</button>':""}`;
+  $("#tabs").innerHTML=S.cats.map(c=>`<button class="${c.id===tab?"on":""}" data-act="tab" data-id="${c.id}">${esc(ico(c))} ${esc(c.name)}</button>`).join("")+`<button class="${tab==="log"?"on":""}" data-act="tab" data-id="log">📜 ประวัติการเบิก</button>${admin?`<button class="${tab==="users"?"on":""}" data-act="tab" data-id="users">👤 ผู้เบิก</button>`:""}${admin?'<button data-act="addcat">＋ หมวดใหม่</button>':""}`;
+  if(tab==="users"&&!admin)tab=S.cats[0]?.id;if(tab==="users")return renderUsers();
   if(tab==="log")return renderLog();
   const c=S.cats.find(x=>x.id===tab);if(!c){$("#view").innerHTML='<div class="empty">ยังไม่มีหมวด — เข้าหลังบ้านเพื่อเพิ่มหมวด</div>';return}
   const items=c.items.map((i,n)=>({...i,n:n+1})).filter(i=>(i.name+i.code).toLowerCase().includes(q.toLowerCase()));
@@ -146,7 +147,7 @@ function render(){if(!loaded)return renderWelcome();
   <div class="card"><table><tr><th>#</th><th>รายการงาน / วัสดุอุปกรณ์</th><th>รหัสสินค้า</th><th class="n">จำนวน</th><th class="n">เบิกใช้</th><th class="n">คงเหลือ</th><th></th></tr>
   ${items.map(i=>{const u=used(i.id),r=i.qty-u,k=r<0?"er":r===0?"wa":"ok";return`<tr><td>${i.n}</td><td>${esc(i.name)}</td><td>${esc(i.code)}</td><td class="n">${i.qty} ${esc(i.unit)}</td><td class="n">${u}</td><td class="n"><span class="b ${k}">${r}</span></td>
   <td class="ac"><button class="s p" data-act="wd" data-id="${i.id}">＋ เบิก</button> ${admin?`<button class="s" data-act="edit" data-id="${i.id}">แก้ไข</button> <button class="s d" data-act="del" data-id="${i.id}">ลบ</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="7" class="empty">ไม่พบรายการ</td></tr>'}</table></div>
-  <div class="sum">${c.items.length} รายการ${low?` · ของหมด ${low} รายการ`:""} · แก้ไขรายการและตั้งค่า “จำนวน” ได้ในโหมดหลังบ้าน</div>`;
+  <div class="sum">${c.items.length} รายการ${low?` · ของหมด ${low} รายการ`:""} · แก้ไขรายการและตั้งค่า “จำนวน” ได้ในโหมดหลังบ้าน${me()?"":" · 🔐 ต้องเข้าสู่ระบบก่อนจึงจะเบิกของได้"}</div>`;
   const qi=$("#q");qi.oninput=()=>{q=qi.value;const p=qi.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)}}
 const whoList=()=>[...new Set(S.log.map(l=>l.who).filter(Boolean))];
 const logF=()=>S.log.filter(l=>(!lf.who||l.who===lf.who)&&(!lf.slip||l.slip===lf.slip)&&(!lf.from||l.date>=lf.from)&&(!lf.to||l.date<=lf.to)).sort((a,b)=>b.date.localeCompare(a.date));
@@ -170,7 +171,7 @@ function ask(title,html,ok){$("#dlg").style.width="";
 const v=id=>$("#"+id).value;
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act,id=b.dataset.id,c=S.cats.find(x=>x.id===tab);
-  if(["addcat","rencat","delcat","add","edit","del","dellog"].includes(a)&&!admin)return;
+  if(["addcat","rencat","delcat","add","edit","del","dellog","adduser","edituser","deluser"].includes(a)&&!admin)return;
   if(a==="tab"){tab=id;q="";render()}
   else if(a==="addcat")ask("เพิ่มหมวดใหม่",'<label>ชื่อหมวด</label><input id="f1">'+iconPicker("📦"),()=>{if(!v("f1").trim())return false;const n={id:uid(),name:v("f1").trim(),icon:v("f2").trim()||"📦",items:[]};S.cats.push(n);tab=n.id;change()});
   else if(a==="rencat")ask("แก้ไขหมวด",`<label>ชื่อหมวด</label><input id="f1" value="${esc(c.name)}">`+iconPicker(ico(c)),()=>{if(!v("f1").trim())return false;c.name=v("f1").trim();c.icon=v("f2").trim()||"📦";change()});
@@ -179,10 +180,13 @@ document.addEventListener("click",e=>{
     ask(a==="add"?"เพิ่มรายการ":"แก้ไขรายการ",`<label>ชื่อรายการ</label><input id="f1" value="${esc(i.name)}"><div class="row"><div><label>รหัสสินค้า</label><input id="f2" value="${esc(i.code)}"></div><div><label>หน่วย</label><input id="f3" value="${esc(i.unit)}" placeholder="ชิ้น / เมตร"></div></div><label>จำนวนทั้งหมด</label><input id="f4" type="number" min="0" step="any" value="${i.qty}"><div class="hint">คงเหลือ = จำนวนทั้งหมด − ยอดเบิกใช้รวม</div>`,
     ()=>{if(!v("f1").trim())return false;Object.assign(i,{name:v("f1").trim(),code:v("f2").trim(),unit:v("f3").trim(),qty:+v("f4")||0});if(a==="add")c.items.push(i);change()})}
   else if(a==="del"){const{i}=find(id);if(confirm(`ลบ “${i.name}” และประวัติการเบิกของรายการนี้?`)){c.items=c.items.filter(x=>x.id!==id);S.log=S.log.filter(l=>l.item!==id);change()}}
-  else if(a==="wd"){const{i}=find(id),r=i.qty-used(id),ex=cart.find(x=>x.item===id);
+  else if(a==="wd"){if(!me())return loginDlg();const{i}=find(id),r=i.qty-used(id),ex=cart.find(x=>x.item===id);
     ask("ใส่ในใบเบิก",`<div><b>${esc(i.name)}</b></div><div class="hint">คงเหลือ ${r} ${esc(i.unit)}${ex?` · อยู่ในใบเบิกแล้ว ${ex.amt}`:""}</div><label>จำนวนที่เบิก</label><input id="f1" type="number" min="0" step="any" value="${ex?ex.amt:""}">`,
     ()=>{const n=+v("f1");if(!(n>0))return false;if(ex)ex.amt=n;else cart.push({item:id,amt:n});cartBar()})}
-  else if(a==="cart")openCart();
+  else if(a==="cart")me()?openCart():loginDlg();
+  else if(a==="adduser")userDlg();
+  else if(a==="edituser")userDlg(S.users.find(x=>x.id===id));
+  else if(a==="deluser"){const u=S.users.find(x=>x.id===id);if(confirm(`ลบผู้เบิก “${u.name}”? (ประวัติการเบิกเดิมยังอยู่)`)){S.users=S.users.filter(x=>x!==u);if(user===u.id)logout();change()}}
   else if(a==="openfile")$("#open").click();
   else if(a==="reconnect"){(async()=>{try{if(await lastH.requestPermission({mode:"readwrite"})!=="granted")return;await useData(await(await lastH.getFile()).text(),lastH)}catch(e){alert("เชื่อมต่อไม่สำเร็จ: "+e.message)}})()}
   else if(a==="usebackup")useData(localStorage.getItem("stock-v1"),null).catch(e=>alert(e.message));
@@ -195,10 +199,10 @@ const iconPicker=cur=>`<label>ไอคอนหมวด</label><div class="fle
 function cartBar(){const b=$("#cartbar");b.style.display=cart.length?"flex":"none";b.innerHTML=`<span>🧾 ใบเบิก: <b>${cart.length}</b> รายการ</span><button class="p" data-act="cart">ดูสรุป / ยืนยันเบิก</button>`}
 function openCart(){
   cart=cart.filter(x=>find(x.item));cartBar();if(!cart.length)return $("#dlg").open&&$("#dlg").close();
-  ci.who??=localStorage.getItem("lastwho")||"";ci.date||=today();ci.site??=localStorage.getItem("lastsite")||"";ci.note??="";
+  ci.who=me()?.name||"";ci.date||=today();ci.site??=localStorage.getItem("lastsite")||"";ci.note??="";
   const rows=cart.map((x,n)=>{const f=find(x.item),r=f.i.qty-used(x.item);return`<tr><td>${n+1}</td><td>${esc(f.i.name)}<div class="hint">${esc(f.c.name)} · คงเหลือ ${r} ${esc(f.i.unit)}</div></td><td style="white-space:nowrap"><input type="number" min="0" step="any" value="${x.amt}" data-ci="${n}" style="width:80px"> ${esc(f.i.unit)}</td><td><button type="button" class="s d" data-rm="${n}">✕</button></td></tr>`}).join("");
   $("#dlg").style.width="min(640px,94vw)";
-  $("#frm").innerHTML=`<h3 style="margin:0 0 4px">🧾 ใบเบิก</h3><div class="row"><div><label>ชื่อผู้เบิก *</label><input id="c1" list="whos" value="${esc(ci.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist></div><div><label>วันที่</label><input id="c2" type="date" value="${ci.date}"></div></div>
+  $("#frm").innerHTML=`<h3 style="margin:0 0 4px">🧾 ใบเบิก</h3><div class="row"><div><label>ชื่อผู้เบิก *</label><input id="c1" value="${esc(ci.who)}" readonly class="opacity-70"></div><div><label>วันที่</label><input id="c2" type="date" value="${ci.date}"></div></div>
   <div class="row"><div><label>โครงการ / สถานที่</label><input id="c3" value="${esc(ci.site)}"></div><div><label>หมายเหตุ</label><input id="c4" value="${esc(ci.note)}"></div></div>
   <div class="card" style="margin-top:12px;max-height:38vh"><table><tr><th>#</th><th>รายการ</th><th>จำนวนเบิก</th><th></th></tr>${rows}</table></div>
   <div class="sum"><b>สรุป: รวม ${cart.length} รายการ</b> · ช่องที่เบิกเกินคงเหลือจะมีคำเตือนตอนยืนยัน</div>
@@ -209,19 +213,19 @@ function openCart(){
 $("#frm").oninput=e=>{const t=e.target,k={c1:"who",c2:"date",c3:"site",c4:"note"}[t.id];if(k)ci[k]=t.value;if(t.dataset.ci!=null)cart[+t.dataset.ci].amt=+t.value||0};
 $("#frm").onclick=e=>{const ic=e.target.closest("[data-ic]");if(ic){$("#f2").value=ic.dataset.ic;document.querySelectorAll("[data-ic]").forEach(b=>b.classList.toggle("ring-2",b===ic));return}const r=e.target.dataset.rm;if(r!=null){cart.splice(+r,1);openCart()}};
 function commit(pr){
-  if(!ci.who.trim())return alert("กรุณาระบุชื่อผู้เบิก");
+  if(!me())return alert("กรุณาเข้าสู่ระบบก่อน");
   if(cart.some(x=>!(x.amt>0)))return alert("มีรายการที่จำนวนเป็น 0 กรุณาแก้ไขหรือลบออก");
   const over=cart.filter(x=>x.amt>find(x.item).i.qty-used(x.item));
   if(over.length&&!confirm(`มี ${over.length} รายการที่เบิกเกินคงเหลือ ยอดคงเหลือจะติดลบ ต้องการดำเนินการต่อ?`))return;
-  const slip="W"+String(S.seq=(S.seq||0)+1).padStart(4,"0"),who=ci.who.trim(),site=ci.site.trim(),dt=ci.date||today();
-  const rows=cart.map(x=>({id:uid(),item:x.item,amt:x.amt,date:dt,who,note:ci.note.trim(),site,slip}));
+  const slip="W"+String(S.seq=(S.seq||0)+1).padStart(4,"0"),who=me().name,site=ci.site.trim(),dt=ci.date||today();
+  const rows=cart.map(x=>({id:uid(),item:x.item,amt:x.amt,date:dt,who,note:ci.note.trim(),site,slip,uid:me().id}));
   S.log.push(...rows);localStorage.setItem("lastwho",who);localStorage.setItem("lastsite",site);
   cart=[];ci.note="";cartBar();$("#dlg").close();change();
   if(pr)printSheet(who,site,rows,slip,dt)}
 const hashPw=async(p,salt)=>{const d=new TextEncoder().encode(salt+p);if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest("SHA-256",d);return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("")}let h=5381;for(const b of d)h=(h*33^b)>>>0;return"f"+h};
 let idle;const bump=()=>{clearTimeout(idle);if(admin)idle=setTimeout(()=>setAdmin(false),600000)};
 document.addEventListener("click",bump);
-function setAdmin(x){admin=x;$("#adm").textContent=x?"🔓 ออกจากหลังบ้าน":"🔒 หลังบ้าน";$("#pw").style.display=x?"":"none";bump();render()}
+function setAdmin(x){admin=x;if(!x&&tab==="users")tab=S.cats[0]?.id;$("#adm").textContent=x?"🔓 ออกจากหลังบ้าน":"🔒 หลังบ้าน";$("#pw").style.display=x?"":"none";bump();render()}
 $("#adm").onclick=()=>{if(!loaded)return alert("กรุณาเปิดไฟล์ข้อมูลก่อน");
   if(admin)return setAdmin(false);
   if(!S.admin)return setPw("ตั้งรหัสหลังบ้าน (ครั้งแรก)",true);
@@ -232,6 +236,40 @@ function setPw(t,first){
     if(!first&&await hashPw(v("f0"),S.admin.salt)!==S.admin.hash)return alert("รหัสเดิมไม่ถูกต้อง");
     if(v("f1").length<4)return alert("รหัสสั้นเกินไป");if(v("f1")!==v("f2"))return alert("รหัสยืนยันไม่ตรงกัน");
     const salt=uid()+uid();S.admin={salt,hash:await hashPw(v("f1"),salt)};$("#dlg").close();persist();setAdmin(true)})();return false})}
+/* ===== ผู้เบิก: เข้าสู่ระบบหน้าบ้าน / จัดการในหลังบ้าน ===== */
+const me=()=>(S.users||[]).find(u=>u.id===user&&u.active!==false);
+let fails=0,lockUntil=0,uidle;
+function lgBtn(){const u=me();$("#lg").textContent=u?"👤 "+u.name+" · ออก":"👤 เข้าสู่ระบบ";$("#lg").className=u?"p":""}
+function logout(){user=null;sessionStorage.removeItem("uid");cart=[];ci={};cartBar();lgBtn();render()}
+const bumpU=()=>{clearTimeout(uidle);if(user)uidle=setTimeout(logout,900000)};document.addEventListener("click",bumpU);
+$("#frm").onkeydown=e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();$("#ok")?.click()}};
+function loginDlg(){
+  if(!loaded)return alert("กรุณาเปิดไฟล์ข้อมูลก่อน");
+  if(!(S.users||[]).some(u=>u.active!==false))return alert("ยังไม่มีผู้เบิกในระบบ ให้ผู้ดูแลเพิ่มผู้เบิกในหลังบ้านก่อน (หลังบ้าน → 👤 ผู้เบิก)");
+  ask("เข้าสู่ระบบเพื่อเบิกของ",'<label>ชื่อผู้ใช้</label><input id="f1" autocomplete="username"><label>รหัสผ่าน</label><input id="f2" type="password" autocomplete="current-password">',()=>{(async()=>{
+    if(Date.now()<lockUntil)return alert("ลองผิดหลายครั้ง กรุณารอ 30 วินาทีแล้วลองใหม่");
+    const u=S.users.find(x=>x.username===v("f1").trim().toLowerCase()&&x.active!==false);
+    if(u&&await hashPw(v("f2"),u.salt)===u.hash){fails=0;user=u.id;sessionStorage.setItem("uid",u.id);$("#dlg").close();lgBtn();bumpU();render()}
+    else{if(++fails>=5){lockUntil=Date.now()+30000;fails=0}alert("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง")}})();return false})}
+$("#lg").onclick=()=>{if(me()){if(cart.length&&!confirm("ใบเบิกที่ยังไม่ยืนยันจะถูกล้าง ออกจากระบบหรือไม่?"))return;logout()}else loginDlg()};
+function renderUsers(){
+  const U=S.users||[];
+  $("#view").innerHTML=`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-3xl dark:bg-indigo-900/40">👤</span><h2 class="text-xl font-bold">ผู้เบิก</h2></div><div class="bar"><button class="p" data-act="adduser">＋ เพิ่มผู้เบิก</button></div>
+  <div class="card"><table><tr><th>ชื่อผู้เบิก</th><th>ชื่อผู้ใช้</th><th>สถานะ</th><th class="n">เบิกแล้ว (ครั้ง)</th><th></th></tr>${U.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.username)}</td><td><span class="b ${u.active===false?"wa":"ok"}">${u.active===false?"ระงับ":"ใช้งาน"}</span></td><td class="n">${S.log.filter(l=>l.uid===u.id).length}</td><td class="ac"><button class="s" data-act="edituser" data-id="${u.id}">แก้ไข</button> <button class="s d" data-act="deluser" data-id="${u.id}">ลบ</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">ยังไม่มีผู้เบิก — กด “＋ เพิ่มผู้เบิก”</td></tr>'}</table></div>
+  <div class="sum">ผู้เบิกต้องเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านจึงจะเบิกของได้ · การเปลี่ยนชื่อจะอัปเดตประวัติการเบิกเดิมให้ด้วย</div>`}
+function userDlg(u){
+  const n=!u;u=u||{name:"",username:"",active:true};
+  ask(n?"เพิ่มผู้เบิก":"แก้ไขผู้เบิก",`<label>ชื่อผู้เบิก (แสดงในใบเบิก)</label><input id="f1" value="${esc(u.name)}"><label>ชื่อผู้ใช้สำหรับเข้าสู่ระบบ</label><input id="f2" value="${esc(u.username)}" placeholder="เช่น somchai"><label>${n?"รหัสผ่าน (อย่างน้อย 4 ตัว)":"รหัสผ่านใหม่ (เว้นว่าง = ไม่เปลี่ยน)"}</label><input id="f3" autocomplete="off"><label>สถานะ</label><select id="f4"><option value="1" ${u.active!==false?"selected":""}>ใช้งาน</option><option value="0" ${u.active===false?"selected":""}>ระงับ</option></select>`,
+  ()=>{(async()=>{
+    const name=v("f1").trim(),un=v("f2").trim().toLowerCase().replace(/\s+/g,""),pw=v("f3");
+    if(!name||!un)return alert("กรุณากรอกชื่อและชื่อผู้ใช้");
+    if(S.users.some(x=>x.username===un&&x!==u))return alert("ชื่อผู้ใช้นี้ถูกใช้แล้ว");
+    if((n||pw)&&pw.length<4)return alert("รหัสผ่านอย่างน้อย 4 ตัว");
+    if(n){u.id=uid();S.users.push(u)}
+    Object.assign(u,{name,username:un,active:v("f4")==="1"});
+    if(pw){u.salt=uid()+uid();u.hash=await hashPw(pw,u.salt)}
+    S.log.forEach(l=>{if(l.uid===u.id)l.who=name});
+    $("#dlg").close();change()})();return false})}
 window.onbeforeunload=e=>{if(dirty&&!fh){e.preventDefault();e.returnValue=""}};
 cartBar();init();
 </script></body></html>
