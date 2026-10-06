@@ -59,6 +59,7 @@ dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
   <button id="bRe" style="display:none"></button>
   <button id="bOpen">📂 เปิดไฟล์ข้อมูล .json</button>
   <button id="bNew">➕ สร้างไฟล์ใหม่</button>
+  <button id="bGh">☁ เชื่อมต่อ GitHub</button>
 </header>
 <main>
   <div id="warn" class="card" style="display:none">เบราว์เซอร์นี้ไม่รองรับการอ่าน/เขียนไฟล์โดยตรง กรุณาใช้ Google Chrome หรือ Microsoft Edge</div>
@@ -125,6 +126,20 @@ dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
     <button id="bCancel">ยกเลิก</button><button class="p" id="bSave">บันทึก</button>
   </div>
 </dialog>
+<dialog id="gdlg" style="width:min(560px,96vw)">
+  <h3 style="margin-top:0;font-size:19px">☁ เชื่อมต่อ GitHub (อ่าน/เขียนอัตโนมัติ)</h3>
+  <div class="g">
+    <div><label>เจ้าของ (owner)</label><input id="gOwner"></div>
+    <div><label>ชื่อ repo</label><input id="gRepo"></div>
+    <div><label>branch (เว้นว่าง = ค่าเริ่มต้น)</label><input id="gBr" placeholder="main"></div>
+    <div><label>พาธไฟล์ข้อมูลใน repo</label><input id="gPath"></div>
+    <div class="full"><label>Personal Access Token (สิทธิ์ Contents: Read and write)</label><input type="password" id="gTok" placeholder="github_pat_..."></div>
+  </div>
+  <p style="font-size:13px;color:var(--mu);line-height:1.6">สร้าง token ที่ GitHub → Settings → Developer settings → Fine-grained tokens เลือกเฉพาะ repo นี้ และให้สิทธิ์ Contents = Read and write. Token จะถูกเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น (ต้องใส่ทุกเครื่องที่ใช้งาน)<br>⚠ ถ้า repo เป็น public ทุกคนจะอ่านไฟล์ข้อมูล (รวมรหัสหลังบ้าน) ได้ แนะนำให้ใช้ repo แบบ private</p>
+  <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+    <button class="d" id="gOff">ยกเลิกการเชื่อมต่อ</button><button id="gCancel">ปิด</button><button class="p" id="gGo">ทดสอบและเชื่อมต่อ</button>
+  </div>
+</dialog>
 <datalist id="dlType"></datalist><datalist id="dlTech"></datalist>
 
 <script>
@@ -142,16 +157,53 @@ const idb=()=>new Promise(r=>{const q=indexedDB.open('repairlog',1);q.onupgraden
 async function kv(m,v){try{const db=await idb();return await new Promise(r=>{const s=db.transaction('k',m==='get'?'readonly':'readwrite').objectStore('k');const q=m==='get'?s.get('h'):s.put(v,'h');q.onsuccess=()=>r(q.result);q.onerror=()=>r()})}catch{}}
 
 /* ---------- อ่าน/เขียนไฟล์ ---------- */
-async function load(){
-  const f=await H.getFile(); lastMod=f.lastModified;
-  const t=await f.text(); const d=t.trim()?JSON.parse(t):empty();
-  d.meta=Object.assign(empty().meta,d.meta||{}); d.records=d.records||[];
+const KEY='repairlog_gh';
+let G=null;
+const ready=()=>H||G;
+const gcfg=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch{return null}};
+const b64=t=>{const u=new TextEncoder().encode(t);let x='';for(let i=0;i<u.length;i+=8192)x+=String.fromCharCode(...u.subarray(i,i+8192));return btoa(x)};
+const unb64=c=>new TextDecoder().decode(Uint8Array.from(atob(c.replace(/\s/g,'')),ch=>ch.charCodeAt(0)));
+const gurl=()=>`https://api.github.com/repos/${G.owner}/${G.repo}/contents/${G.path.split('/').map(encodeURIComponent).join('/')}`;
+const gq=()=>G.branch?'?ref='+encodeURIComponent(G.branch):'';
+const gh=(x={})=>({Authorization:'Bearer '+G.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...x});
+async function gerr(res){
+  if(res.status===401||res.status===403)return new Error('GitHub ปฏิเสธการเข้าถึง ('+res.status+') ตรวจสอบ token และสิทธิ์ Contents');
+  return new Error('GitHub '+res.status+' '+(await res.text()).slice(0,140));
+}
+// คืน null ถ้าไฟล์ไม่เปลี่ยน (304)
+async function gget(force){
+  const h=gh();if(!force&&G.etag)h['If-None-Match']=G.etag;
+  const res=await fetch(gurl()+gq(),{headers:h,cache:'no-store'});
+  if(res.status===304)return null;
+  if(res.status===404){G.sha=null;G.etag=null;return{text:''}}
+  if(!res.ok)throw await gerr(res);
+  const j=await res.json();G.sha=j.sha;G.etag=res.headers.get('ETag');
+  if(j.content)return{text:unb64(j.content)};
+  const r2=await fetch(gurl()+gq(),{headers:gh({Accept:'application/vnd.github.raw+json'}),cache:'no-store'});
+  return{text:await r2.text()};
+}
+async function gput(text){
+  const body={message:'repair log '+new Date().toISOString(),content:b64(text)};
+  if(G.branch)body.branch=G.branch;if(G.sha)body.sha=G.sha;
+  const res=await fetch(gurl(),{method:'PUT',headers:gh({'Content-Type':'application/json'}),body:JSON.stringify(body)});
+  if(res.status===409||res.status===422){const e=new Error('conflict');e.conflict=true;throw e}
+  if(!res.ok)throw await gerr(res);
+  const j=await res.json();G.sha=j.content.sha;G.etag=null;
+}
+function apply(text){
+  const d=text.trim()?JSON.parse(text):empty();
+  d.meta=Object.assign(empty().meta,d.meta||{});d.records=d.records||[];
   // แก้ข้อมูลเดิมที่ปีถูกเก็บเป็น พ.ศ. (เช่น 2569) ให้เป็น ค.ศ.
   d.records.forEach(r=>{const y=+(r.date||'').slice(0,4);if(y>2400){r.date=(y-543)+r.date.slice(4);r.seq=0}});
   D=d;
 }
+async function load(){
+  if(G){apply((await gget(true)).text);return}
+  const f=await H.getFile();lastMod=f.lastModified;apply(await f.text());
+}
 async function write(){
-  const w=await H.createWritable(); await w.write(JSON.stringify(D,null,1)); await w.close();
+  if(G){await gput(JSON.stringify(D));return}
+  const w=await H.createWritable();await w.write(JSON.stringify(D,null,1));await w.close();
   lastMod=(await H.getFile()).lastModified;
 }
 // ลำดับที่ เริ่มนับใหม่ทุกเดือน (ออกเลขตอนบันทึก เพื่อไม่ให้ซ้ำกันข้ามเครื่อง)
@@ -161,20 +213,36 @@ function assignSeq(){
   D.records.filter(r=>!r.seq).forEach(r=>{r.seq=mx[mk(r)]=(mx[mk(r)]||0)+1});
 }
 async function commit(fn){
-  if(!H){alert('กรุณาเปิดหรือสร้างไฟล์ข้อมูลก่อน');return false}
-  try{await load();fn();assignSeq();await write();render();return true}
-  catch(e){alert('บันทึกไม่สำเร็จ: '+e.message);return false}
+  if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return false}
+  try{
+    for(let i=0;i<4;i++){
+      await load();fn();assignSeq();
+      try{await write();break}catch(e){if(!e.conflict||i===3)throw e}
+    }
+    render();return true;
+  }catch(e){alert('บันทึกไม่สำเร็จ: '+e.message);return false}
 }
 async function connect(h,isNew){
-  H=h;await kv('put',h);
+  G=null;H=h;await kv('put',h);
   if(isNew){D=empty();await write()}else await load();
   $('#bRe').style.display='none';$('#st').textContent='✔ '+H.name+' · ซิงค์อัตโนมัติ';render();
+}
+async function connectGH(cfg,save){
+  const old=G;G=Object.assign({sha:null,etag:null},cfg);
+  try{await load();if(!G.sha){D=empty();await write()}}catch(e){G=old;throw e}
+  H=null;if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
+  $('#bRe').style.display='none';$('#st').textContent='☁ GitHub: '+G.owner+'/'+G.repo+' · ซิงค์อัตโนมัติ';render();
 }
 const ft=[{description:'JSON',accept:{'application/json':['.json']}}];
 $('#bOpen').onclick=async()=>{try{const[h]=await showOpenFilePicker({types:ft});await connect(h,false)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
 $('#bNew').onclick=async()=>{try{const h=await showSaveFilePicker({suggestedName:'repair-data.json',types:ft});await connect(h,true)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
 $('#bRe').onclick=async()=>{try{if(await H.requestPermission({mode:'readwrite'})==='granted')await connect(H,false)}catch(e){alert(e.message)}};
-setInterval(async()=>{if(!H)return;try{const f=await H.getFile();if(f.lastModified!==lastMod){await load();render()}}catch{}},4000);
+setInterval(async()=>{
+  try{
+    if(G){const r=await gget(false);if(r){apply(r.text);render()}}
+    else if(H){const f=await H.getFile();if(f.lastModified!==lastMod){await load();render()}}
+  }catch{}
+},4000);
 
 /* ---------- แสดงผล ---------- */
 const pcol=(r,k)=>(r.parts||[]).map(p=>`<div class="pt">${p[k]?esc(p[k])+(p[k+'p']?` <i>${fmt(p[k+'p'])}</i>`:''):'&nbsp;'}</div>`).join('');
@@ -217,7 +285,7 @@ function partRow(p={}){
 }
 $('#bPart').onclick=()=>partRow();
 function openForm(id){
-  if(!H){alert('กรุณาเปิดหรือสร้างไฟล์ข้อมูลก่อน');return}
+  if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return}
   editId=id;const r=D.records.find(x=>x.id===id)||{date:new Date().toISOString().slice(0,10),parts:[{}]};
   $('#dT').textContent=id?`แก้ไขรายการ ลำดับที่ ${r.seq}`:'เพิ่มรายการซ่อม';
   $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';$('#fType').value=r.type||'';
@@ -284,7 +352,7 @@ function parseSheet(rows){
   }
   return out;
 }
-$('#bImp').onclick=()=>{if(!H){alert('กรุณาเปิดหรือสร้างไฟล์ข้อมูลก่อน');return}$('#fileX').click()};
+$('#bImp').onclick=()=>{if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return}$('#fileX').click()};
 $('#fileX').onchange=async e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;
   try{
@@ -293,7 +361,7 @@ $('#fileX').onchange=async e=>{
     if(!all.length){alert('ไม่พบข้อมูล (ต้องมีหัวตารางที่มีคำว่า "ชื่อลูกค้า") ดาวน์โหลดแม่แบบได้ในระบบหลังบ้าน');return}
     let added=0;
     await commit(()=>{
-      const key=r=>[r.date,r.cus,r.sv,r.sn].join('|');const have=new Set(D.records.map(key));
+      added=0;const key=r=>[r.date,r.cus,r.sv,r.sn].join('|');const have=new Set(D.records.map(key));
       const b={id:crypto.randomUUID(),name:f.name,at:Date.now()};
       all.forEach(r=>{if(!have.has(key(r))){r.imp=b.id;D.records.push(r);have.add(key(r));added++}});
       if(added)D.meta.imports.push(b);
@@ -343,12 +411,33 @@ $('#bSet').onclick=async()=>{
 };
 $('#bBak').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,1)],{type:'application/json'}));a.download='repair-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
 
+/* ---------- GitHub ---------- */
+$('#bGh').onclick=()=>{const c=G||gcfg()||{};
+  $('#gOwner').value=c.owner||'sahakoloa';$('#gRepo').value=c.repo||'sahakoloa.github.io';$('#gBr').value=c.branch||'';
+  $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gdlg').showModal()};
+$('#gCancel').onclick=()=>$('#gdlg').close();
+$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';render();$('#gdlg').close()};
+$('#gGo').onclick=async()=>{
+  const cfg={owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:$('#gBr').value.trim(),path:$('#gPath').value.trim().replace(/^\/+/,''),token:$('#gTok').value.trim()};
+  if(!cfg.owner||!cfg.repo||!cfg.path||!cfg.token){alert('กรุณากรอกข้อมูลให้ครบ (ยกเว้น branch)');return}
+  $('#gGo').disabled=true;
+  try{await connectGH(cfg,true);$('#gdlg').close()}catch(e){alert('เชื่อมต่อไม่สำเร็จ: '+e.message)}
+  $('#gGo').disabled=false;
+};
+
 /* ---------- เริ่มต้น ---------- */
 (async()=>{
-  if(!window.showOpenFilePicker){$('#warn').style.display='';$('#bOpen').disabled=$('#bNew').disabled=true;return}
-  const h=await kv('get');
-  if(h){H=h;$('#bRe').textContent='↻ เชื่อมต่อ '+h.name+' ต่อ';$('#bRe').style.display='';
-    try{if(await h.queryPermission({mode:'readwrite'})==='granted')await connect(h,false)}catch{}}
+  if(!window.showOpenFilePicker){
+    $('#bOpen').disabled=$('#bNew').disabled=true;
+    $('#warn').textContent='เบราว์เซอร์นี้ไม่รองรับการเปิดไฟล์โดยตรง ให้ใช้โหมด GitHub หรือเปิดด้วย Chrome/Edge';$('#warn').style.display='';
+  }
+  const c=gcfg();
+  if(c){try{await connectGH(c,false)}catch(e){$('#st').textContent='⚠ เชื่อมต่อ GitHub ไม่ได้: '+e.message}}
+  else{
+    const h=window.showOpenFilePicker&&await kv('get');
+    if(h){H=h;$('#bRe').textContent='↻ เชื่อมต่อ '+h.name+' ต่อ';$('#bRe').style.display='';
+      try{if(await h.queryPermission({mode:'readwrite'})==='granted')await connect(h,false)}catch{}}
+  }
   render();
 })();
 </script>
