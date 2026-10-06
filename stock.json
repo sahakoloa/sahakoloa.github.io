@@ -1,6 +1,6 @@
 {
  "version": 1,
- "seq": 0,
+ "seq": 1,
  "cats": [
   {
    "id": "c1",
@@ -352,7 +352,41 @@
    "items": []
   }
  ],
- "log": [],
+ "log": [
+  {
+   "id": "cyqq36gj",
+   "item": "i1_19",
+   "amt": 2,
+   "date": "2026-10-06",
+   "who": "พชร",
+   "note": "",
+   "site": "เขต 33",
+   "slip": "W0001",
+   "uid": "ez3v6xp5"
+  },
+  {
+   "id": "gpq6iqms",
+   "item": "i1_20",
+   "amt": 3,
+   "date": "2026-10-06",
+   "who": "พชร",
+   "note": "",
+   "site": "เขต 33",
+   "slip": "W0001",
+   "uid": "ez3v6xp5"
+  },
+  {
+   "id": "au02j7f2",
+   "item": "i1_21",
+   "amt": 3,
+   "date": "2026-10-06",
+   "who": "พชร",
+   "note": "",
+   "site": "เขต 33",
+   "slip": "W0001",
+   "uid": "ez3v6xp5"
+  }
+ ],
  "users": [
   {
    "name": "พชร",
