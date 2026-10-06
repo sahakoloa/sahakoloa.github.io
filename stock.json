@@ -349,15 +349,7 @@
    "id": "vj1hd175",
    "name": "ระบบงาน Network",
    "icon": "🧱",
-   "items": [
-    {
-     "id": "ndvnv1p9",
-     "name": "สาย LAN (CAT6) Indoor / Outdoor",
-     "code": "",
-     "unit": "กล่อง",
-     "qty": 20
-    }
-   ]
+   "items": []
   }
  ],
  "log": [],
