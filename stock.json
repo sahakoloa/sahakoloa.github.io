@@ -347,7 +347,16 @@
   }
  ],
  "log": [],
- "users": [],
+ "users": [
+  {
+   "name": "พชร ฉางรัมย์",
+   "username": "phachara",
+   "active": true,
+   "id": "ez3v6xp5",
+   "salt": "bu469prcpo6y8cyi",
+   "hash": "e8839e752a0780cf5f7fe05221da94f815c681912ff25200845e6dd319a37cb2"
+  }
+ ],
  "admin": {
   "salt": "k1ouw0gphk8rhhbl",
   "hash": "fe1a3e878b53168cc9f2d5851acec43b311a513044913202afe8dc1d38bece68"
