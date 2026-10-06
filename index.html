@@ -45,14 +45,14 @@
 #pr .sg{display:flex;justify-content:space-around;margin-top:60px;text-align:center}#pr .sg div{width:30%}#pr .sg i{display:block;border-top:1px dotted #000;margin-top:40px;padding-top:4px;font-style:normal}}
 </style></head><body>
 <header class="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white/90 px-5 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/90"><div class="mr-auto flex items-center gap-3"><div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl shadow-lg shadow-indigo-500/30">📦</div><div><h1 class="text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1><span id="st"></span></div></div>
-<button id="adm">🔒 หลังบ้าน</button><button id="pw" style="display:none">🔑 เปลี่ยนรหัส</button><button id="open">📂 เปิดไฟล์</button><button id="saveas" class="p">💾 บันทึกเป็น…</button><button id="csv">⬇ ส่งออก CSV</button></header>
+<button id="gh">☁ ออนไลน์</button><button id="rf" title="รีเฟรชข้อมูลจากออนไลน์">🔄</button><button id="adm">🔒 หลังบ้าน</button><button id="pw" style="display:none">🔑 เปลี่ยนรหัส</button><button id="open">📂 เปิดไฟล์</button><button id="saveas" class="p">💾 บันทึกเป็น…</button><button id="csv">⬇ ส่งออก CSV</button></header>
 <main class="mx-auto max-w-6xl px-4 py-6 pb-24"><div class="tabs" id="tabs"></div><div id="view"></div></main>
 <div id="pr"></div><div id="cartbar"></div><dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
 <script>
 const ICONS=['⚡','💡','🔌','🔧','🛠️','📺','🖥️','📹','📡','🌐','🔗','🔋','🧰','📦','🏗️','🪛','🔩','📷','🚪','❄️','🚰','🧱','🛡️','📍'],IMAP={'ระบบงานไฟฟ้า':'⚡','งานจอ LED':'📺','งาน CCTV':'📹'},ico=c=>c.icon||IMAP[c.name]||'📦';
 const uid=()=>Math.random().toString(36).slice(2,10);
 let cart=[],ci={},admin=false,lf={who:'',slip:'',from:'',to:''},S,tab,q="",fh=null,dirty=false;
-S={cats:[],log:[]};let loaded=false,lastH=null;
+S={cats:[],log:[]};let loaded=false,lastH=null,src=null,ghSha=null,ghBusy=false,ghMissing=false,ghWarned=false,ghQ=Promise.resolve();
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const used=id=>S.log.filter(l=>l.item===id).reduce((a,l)=>a+l.amt,0);
 const find=id=>{for(const c of S.cats){const i=c.items.find(x=>x.id===id);if(i)return{c,i}}};
@@ -60,6 +60,7 @@ const today=()=>new Date().toISOString().slice(0,10);
 function status(t,c){const e=$("#st");e.textContent=t;e.className=c||""}
 async function persist(){if(!loaded)return;
   try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  if(src==="gh")return ghQueue();
   if(fh){try{const w=await fh.createWritable();await w.write(JSON.stringify(S,null,1));await w.close();dirty=false;status("✓ บันทึกลงไฟล์ "+fh.name+" แล้ว","ok");return}catch(e){status("บันทึกไฟล์ไม่สำเร็จ: "+e.message,"wa");return}}
   dirty=true;status("⚠ ยังไม่ได้เชื่อมไฟล์ (สำรองในเบราว์เซอร์เท่านั้น)","wa");
 }
@@ -67,16 +68,16 @@ function change(){persist();render()}
 const FP={types:[{description:"ข้อมูลเบิกของ",accept:{"application/json":[".json"]}}]};
 $("#saveas").onclick=async()=>{if(!loaded)return alert("ยังไม่มีข้อมูล กรุณาเปิดไฟล์หรือเริ่มใหม่ก่อน");
   if(!window.showSaveFilePicker){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));a.download="stock.json";a.click();return}
-  try{fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);await persist()}catch(e){}};
+  try{fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);src="file";await persist()}catch(e){}};
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("stock-app",1);r.onupgradeneeded=()=>r.result.createObjectStore("h");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
 const idbSet=async h=>{try{(await idb()).transaction("h","readwrite").objectStore("h").put(h,"fh")}catch(e){}};
 const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{const q=d.transaction("h").objectStore("h").get("fh");q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}};
-async function useData(txt,h){
+async function useData(txt,h,sr){
   const d=JSON.parse(txt);if(!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง");
-  d.log||=[];d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid()})});d.log.forEach(l=>{l.id||=uid()});S=d;fh=h||null;loaded=true;tab=S.cats[0]?.id;admin=false;cart=[];ci={};
+  d.log||=[];d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid()})});d.log.forEach(l=>{l.id||=uid()});S=d;fh=h||null;src=sr||(h?"file":null);loaded=true;tab=S.cats[0]?.id;admin=false;cart=[];ci={};
   $("#adm").textContent="🔒 หลังบ้าน";$("#pw").style.display="none";
   try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
-  if(fh){idbSet(fh);status("✓ เชื่อมไฟล์ "+fh.name+" แล้ว (บันทึกอัตโนมัติ)","ok")}else status("โหลดข้อมูลแล้ว (ยังไม่ได้เชื่อมไฟล์ — กด “บันทึกเป็น…”)","wa");
+  if(fh){idbSet(fh);status("✓ เชื่อมไฟล์ "+fh.name+" แล้ว (บันทึกอัตโนมัติ)","ok")}else if(src!=="gh")status("โหลดข้อมูลแล้ว (ยังไม่ได้เชื่อมไฟล์ — กด “บันทึกเป็น…”)","wa");
   cartBar();render()}
 $("#open").onclick=async()=>{
   try{let f,h=null;
@@ -86,7 +87,45 @@ $("#open").onclick=async()=>{
   }catch(e){if(e.name!=="AbortError")alert("เปิดไฟล์ไม่สำเร็จ: "+e.message)}};
 function renderWelcome(){$("#tabs").innerHTML="";
   $("#view").innerHTML=`<div class="mx-auto mt-10 max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800"><div class="text-5xl">📂</div><h2 class="mt-3 text-xl font-bold">เปิดไฟล์ข้อมูล stock.json</h2><p class="mt-2 text-sm text-slate-500">ข้อมูลรายการและประวัติการเบิกทั้งหมดเก็บอยู่ในไฟล์ stock.json ไม่ได้ฝังอยู่ในหน้านี้</p><div class="mt-6 flex flex-col gap-2">${lastH?`<button class="p" data-act="reconnect">🔗 เชื่อมต่อ ${esc(lastH.name)} ต่อ</button>`:""}<button class="${lastH?"":"p"}" data-act="openfile">📂 เลือกไฟล์ stock.json</button>${localStorage.getItem("stock-v1")?'<button data-act="usebackup">🗂 ใช้ข้อมูลสำรองในเบราว์เซอร์</button>':""}<button data-act="blank">✨ เริ่มใหม่ (ข้อมูลว่าง)</button></div></div>`}
+
+/* ===== ออนไลน์: เก็บ stock.json ใน GitHub repo ผ่าน GitHub Contents API ===== */
+const GH0={owner:"sahakoloa",repo:"sahakoloa.github.io",path:"stock.json",token:""};
+const ghCfg=()=>{try{return{...GH0,...JSON.parse(localStorage.getItem("gh-cfg")||"{}")}}catch(e){return{...GH0}}};
+const online=()=>location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg");
+const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
+const ghUrl=c=>`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
+const ghH=c=>({Accept:"application/vnd.github+json",...(c.token?{Authorization:"Bearer "+c.token}:{})});
+async function ghGet(){const c=ghCfg(),r=await fetch(ghUrl(c)+"?t="+Date.now(),{headers:ghH(c),cache:"no-store"});
+  if(r.status===404)return{sha:null,txt:null};
+  if(!r.ok)throw Error("GitHub "+r.status+(r.status===401?" (token ไม่ถูกต้อง)":r.status===403?" (เกินโควตา/ไม่มีสิทธิ์)":""));
+  const j=await r.json();return{sha:j.sha,txt:b64d(j.content)}}
+function ghStatus(){const t=ghCfg().token;status(t?"☁ ออนไลน์ · ซิงก์ล่าสุด "+new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"}):"☁ ออนไลน์ (อ่านอย่างเดียว — ยังไม่ได้ตั้ง token)",t?"ok":"wa")}
+async function ghLoad(keep){
+  const g=await ghGet(),same=g.sha===ghSha;ghSha=g.sha;ghMissing=g.txt===null;
+  if(ghMissing){if(loaded&&ghCfg().token){src="gh";return ghQueue()}status("☁ ยังไม่พบไฟล์ "+ghCfg().path+" ในรีโป — เลือก “เริ่มใหม่” หรือเปิดไฟล์ แล้วระบบจะสร้างให้","wa");render();return}
+  if(keep&&same)return;
+  const t=tab,ad=admin,ct=cart,c2=ci;await useData(g.txt,null,"gh");
+  if(keep){if(S.cats.some(x=>x.id===t)||t==="log")tab=t;cart=ct;ci=c2;setAdmin(ad)}
+  ghStatus()}
+function ghQueue(){ghBusy=true;status("☁ กำลังบันทึก…");ghQ=ghQ.then(()=>ghPush(true)).catch(e=>status("⚠ บันทึกออนไลน์ไม่สำเร็จ: "+e.message,"wa")).finally(()=>{ghBusy=false});return ghQ}
+async function ghPush(retry){
+  const c=ghCfg();if(!c.token){status("⚠ ยังไม่ได้ตั้ง token — ข้อมูลไม่ถูกบันทึกออนไลน์","wa");if(!ghWarned){ghWarned=true;ghDlg()}return}
+  const r=await fetch(ghUrl(c),{method:"PUT",headers:{...ghH(c),"Content-Type":"application/json"},body:JSON.stringify({message:"update stock "+new Date().toISOString(),content:b64e(JSON.stringify(S,null,1)),...(ghSha?{sha:ghSha}:{})})});
+  if(r.status===409||r.status===422){if(!retry)throw Error("ข้อมูลชนกัน กด 🔄 แล้วลองใหม่");await ghMerge();return ghPush(false)}
+  if(!r.ok)throw Error("GitHub "+r.status+(r.status===401?" (token ไม่ถูกต้อง)":r.status===403||r.status===404?" (token ไม่มีสิทธิ์เขียน repo นี้)":""));
+  ghSha=(await r.json()).content.sha;ghStatus()}
+async function ghMerge(){const g=await ghGet();ghSha=g.sha;if(!g.txt)return;const R=JSON.parse(g.txt),ids=new Set(S.log.map(l=>l.id));
+  (R.log||[]).forEach(l=>{if(!ids.has(l.id))S.log.push(l)});S.seq=Math.max(S.seq||0,R.seq||0);
+  if(!admin){S.cats=R.cats;if(R.admin)S.admin=R.admin}render()}
+function ghDlg(){const c=ghCfg();
+  ask("☁ ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}"><label>ไฟล์ข้อมูล</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint">ใช้ Fine-grained token สิทธิ์ Contents: Read and write เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว</div>`,
+  ()=>{localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim(),token:v("g4").trim()}));ghWarned=true;ghLoad(false).catch(e=>status("⚠ "+e.message,"wa"))})}
+$("#gh").onclick=ghDlg;
+$("#rf").onclick=()=>{if(!online())return alert("ยังไม่ได้ตั้งค่าออนไลน์ กดปุ่ม ☁ ก่อน");ghLoad(true).catch(e=>status("⚠ "+e.message,"wa"))};
+const ghTick=()=>{if(src==="gh"&&!ghBusy&&!$("#dlg").open&&!document.hidden)ghLoad(true).catch(()=>{})};
+setInterval(ghTick,60000);document.addEventListener("visibilitychange",ghTick);
 async function init(){
+  if(online()){try{await ghLoad(false)}catch(e){status("⚠ โหลดออนไลน์ไม่สำเร็จ: "+e.message,"wa")}if(loaded)return}
   try{const r=await fetch("stock.json",{cache:"no-store"});if(r.ok){await useData(await r.text(),null);status("โหลดจาก stock.json แล้ว — กด “บันทึกเป็น…” เพื่อเชื่อมไฟล์สำหรับบันทึกอัตโนมัติ","wa");return}}catch(e){}
   status("ยังไม่ได้โหลดข้อมูล","wa");lastH=await idbGet();render()}
 $("#csv").onclick=()=>{
@@ -147,7 +186,7 @@ document.addEventListener("click",e=>{
   else if(a==="openfile")$("#open").click();
   else if(a==="reconnect"){(async()=>{try{if(await lastH.requestPermission({mode:"readwrite"})!=="granted")return;await useData(await(await lastH.getFile()).text(),lastH)}catch(e){alert("เชื่อมต่อไม่สำเร็จ: "+e.message)}})()}
   else if(a==="usebackup")useData(localStorage.getItem("stock-v1"),null).catch(e=>alert(e.message));
-  else if(a==="blank")useData(JSON.stringify({cats:[],log:[]}),null);
+  else if(a==="blank")useData(JSON.stringify({cats:[],log:[]}),null,ghMissing?"gh":null);
   else if(a==="print"){if(!logF().length)return alert("ไม่มีรายการเบิกให้พิมพ์");
     ask("ปริ้นใบเบิก",`<label>ชื่อผู้เบิก (แสดงบนใบเบิกและช่องลงชื่อ)</label><input id="f1" list="whos" value="${esc(lf.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist><label>โครงการ / สถานที่ (ถ้ามี)</label><input id="f2" value="${esc(localStorage.getItem('lastsite')||'')}"><div class="hint">พิมพ์ตามรายการที่กรองอยู่ · ต้องการไฟล์ PDF ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” ในหน้าต่างพิมพ์</div>`,()=>{if(!v("f1").trim()){alert("กรุณาระบุชื่อผู้เบิก");return false}localStorage.setItem('lastsite',v("f2").trim());const w=v("f1").trim(),st=v("f2").trim();setTimeout(()=>printSheet(w,st,null,lf.slip),50)})}
   else if(a==="dellog"){if(confirm("ยกเลิกรายการเบิกนี้?")){S.log=S.log.filter(l=>l.id!==id);change()}}
