@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบเบิกของติดตั้ง</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style type="text/tailwindcss">
+@layer base{
+ body{@apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-900 dark:text-slate-100;font-family:'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+ label{@apply mb-1 mt-3 block text-xs font-medium text-slate-500 dark:text-slate-400}
+ input,select,textarea{@apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800}
+ table{@apply w-full text-sm}
+ th{@apply whitespace-nowrap bg-slate-50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:bg-slate-900/40 dark:text-slate-400}
+ td{@apply border-t border-slate-100 px-4 py-3 dark:border-slate-700}
+ tr:hover>td{@apply bg-slate-50/70 dark:bg-slate-700/30}
+ dialog{@apply rounded-2xl bg-white p-6 text-slate-800 shadow-2xl dark:bg-slate-800 dark:text-slate-100;width:min(440px,92vw)}
+ dialog::backdrop{background:rgba(15,23,42,.55)}
+}
+@layer components{
+ button{@apply inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700}
+ button.p{@apply border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-500 dark:bg-indigo-600 dark:hover:bg-indigo-500}
+ button.d{@apply text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950}
+ button.s{@apply px-2.5 py-1 text-xs}
+ #st{@apply inline-block rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] text-slate-500 dark:bg-slate-800 dark:text-slate-400}
+ #st.ok{@apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300}
+ #st.wa{@apply bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300}
+ .tabs{@apply mb-5 flex flex-wrap gap-2}
+ .tabs button{@apply rounded-full px-4 py-2}
+ .tabs button.on{@apply border-indigo-600 bg-indigo-600 text-white shadow-md shadow-indigo-500/30}
+ .tabs button[data-act=addcat]{@apply border-dashed text-slate-500}
+ .bar{@apply mb-4 flex flex-wrap items-center gap-2}.bar input{@apply max-w-xs}
+ .card{@apply overflow-auto rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800}
+ td.n,th.n{@apply text-right}td.ac{@apply whitespace-nowrap text-right}
+ .b{@apply inline-block min-w-[2.5rem] rounded-full px-2.5 py-0.5 text-center text-xs font-semibold}
+ .b.ok{@apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300}
+ .b.wa{@apply bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300}
+ .b.er{@apply bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300}
+ .sum{@apply mt-3 text-xs text-slate-500 dark:text-slate-400}.empty{@apply py-10 text-center text-slate-400}
+ .row{@apply flex gap-3}.row>*{@apply flex-1}.act{@apply mt-6 flex justify-end gap-2}.hint{@apply mt-1 text-xs text-slate-400}
+ .lf{@apply mb-4 flex flex-wrap items-end gap-3}.lf>div{@apply min-w-[9rem]}.lf label{@apply mt-0}
+ #cartbar{@apply fixed inset-x-0 bottom-0 z-20 items-center justify-between border-t border-slate-200 bg-white px-5 py-3 text-sm shadow-[0_-4px_14px_rgba(0,0,0,.08)] dark:border-slate-700 dark:bg-slate-800;display:none}
+}
+#pr{display:none}
+@media print{body{background:#fff;color:#000}header,main,dialog,#cartbar{display:none!important}#pr{display:block;font-size:13px}
+#pr h2{font-size:20px;font-weight:700;text-align:center;margin:0 0 4px}#pr .m{display:flex;justify-content:space-between;margin:10px 0}
+#pr table{border:1px solid #000}#pr th,#pr td{border:1px solid #000;padding:5px 7px;color:#000;background:#fff;text-transform:none;letter-spacing:0;font-size:13px}
+#pr .sg{display:flex;justify-content:space-around;margin-top:60px;text-align:center}#pr .sg div{width:30%}#pr .sg i{display:block;border-top:1px dotted #000;margin-top:40px;padding-top:4px;font-style:normal}}
+</style></head><body>
+<header class="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white/90 px-5 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/90"><div class="mr-auto flex items-center gap-3"><div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl shadow-lg shadow-indigo-500/30">📦</div><div><h1 class="text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1><span id="st"></span></div></div>
+<button id="adm">🔒 หลังบ้าน</button><button id="pw" style="display:none">🔑 เปลี่ยนรหัส</button><button id="open">📂 เปิดไฟล์</button><button id="saveas" class="p">💾 บันทึกเป็น…</button><button id="csv">⬇ ส่งออก CSV</button></header>
+<main class="mx-auto max-w-6xl px-4 py-6 pb-24"><div class="tabs" id="tabs"></div><div id="view"></div></main>
+<div id="pr"></div><div id="cartbar"></div><dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
+<script>
+const ICONS=['⚡','💡','🔌','🔧','🛠️','📺','🖥️','📹','📡','🌐','🔗','🔋','🧰','📦','🏗️','🪛','🔩','📷','🚪','❄️','🚰','🧱','🛡️','📍'],IMAP={'ระบบงานไฟฟ้า':'⚡','งานจอ LED':'📺','งาน CCTV':'📹'},ico=c=>c.icon||IMAP[c.name]||'📦';
+const uid=()=>Math.random().toString(36).slice(2,10);
+let cart=[],ci={},admin=false,lf={who:'',slip:'',from:'',to:''},S,tab,q="",fh=null,dirty=false;
+S={cats:[],log:[]};let loaded=false,lastH=null;
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const used=id=>S.log.filter(l=>l.item===id).reduce((a,l)=>a+l.amt,0);
+const find=id=>{for(const c of S.cats){const i=c.items.find(x=>x.id===id);if(i)return{c,i}}};
+const today=()=>new Date().toISOString().slice(0,10);
+function status(t,c){const e=$("#st");e.textContent=t;e.className=c||""}
+async function persist(){if(!loaded)return;
+  try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  if(fh){try{const w=await fh.createWritable();await w.write(JSON.stringify(S,null,1));await w.close();dirty=false;status("✓ บันทึกลงไฟล์ "+fh.name+" แล้ว","ok");return}catch(e){status("บันทึกไฟล์ไม่สำเร็จ: "+e.message,"wa");return}}
+  dirty=true;status("⚠ ยังไม่ได้เชื่อมไฟล์ (สำรองในเบราว์เซอร์เท่านั้น)","wa");
+}
+function change(){persist();render()}
+const FP={types:[{description:"ข้อมูลเบิกของ",accept:{"application/json":[".json"]}}]};
+$("#saveas").onclick=async()=>{if(!loaded)return alert("ยังไม่มีข้อมูล กรุณาเปิดไฟล์หรือเริ่มใหม่ก่อน");
+  if(!window.showSaveFilePicker){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));a.download="stock.json";a.click();return}
+  try{fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);await persist()}catch(e){}};
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("stock-app",1);r.onupgradeneeded=()=>r.result.createObjectStore("h");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const idbSet=async h=>{try{(await idb()).transaction("h","readwrite").objectStore("h").put(h,"fh")}catch(e){}};
+const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{const q=d.transaction("h").objectStore("h").get("fh");q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}};
+async function useData(txt,h){
+  const d=JSON.parse(txt);if(!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง");
+  d.log||=[];d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid()})});d.log.forEach(l=>{l.id||=uid()});S=d;fh=h||null;loaded=true;tab=S.cats[0]?.id;admin=false;cart=[];ci={};
+  $("#adm").textContent="🔒 หลังบ้าน";$("#pw").style.display="none";
+  try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  if(fh){idbSet(fh);status("✓ เชื่อมไฟล์ "+fh.name+" แล้ว (บันทึกอัตโนมัติ)","ok")}else status("โหลดข้อมูลแล้ว (ยังไม่ได้เชื่อมไฟล์ — กด “บันทึกเป็น…”)","wa");
+  cartBar();render()}
+$("#open").onclick=async()=>{
+  try{let f,h=null;
+    if(window.showOpenFilePicker){[h]=await showOpenFilePicker(FP);f=await h.getFile()}
+    else f=await new Promise(r=>{const i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=()=>r(i.files[0]);i.click()});
+    await useData(await f.text(),h)
+  }catch(e){if(e.name!=="AbortError")alert("เปิดไฟล์ไม่สำเร็จ: "+e.message)}};
+function renderWelcome(){$("#tabs").innerHTML="";
+  $("#view").innerHTML=`<div class="mx-auto mt-10 max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800"><div class="text-5xl">📂</div><h2 class="mt-3 text-xl font-bold">เปิดไฟล์ข้อมูล stock.json</h2><p class="mt-2 text-sm text-slate-500">ข้อมูลรายการและประวัติการเบิกทั้งหมดเก็บอยู่ในไฟล์ stock.json ไม่ได้ฝังอยู่ในหน้านี้</p><div class="mt-6 flex flex-col gap-2">${lastH?`<button class="p" data-act="reconnect">🔗 เชื่อมต่อ ${esc(lastH.name)} ต่อ</button>`:""}<button class="${lastH?"":"p"}" data-act="openfile">📂 เลือกไฟล์ stock.json</button>${localStorage.getItem("stock-v1")?'<button data-act="usebackup">🗂 ใช้ข้อมูลสำรองในเบราว์เซอร์</button>':""}<button data-act="blank">✨ เริ่มใหม่ (ข้อมูลว่าง)</button></div></div>`}
+async function init(){
+  try{const r=await fetch("stock.json",{cache:"no-store"});if(r.ok){await useData(await r.text(),null);status("โหลดจาก stock.json แล้ว — กด “บันทึกเป็น…” เพื่อเชื่อมไฟล์สำหรับบันทึกอัตโนมัติ","wa");return}}catch(e){}
+  status("ยังไม่ได้โหลดข้อมูล","wa");lastH=await idbGet();render()}
+$("#csv").onclick=()=>{
+  const r=[["หมวด","ลำดับ","รายการ","รหัสสินค้า","หน่วย","จำนวน","เบิกใช้","คงเหลือ"]];
+  S.cats.forEach(c=>c.items.forEach((i,n)=>r.push([c.name,n+1,i.name,i.code,i.unit,i.qty,used(i.id),i.qty-used(i.id)])));
+  const t="\ufeff"+r.map(x=>x.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="stock-"+today()+".csv";a.click()};
+function render(){if(!loaded)return renderWelcome();
+  $("#tabs").innerHTML=S.cats.map(c=>`<button class="${c.id===tab?"on":""}" data-act="tab" data-id="${c.id}">${esc(ico(c))} ${esc(c.name)}</button>`).join("")+`<button class="${tab==="log"?"on":""}" data-act="tab" data-id="log">📜 ประวัติการเบิก</button>${admin?'<button data-act="addcat">＋ หมวดใหม่</button>':""}`;
+  if(tab==="log")return renderLog();
+  const c=S.cats.find(x=>x.id===tab);if(!c){$("#view").innerHTML='<div class="empty">ยังไม่มีหมวด — เข้าหลังบ้านเพื่อเพิ่มหมวด</div>';return}
+  const items=c.items.map((i,n)=>({...i,n:n+1})).filter(i=>(i.name+i.code).toLowerCase().includes(q.toLowerCase()));
+  const low=c.items.filter(i=>i.qty>0&&i.qty-used(i.id)<=0).length;
+  const kpi=(t,x,c)=>`<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"><div class="text-xs text-slate-500 dark:text-slate-400">${t}</div><div class="mt-1 text-2xl font-bold ${c}">${x}</div></div>`;
+  $("#view").innerHTML=`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-3xl dark:bg-indigo-900/40">${esc(ico(c))}</span><h2 class="text-xl font-bold">${esc(c.name)}</h2></div>
+  <div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">${kpi("รายการทั้งหมด",c.items.length,"")}${kpi("มีของคงเหลือ",c.items.filter(i=>i.qty-used(i.id)>0).length,"text-emerald-600")}${kpi("ของหมด",low,"text-amber-600")}${kpi("เบิกวันนี้ (ครั้ง)",S.log.filter(l=>l.date===today()&&c.items.some(i=>i.id===l.item)).length,"text-indigo-600")}</div>
+  <div class="bar"><input id="q" placeholder="🔍 ค้นหารายการ / รหัส" value="${esc(q)}">${admin?`<button class="p" data-act="add">＋ เพิ่มรายการ</button><button data-act="rencat">✎ แก้ชื่อหมวด</button><button class="d" data-act="delcat">🗑 ลบหมวด</button>`:""}</div>
+  <div class="card"><table><tr><th>#</th><th>รายการงาน / วัสดุอุปกรณ์</th><th>รหัสสินค้า</th><th class="n">จำนวน</th><th class="n">เบิกใช้</th><th class="n">คงเหลือ</th><th></th></tr>
+  ${items.map(i=>{const u=used(i.id),r=i.qty-u,k=r<0?"er":r===0?"wa":"ok";return`<tr><td>${i.n}</td><td>${esc(i.name)}</td><td>${esc(i.code)}</td><td class="n">${i.qty} ${esc(i.unit)}</td><td class="n">${u}</td><td class="n"><span class="b ${k}">${r}</span></td>
+  <td class="ac"><button class="s p" data-act="wd" data-id="${i.id}">＋ เบิก</button> ${admin?`<button class="s" data-act="edit" data-id="${i.id}">แก้ไข</button> <button class="s d" data-act="del" data-id="${i.id}">ลบ</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="7" class="empty">ไม่พบรายการ</td></tr>'}</table></div>
+  <div class="sum">${c.items.length} รายการ${low?` · ของหมด ${low} รายการ`:""} · แก้ไขรายการและตั้งค่า “จำนวน” ได้ในโหมดหลังบ้าน</div>`;
+  const qi=$("#q");qi.oninput=()=>{q=qi.value;const p=qi.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)}}
+const whoList=()=>[...new Set(S.log.map(l=>l.who).filter(Boolean))];
+const logF=()=>S.log.filter(l=>(!lf.who||l.who===lf.who)&&(!lf.slip||l.slip===lf.slip)&&(!lf.from||l.date>=lf.from)&&(!lf.to||l.date<=lf.to)).sort((a,b)=>b.date.localeCompare(a.date));
+function renderLog(){
+  const L=logF();
+  $("#view").innerHTML=`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-3xl dark:bg-indigo-900/40">📜</span><h2 class="text-xl font-bold">ประวัติการเบิก</h2></div><div class="lf"><div><label>ผู้เบิก</label><select id="lf-who"><option value="">ทั้งหมด</option>${whoList().map(w=>`<option ${w===lf.who?"selected":""}>${esc(w)}</option>`).join("")}</select></div><div><label>เลขที่ใบเบิก</label><select id="lf-slip"><option value="">ทั้งหมด</option>${[...new Set(S.log.map(l=>l.slip).filter(Boolean))].reverse().map(w=>`<option ${w===lf.slip?"selected":""}>${w}</option>`).join("")}</select></div><div><label>ตั้งแต่วันที่</label><input type="date" id="lf-from" value="${lf.from}"></div><div><label>ถึงวันที่</label><input type="date" id="lf-to" value="${lf.to}"></div><button class="p" data-act="print">🖨 พิมพ์ / PDF (${L.length})</button></div>
+  <div class="card"><table><tr><th>วันที่</th><th>ใบเบิก</th><th>หมวด</th><th>รายการ</th><th class="n">จำนวนเบิก</th><th>ผู้เบิก</th><th>หมายเหตุ</th><th></th></tr>
+  ${L.map(l=>{const f=find(l.item);return`<tr><td>${l.date}</td><td>${esc(l.slip||"-")}</td><td>${esc(f?.c.name||"-")}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"-")}</td><td>${esc(l.note)}</td><td class="ac">${admin?`<button class="s d" data-act="dellog" data-id="${l.id}">ยกเลิก</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="8" class="empty">ไม่พบประวัติการเบิก</td></tr>'}</table></div><div class="sum">ใบเบิกจะพิมพ์ตามรายการที่กรองอยู่ · การยกเลิกรายการเบิก (หลังบ้าน) จะคืนของเข้าคงเหลืออัตโนมัติ</div>`;
+  ["who","slip","from","to"].forEach(k=>$("#lf-"+k).onchange=e=>{lf[k]=e.target.value;render()})}
+function printSheet(who,site,rows,no,dt){
+  const L=rows||logF().slice().reverse(),d=x=>x.split("-").reverse().join("/");
+  $("#pr").innerHTML=`<h2>ใบเบิกวัสดุอุปกรณ์</h2><div class="m"><span>ผู้เบิก: <b>${esc(who||"-")}</b>${site?`<br>โครงการ/สถานที่: ${esc(site)}`:""}</span><span>${no?`เลขที่: <b>${esc(no)}</b><br>`:""}${dt?`วันที่เบิก: ${d(dt)}`:`วันที่พิมพ์: ${d(today())}`}${!rows&&(lf.from||lf.to)?`<br>ช่วงวันที่: ${lf.from?d(lf.from):"…"} - ${lf.to?d(lf.to):"…"}`:""}</span></div>
+  <table><tr><th>ลำดับ</th><th>วันที่</th><th>รายการ</th><th>รหัส</th><th class="n">จำนวน</th><th>ผู้เบิก</th><th>หมายเหตุ</th></tr>${L.map((l,n)=>{const f=find(l.item);return`<tr><td>${n+1}</td><td>${d(l.date)}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td>${esc(f?.i.code||"")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"")}</td><td>${esc(l.note)}</td></tr>`}).join("")}<tr><td colspan="7" style="text-align:right"><b>สรุป: รวม ${L.length} รายการ</b></td></tr></table>
+  <div class="sg"><div><i>(${esc(who||"............................")})<br>ผู้เบิก</i></div><div><i>(............................)<br>ผู้จ่ายของ</i></div><div><i>(............................)<br>ผู้อนุมัติ</i></div></div>`;
+  const old=document.title;document.title=(no||"ใบเบิก")+(who?"_"+who:"");window.onafterprint=()=>{document.title=old};
+  setTimeout(()=>window.print(),100)}
+function ask(title,html,ok){$("#dlg").style.width="";
+  $("#frm").innerHTML=`<h3 style="margin:0 0 4px">${title}</h3>${html}<div class="act"><button value="x" type="button" id="cn">ยกเลิก</button><button class="p" id="ok" type="button">ตกลง</button></div>`;
+  $("#dlg").showModal();$("#cn").onclick=()=>$("#dlg").close();
+  $("#ok").onclick=()=>{if(ok()!==false)$("#dlg").close()};const f=$("#frm input,#frm textarea");f&&f.focus()}
+const v=id=>$("#"+id).value;
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act,id=b.dataset.id,c=S.cats.find(x=>x.id===tab);
+  if(["addcat","rencat","delcat","add","edit","del","dellog"].includes(a)&&!admin)return;
+  if(a==="tab"){tab=id;q="";render()}
+  else if(a==="addcat")ask("เพิ่มหมวดใหม่",'<label>ชื่อหมวด</label><input id="f1">'+iconPicker("📦"),()=>{if(!v("f1").trim())return false;const n={id:uid(),name:v("f1").trim(),icon:v("f2").trim()||"📦",items:[]};S.cats.push(n);tab=n.id;change()});
+  else if(a==="rencat")ask("แก้ไขหมวด",`<label>ชื่อหมวด</label><input id="f1" value="${esc(c.name)}">`+iconPicker(ico(c)),()=>{if(!v("f1").trim())return false;c.name=v("f1").trim();c.icon=v("f2").trim()||"📦";change()});
+  else if(a==="delcat"){if(confirm(`ลบหมวด “${c.name}” พร้อมรายการทั้งหมด?`)){const ids=c.items.map(i=>i.id);S.log=S.log.filter(l=>!ids.includes(l.item));S.cats=S.cats.filter(x=>x!==c);tab=S.cats[0]?.id;change()}}
+  else if(a==="add"||a==="edit"){const i=a==="edit"?find(id).i:{id:uid(),name:"",code:"",unit:"",qty:0};
+    ask(a==="add"?"เพิ่มรายการ":"แก้ไขรายการ",`<label>ชื่อรายการ</label><input id="f1" value="${esc(i.name)}"><div class="row"><div><label>รหัสสินค้า</label><input id="f2" value="${esc(i.code)}"></div><div><label>หน่วย</label><input id="f3" value="${esc(i.unit)}" placeholder="ชิ้น / เมตร"></div></div><label>จำนวนทั้งหมด</label><input id="f4" type="number" min="0" step="any" value="${i.qty}"><div class="hint">คงเหลือ = จำนวนทั้งหมด − ยอดเบิกใช้รวม</div>`,
+    ()=>{if(!v("f1").trim())return false;Object.assign(i,{name:v("f1").trim(),code:v("f2").trim(),unit:v("f3").trim(),qty:+v("f4")||0});if(a==="add")c.items.push(i);change()})}
+  else if(a==="del"){const{i}=find(id);if(confirm(`ลบ “${i.name}” และประวัติการเบิกของรายการนี้?`)){c.items=c.items.filter(x=>x.id!==id);S.log=S.log.filter(l=>l.item!==id);change()}}
+  else if(a==="wd"){const{i}=find(id),r=i.qty-used(id),ex=cart.find(x=>x.item===id);
+    ask("ใส่ในใบเบิก",`<div><b>${esc(i.name)}</b></div><div class="hint">คงเหลือ ${r} ${esc(i.unit)}${ex?` · อยู่ในใบเบิกแล้ว ${ex.amt}`:""}</div><label>จำนวนที่เบิก</label><input id="f1" type="number" min="0" step="any" value="${ex?ex.amt:""}">`,
+    ()=>{const n=+v("f1");if(!(n>0))return false;if(ex)ex.amt=n;else cart.push({item:id,amt:n});cartBar()})}
+  else if(a==="cart")openCart();
+  else if(a==="openfile")$("#open").click();
+  else if(a==="reconnect"){(async()=>{try{if(await lastH.requestPermission({mode:"readwrite"})!=="granted")return;await useData(await(await lastH.getFile()).text(),lastH)}catch(e){alert("เชื่อมต่อไม่สำเร็จ: "+e.message)}})()}
+  else if(a==="usebackup")useData(localStorage.getItem("stock-v1"),null).catch(e=>alert(e.message));
+  else if(a==="blank")useData(JSON.stringify({cats:[],log:[]}),null);
+  else if(a==="print"){if(!logF().length)return alert("ไม่มีรายการเบิกให้พิมพ์");
+    ask("ปริ้นใบเบิก",`<label>ชื่อผู้เบิก (แสดงบนใบเบิกและช่องลงชื่อ)</label><input id="f1" list="whos" value="${esc(lf.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist><label>โครงการ / สถานที่ (ถ้ามี)</label><input id="f2" value="${esc(localStorage.getItem('lastsite')||'')}"><div class="hint">พิมพ์ตามรายการที่กรองอยู่ · ต้องการไฟล์ PDF ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” ในหน้าต่างพิมพ์</div>`,()=>{if(!v("f1").trim()){alert("กรุณาระบุชื่อผู้เบิก");return false}localStorage.setItem('lastsite',v("f2").trim());const w=v("f1").trim(),st=v("f2").trim();setTimeout(()=>printSheet(w,st,null,lf.slip),50)})}
+  else if(a==="dellog"){if(confirm("ยกเลิกรายการเบิกนี้?")){S.log=S.log.filter(l=>l.id!==id);change()}}
+});
+const iconPicker=cur=>`<label>ไอคอนหมวด</label><div class="flex items-center gap-3"><input id="f2" maxlength="4" value="${esc(cur)}" class="!w-16 text-center !text-2xl"><span class="hint">เลือกด้านล่าง หรือพิมพ์อีโมจิเอง</span></div><div class="mt-2 grid grid-cols-8 gap-1.5">${ICONS.map(x=>`<button type="button" data-ic="${x}" class="!px-0 !py-1.5 !text-xl ${x===cur?"ring-2 ring-indigo-500":""}">${x}</button>`).join("")}</div>`;
+function cartBar(){const b=$("#cartbar");b.style.display=cart.length?"flex":"none";b.innerHTML=`<span>🧾 ใบเบิก: <b>${cart.length}</b> รายการ</span><button class="p" data-act="cart">ดูสรุป / ยืนยันเบิก</button>`}
+function openCart(){
+  cart=cart.filter(x=>find(x.item));cartBar();if(!cart.length)return $("#dlg").open&&$("#dlg").close();
+  ci.who??=localStorage.getItem("lastwho")||"";ci.date||=today();ci.site??=localStorage.getItem("lastsite")||"";ci.note??="";
+  const rows=cart.map((x,n)=>{const f=find(x.item),r=f.i.qty-used(x.item);return`<tr><td>${n+1}</td><td>${esc(f.i.name)}<div class="hint">${esc(f.c.name)} · คงเหลือ ${r} ${esc(f.i.unit)}</div></td><td style="white-space:nowrap"><input type="number" min="0" step="any" value="${x.amt}" data-ci="${n}" style="width:80px"> ${esc(f.i.unit)}</td><td><button type="button" class="s d" data-rm="${n}">✕</button></td></tr>`}).join("");
+  $("#dlg").style.width="min(640px,94vw)";
+  $("#frm").innerHTML=`<h3 style="margin:0 0 4px">🧾 ใบเบิก</h3><div class="row"><div><label>ชื่อผู้เบิก *</label><input id="c1" list="whos" value="${esc(ci.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist></div><div><label>วันที่</label><input id="c2" type="date" value="${ci.date}"></div></div>
+  <div class="row"><div><label>โครงการ / สถานที่</label><input id="c3" value="${esc(ci.site)}"></div><div><label>หมายเหตุ</label><input id="c4" value="${esc(ci.note)}"></div></div>
+  <div class="card" style="margin-top:12px;max-height:38vh"><table><tr><th>#</th><th>รายการ</th><th>จำนวนเบิก</th><th></th></tr>${rows}</table></div>
+  <div class="sum"><b>สรุป: รวม ${cart.length} รายการ</b> · ช่องที่เบิกเกินคงเหลือจะมีคำเตือนตอนยืนยัน</div>
+  <div class="act" style="flex-wrap:wrap"><button type="button" id="cc">ปิด</button><button type="button" class="d" id="cclr">ล้างใบเบิก</button><button type="button" class="p" id="cok">ยืนยันเบิก</button><button type="button" class="p" id="cpr">ยืนยัน + พิมพ์ / PDF</button></div>`;
+  if(!$("#dlg").open)$("#dlg").showModal();
+  $("#cc").onclick=()=>$("#dlg").close();$("#cclr").onclick=()=>{if(confirm("ล้างรายการทั้งหมดในใบเบิก?")){cart=[];cartBar();$("#dlg").close()}};
+  $("#cok").onclick=()=>commit(false);$("#cpr").onclick=()=>commit(true)}
+$("#frm").oninput=e=>{const t=e.target,k={c1:"who",c2:"date",c3:"site",c4:"note"}[t.id];if(k)ci[k]=t.value;if(t.dataset.ci!=null)cart[+t.dataset.ci].amt=+t.value||0};
+$("#frm").onclick=e=>{const ic=e.target.closest("[data-ic]");if(ic){$("#f2").value=ic.dataset.ic;document.querySelectorAll("[data-ic]").forEach(b=>b.classList.toggle("ring-2",b===ic));return}const r=e.target.dataset.rm;if(r!=null){cart.splice(+r,1);openCart()}};
+function commit(pr){
+  if(!ci.who.trim())return alert("กรุณาระบุชื่อผู้เบิก");
+  if(cart.some(x=>!(x.amt>0)))return alert("มีรายการที่จำนวนเป็น 0 กรุณาแก้ไขหรือลบออก");
+  const over=cart.filter(x=>x.amt>find(x.item).i.qty-used(x.item));
+  if(over.length&&!confirm(`มี ${over.length} รายการที่เบิกเกินคงเหลือ ยอดคงเหลือจะติดลบ ต้องการดำเนินการต่อ?`))return;
+  const slip="W"+String(S.seq=(S.seq||0)+1).padStart(4,"0"),who=ci.who.trim(),site=ci.site.trim(),dt=ci.date||today();
+  const rows=cart.map(x=>({id:uid(),item:x.item,amt:x.amt,date:dt,who,note:ci.note.trim(),site,slip}));
+  S.log.push(...rows);localStorage.setItem("lastwho",who);localStorage.setItem("lastsite",site);
+  cart=[];ci.note="";cartBar();$("#dlg").close();change();
+  if(pr)printSheet(who,site,rows,slip,dt)}
+const hashPw=async(p,salt)=>{const d=new TextEncoder().encode(salt+p);if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest("SHA-256",d);return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("")}let h=5381;for(const b of d)h=(h*33^b)>>>0;return"f"+h};
+let idle;const bump=()=>{clearTimeout(idle);if(admin)idle=setTimeout(()=>setAdmin(false),600000)};
+document.addEventListener("click",bump);
+function setAdmin(x){admin=x;$("#adm").textContent=x?"🔓 ออกจากหลังบ้าน":"🔒 หลังบ้าน";$("#pw").style.display=x?"":"none";bump();render()}
+$("#adm").onclick=()=>{if(!loaded)return alert("กรุณาเปิดไฟล์ข้อมูลก่อน");
+  if(admin)return setAdmin(false);
+  if(!S.admin)return setPw("ตั้งรหัสหลังบ้าน (ครั้งแรก)",true);
+  ask("เข้าสู่ระบบหลังบ้าน",'<label>รหัสผ่าน</label><input id="f1" type="password">',()=>{(async()=>{if(await hashPw(v("f1"),S.admin.salt)===S.admin.hash){$("#dlg").close();setAdmin(true)}else alert("รหัสผ่านไม่ถูกต้อง")})();return false})};
+$("#pw").onclick=()=>setPw("เปลี่ยนรหัสหลังบ้าน",false);
+function setPw(t,first){
+  ask(t,`${first?"":'<label>รหัสเดิม</label><input id="f0" type="password">'}<label>รหัสใหม่ (อย่างน้อย 4 ตัว)</label><input id="f1" type="password"><label>ยืนยันรหัสใหม่</label><input id="f2" type="password">`,()=>{(async()=>{
+    if(!first&&await hashPw(v("f0"),S.admin.salt)!==S.admin.hash)return alert("รหัสเดิมไม่ถูกต้อง");
+    if(v("f1").length<4)return alert("รหัสสั้นเกินไป");if(v("f1")!==v("f2"))return alert("รหัสยืนยันไม่ตรงกัน");
+    const salt=uid()+uid();S.admin={salt,hash:await hashPw(v("f1"),salt)};$("#dlg").close();persist();setAdmin(true)})();return false})}
+window.onbeforeunload=e=>{if(dirty&&!fh){e.preventDefault();e.returnValue=""}};
+cartBar();init();
+</script></body></html>
