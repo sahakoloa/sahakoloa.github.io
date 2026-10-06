@@ -347,5 +347,9 @@
   }
  ],
  "log": [],
- "users": []
+ "users": [],
+ "admin": {
+  "salt": "965hr8r6bdkogrds",
+  "hash": "f322d79b40fc69102647e92dc7a29e76ed0194775ee59b635bb69b7c420b8ff4"
+ }
 }
