@@ -4,7 +4,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <style type="text/tailwindcss">
 @layer base{
- body{@apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-900 dark:text-slate-100;font-family:'Sarabun','Noto Sans Thai',system-ui,sans-serif}
+ body{@apply bg-slate-100 text-slate-800 antialiased dark:bg-slate-900 dark:text-slate-100;font-family:'Sarabun','Noto Sans Thai',system-ui,sans-serif;background-image:radial-gradient(60rem 28rem at 10% -10%,rgba(99,102,241,.14),transparent)}
  label{@apply mb-1 mt-3 block text-xs font-medium text-slate-500 dark:text-slate-400}
  input,select,textarea{@apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800}
  table{@apply w-full text-sm}
@@ -36,7 +36,13 @@
  .sum{@apply mt-3 text-xs text-slate-500 dark:text-slate-400}.empty{@apply py-10 text-center text-slate-400}
  .row{@apply flex gap-3}.row>*{@apply flex-1}.act{@apply mt-6 flex justify-end gap-2}.hint{@apply mt-1 text-xs text-slate-400}
  .lf{@apply mb-4 flex flex-wrap items-end gap-3}.lf>div{@apply min-w-[9rem]}.lf label{@apply mt-0}
- #cartbar{@apply fixed inset-x-0 bottom-0 z-20 items-center justify-between border-t border-slate-200 bg-white px-5 py-3 text-sm shadow-[0_-4px_14px_rgba(0,0,0,.08)] dark:border-slate-700 dark:bg-slate-800;display:none}
+ #cartbar{@apply fixed bottom-5 left-1/2 z-20 -translate-x-1/2 items-center gap-4 whitespace-nowrap rounded-full bg-indigo-600 py-2 pl-5 pr-2 text-sm text-white shadow-xl shadow-indigo-500/40;display:none}
+ #cartbar button{@apply rounded-full border-0 bg-white px-4 py-1.5 text-indigo-700 hover:bg-indigo-50}
+ .nav{@apply rounded-lg border-0 bg-transparent px-3 py-2 text-sm font-medium text-slate-600 shadow-none hover:bg-slate-100 dark:bg-transparent dark:text-slate-300 dark:hover:bg-slate-800}
+ .nav.on{@apply bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200}
+ .menu{@apply absolute left-0 z-40 mt-2 hidden w-64 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-800}
+ .menu.right{@apply left-auto right-0}.menu.open{@apply block}
+ .mi{@apply flex w-full items-center justify-start gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-left shadow-none hover:bg-slate-100 dark:bg-transparent dark:hover:bg-slate-700}
 }
 #pr{display:none}
 @media print{body{background:#fff;color:#000}header,main,dialog,#cartbar{display:none!important}#pr{display:block;font-size:13px}
@@ -44,15 +50,23 @@
 #pr table{border:1px solid #000}#pr th,#pr td{border:1px solid #000;padding:5px 7px;color:#000;background:#fff;text-transform:none;letter-spacing:0;font-size:13px}
 #pr .sg{display:flex;justify-content:space-around;margin-top:60px;text-align:center}#pr .sg div{width:30%}#pr .sg i{display:block;border-top:1px dotted #000;margin-top:40px;padding-top:4px;font-style:normal}}
 </style></head><body>
-<header class="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white/90 px-5 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/90"><div class="mr-auto flex items-center gap-3"><div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl shadow-lg shadow-indigo-500/30">📦</div><div><h1 class="text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1><span id="st"></span></div></div>
-<button id="gh">☁ ออนไลน์</button><button id="rf" title="รีเฟรชข้อมูลจากออนไลน์">🔄</button><button id="lg">👤 เข้าสู่ระบบ</button><button id="adm">🔒 หลังบ้าน</button><button id="pw" style="display:none">🔑 เปลี่ยนรหัส</button><button id="open">📂 เปิดไฟล์</button><button id="saveas" class="p">💾 บันทึกเป็น…</button><button id="csv">⬇ ส่งออก CSV</button></header>
+<header class="sticky top-0 z-30 border-b border-slate-200 bg-white/85 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/85">
+<div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
+<div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-xl shadow-lg shadow-indigo-500/30">📦</div>
+<div class="mr-auto min-w-0"><h1 class="truncate text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1><span id="st"></span></div>
+<div class="relative"><button id="um" data-m="um" class="!gap-2 !rounded-full !py-1 !pl-1 !pr-3"><span id="av" class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white">?</span><span id="un" class="max-w-[8rem] truncate text-sm">ผู้เยี่ยมชม</span><span class="text-xs">▾</span></button>
+<div id="m-um" class="menu right"><div id="uh" class="px-3 py-2 text-xs text-slate-500">ยังไม่ได้เข้าสู่ระบบ</div>
+<button id="lg" class="mi">🔑 เข้าสู่ระบบ</button><hr class="my-1 border-slate-200 dark:border-slate-700">
+<button id="adm" class="mi">🔒 เข้าสู่หลังบ้าน</button><button id="pw" class="mi" style="display:none">🔑 เปลี่ยนรหัสหลังบ้าน</button><hr class="my-1 border-slate-200 dark:border-slate-700">
+<button id="gh" class="mi">☁ ตั้งค่าออนไลน์</button><button id="rf" class="mi">🔄 รีเฟรชข้อมูล</button><button id="open" class="mi">📂 เปิดไฟล์</button><button id="saveas" class="mi">💾 บันทึกเป็น…</button><button id="csv" class="mi">⬇ ส่งออก CSV</button></div></div></div>
+<nav id="nav" class="mx-auto flex max-w-6xl flex-wrap gap-1 px-4 pb-2"></nav></header>
 <main class="mx-auto max-w-6xl px-4 py-6 pb-24"><div class="tabs" id="tabs"></div><div id="view"></div></main>
 <div id="pr"></div><div id="cartbar"></div><dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
 <script>
 const ICONS=['⚡','💡','🔌','🔧','🛠️','📺','🖥️','📹','📡','🌐','🔗','🔋','🧰','📦','🏗️','🪛','🔩','📷','🚪','❄️','🚰','🧱','🛡️','📍'],IMAP={'ระบบงานไฟฟ้า':'⚡','งานจอ LED':'📺','งาน CCTV':'📹'},ico=c=>c.icon||IMAP[c.name]||'📦';
 const uid=()=>Math.random().toString(36).slice(2,10);
 let cart=[],ci={},admin=false,lf={who:'',slip:'',from:'',to:''},S,tab,q="",fh=null,dirty=false;
-S={cats:[],log:[]};let user=null,loaded=false,lastH=null,src=null,ghSha=null,ghBusy=false,ghMissing=false,ghWarned=false,ghQ=Promise.resolve();
+S={cats:[],log:[]};let lastCat=null,user=null,loaded=false,lastH=null,src=null,ghSha=null,ghBusy=false,ghMissing=false,ghWarned=false,ghQ=Promise.resolve();
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const used=id=>S.log.filter(l=>l.item===id).reduce((a,l)=>a+l.amt,0);
 const find=id=>{for(const c of S.cats){const i=c.items.find(x=>x.id===id);if(i)return{c,i}}};
@@ -75,7 +89,7 @@ const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{cons
 async function useData(txt,h,sr){
   const d=JSON.parse(txt);if(!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง");
   d.log||=[];d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid()})});d.log.forEach(l=>{l.id||=uid()});d.users||=[];d.users.forEach(u=>{u.id||=uid()});user=sessionStorage.getItem('uid');if(!d.users.some(u=>u.id===user))user=null;S=d;fh=h||null;src=sr||(h?"file":null);loaded=true;tab=S.cats[0]?.id;admin=false;cart=[];ci={};
-  $("#adm").textContent="🔒 หลังบ้าน";$("#pw").style.display="none";
+  $("#adm").textContent="🔒 เข้าสู่หลังบ้าน";$("#pw").style.display="none";
   try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
   if(fh){idbSet(fh);status("✓ เชื่อมไฟล์ "+fh.name+" แล้ว (บันทึกอัตโนมัติ)","ok")}else if(src!=="gh")status("โหลดข้อมูลแล้ว (ยังไม่ได้เชื่อมไฟล์ — กด “บันทึกเป็น…”)","wa");
   lgBtn();cartBar();render()}
@@ -85,7 +99,7 @@ $("#open").onclick=async()=>{
     else f=await new Promise(r=>{const i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=()=>r(i.files[0]);i.click()});
     await useData(await f.text(),h)
   }catch(e){if(e.name!=="AbortError")alert("เปิดไฟล์ไม่สำเร็จ: "+e.message)}};
-function renderWelcome(){$("#tabs").innerHTML="";
+function renderWelcome(){$("#tabs").innerHTML="";$("#nav").innerHTML="";
   $("#view").innerHTML=`<div class="mx-auto mt-10 max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800"><div class="text-5xl">📂</div><h2 class="mt-3 text-xl font-bold">เปิดไฟล์ข้อมูล stock.json</h2><p class="mt-2 text-sm text-slate-500">ข้อมูลรายการและประวัติการเบิกทั้งหมดเก็บอยู่ในไฟล์ stock.json ไม่ได้ฝังอยู่ในหน้านี้</p><div class="mt-6 flex flex-col gap-2">${lastH?`<button class="p" data-act="reconnect">🔗 เชื่อมต่อ ${esc(lastH.name)} ต่อ</button>`:""}<button class="${lastH?"":"p"}" data-act="openfile">📂 เลือกไฟล์ stock.json</button>${localStorage.getItem("stock-v1")?'<button data-act="usebackup">🗂 ใช้ข้อมูลสำรองในเบราว์เซอร์</button>':""}<button data-act="blank">✨ เริ่มใหม่ (ข้อมูลว่าง)</button></div></div>`}
 
 /* ===== ออนไลน์: เก็บ stock.json ใน GitHub repo ผ่าน GitHub Contents API ===== */
@@ -134,18 +148,19 @@ $("#csv").onclick=()=>{
   const t="\ufeff"+r.map(x=>x.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download="stock-"+today()+".csv";a.click()};
 function render(){if(!loaded)return renderWelcome();
-  $("#tabs").innerHTML=S.cats.map(c=>`<button class="${c.id===tab?"on":""}" data-act="tab" data-id="${c.id}">${esc(ico(c))} ${esc(c.name)}</button>`).join("")+`<button class="${tab==="log"?"on":""}" data-act="tab" data-id="log">📜 ประวัติการเบิก</button>${admin?`<button class="${tab==="users"?"on":""}" data-act="tab" data-id="users">👤 ผู้เบิก</button>`:""}${admin?'<button data-act="addcat">＋ หมวดใหม่</button>':""}`;
+  if(tab==="users"&&!admin)tab=S.cats[0]?.id;const inCat=tab!=="log"&&tab!=="users";if(inCat)lastCat=tab;renderNav();
+  $("#tabs").innerHTML=inCat?S.cats.map(c=>`<button class="${c.id===tab?"on":""}" data-act="tab" data-id="${c.id}">${esc(ico(c))} ${esc(c.name)}</button>`).join("")+(admin?'<button data-act="addcat">＋ หมวดใหม่</button>':""):"";
   if(tab==="users"&&!admin)tab=S.cats[0]?.id;if(tab==="users")return renderUsers();
   if(tab==="log")return renderLog();
   const c=S.cats.find(x=>x.id===tab);if(!c){$("#view").innerHTML='<div class="empty">ยังไม่มีหมวด — เข้าหลังบ้านเพื่อเพิ่มหมวด</div>';return}
   const items=c.items.map((i,n)=>({...i,n:n+1})).filter(i=>(i.name+i.code).toLowerCase().includes(q.toLowerCase()));
   const low=c.items.filter(i=>i.qty>0&&i.qty-used(i.id)<=0).length;
-  const kpi=(t,x,c)=>`<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800"><div class="text-xs text-slate-500 dark:text-slate-400">${t}</div><div class="mt-1 text-2xl font-bold ${c}">${x}</div></div>`;
-  $("#view").innerHTML=`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-3xl dark:bg-indigo-900/40">${esc(ico(c))}</span><h2 class="text-xl font-bold">${esc(c.name)}</h2></div>
+  const kpi=(t,x,c)=>`<div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800"><div class="text-xs text-slate-500 dark:text-slate-400">${t}</div><div class="mt-1 text-2xl font-bold ${c}">${x}</div></div>`;
+  $("#view").innerHTML=banner()+`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-3xl dark:bg-indigo-900/40">${esc(ico(c))}</span><h2 class="text-xl font-bold">${esc(c.name)}</h2></div>
   <div class="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">${kpi("รายการทั้งหมด",c.items.length,"")}${kpi("มีของคงเหลือ",c.items.filter(i=>i.qty-used(i.id)>0).length,"text-emerald-600")}${kpi("ของหมด",low,"text-amber-600")}${kpi("เบิกวันนี้ (ครั้ง)",S.log.filter(l=>l.date===today()&&c.items.some(i=>i.id===l.item)).length,"text-indigo-600")}</div>
   <div class="bar"><input id="q" placeholder="🔍 ค้นหารายการ / รหัส" value="${esc(q)}">${admin?`<button class="p" data-act="add">＋ เพิ่มรายการ</button><button data-act="rencat">✎ แก้ชื่อหมวด</button><button class="d" data-act="delcat">🗑 ลบหมวด</button>`:""}</div>
   <div class="card"><table><tr><th>#</th><th>รายการงาน / วัสดุอุปกรณ์</th><th>รหัสสินค้า</th><th class="n">จำนวน</th><th class="n">เบิกใช้</th><th class="n">คงเหลือ</th><th></th></tr>
-  ${items.map(i=>{const u=used(i.id),r=i.qty-u,k=r<0?"er":r===0?"wa":"ok";return`<tr><td>${i.n}</td><td>${esc(i.name)}</td><td>${esc(i.code)}</td><td class="n">${i.qty} ${esc(i.unit)}</td><td class="n">${u}</td><td class="n"><span class="b ${k}">${r}</span></td>
+  ${items.map(i=>{const u=used(i.id),r=i.qty-u,k=r<0?"er":r===0?"wa":"ok";return`<tr><td>${i.n}</td><td>${esc(i.name)}</td><td>${esc(i.code)}</td><td class="n">${i.qty} ${esc(i.unit)}</td><td class="n">${u}</td><td class="n"><span class="b ${k}">${r}</span>${i.qty>0?`<div class="ml-auto mt-1 h-1 w-16 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full ${k==="ok"?"bg-emerald-500":k==="wa"?"bg-amber-500":"bg-red-500"}" style="width:${Math.max(0,Math.min(100,r/i.qty*100))}%"></div></div>`:""}</td>
   <td class="ac"><button class="s p" data-act="wd" data-id="${i.id}">＋ เบิก</button> ${admin?`<button class="s" data-act="edit" data-id="${i.id}">แก้ไข</button> <button class="s d" data-act="del" data-id="${i.id}">ลบ</button>`:""}</td></tr>`}).join("")||'<tr><td colspan="7" class="empty">ไม่พบรายการ</td></tr>'}</table></div>
   <div class="sum">${c.items.length} รายการ${low?` · ของหมด ${low} รายการ`:""} · แก้ไขรายการและตั้งค่า “จำนวน” ได้ในโหมดหลังบ้าน${me()?"":" · 🔐 ต้องเข้าสู่ระบบก่อนจึงจะเบิกของได้"}</div>`;
   const qi=$("#q");qi.oninput=()=>{q=qi.value;const p=qi.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)}}
@@ -184,6 +199,7 @@ document.addEventListener("click",e=>{
     ask("ใส่ในใบเบิก",`<div><b>${esc(i.name)}</b></div><div class="hint">คงเหลือ ${r} ${esc(i.unit)}${ex?` · อยู่ในใบเบิกแล้ว ${ex.amt}`:""}</div><label>จำนวนที่เบิก</label><input id="f1" type="number" min="0" step="any" value="${ex?ex.amt:""}">`,
     ()=>{const n=+v("f1");if(!(n>0))return false;if(ex)ex.amt=n;else cart.push({item:id,amt:n});cartBar()})}
   else if(a==="cart")me()?openCart():loginDlg();
+  else if(a==="login")loginDlg();
   else if(a==="adduser")userDlg();
   else if(a==="edituser")userDlg(S.users.find(x=>x.id===id));
   else if(a==="deluser"){const u=S.users.find(x=>x.id===id);if(confirm(`ลบผู้เบิก “${u.name}”? (ประวัติการเบิกเดิมยังอยู่)`)){S.users=S.users.filter(x=>x!==u);if(user===u.id)logout();change()}}
@@ -225,7 +241,7 @@ function commit(pr){
 const hashPw=async(p,salt)=>{const d=new TextEncoder().encode(salt+p);if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest("SHA-256",d);return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("")}let h=5381;for(const b of d)h=(h*33^b)>>>0;return"f"+h};
 let idle;const bump=()=>{clearTimeout(idle);if(admin)idle=setTimeout(()=>setAdmin(false),600000)};
 document.addEventListener("click",bump);
-function setAdmin(x){admin=x;if(!x&&tab==="users")tab=S.cats[0]?.id;$("#adm").textContent=x?"🔓 ออกจากหลังบ้าน":"🔒 หลังบ้าน";$("#pw").style.display=x?"":"none";bump();render()}
+function setAdmin(x){admin=x;if(!x&&tab==="users")tab=S.cats[0]?.id;$("#adm").textContent=x?"🔓 ออกจากหลังบ้าน":"🔒 เข้าสู่หลังบ้าน";$("#pw").style.display=x?"":"none";lgBtn();bump();render()}
 $("#adm").onclick=()=>{if(!loaded)return alert("กรุณาเปิดไฟล์ข้อมูลก่อน");
   if(admin)return setAdmin(false);
   if(!S.admin)return setPw("ตั้งรหัสหลังบ้าน (ครั้งแรก)",true);
@@ -239,7 +255,13 @@ function setPw(t,first){
 /* ===== ผู้เบิก: เข้าสู่ระบบหน้าบ้าน / จัดการในหลังบ้าน ===== */
 const me=()=>(S.users||[]).find(u=>u.id===user&&u.active!==false);
 let fails=0,lockUntil=0,uidle;
-function lgBtn(){const u=me();$("#lg").textContent=u?"👤 "+u.name+" · ออก":"👤 เข้าสู่ระบบ";$("#lg").className=u?"p":""}
+function lgBtn(){const u=me();$("#lg").textContent=u?"🚪 ออกจากระบบ":"🔑 เข้าสู่ระบบ";$("#lg").className="mi";$("#av").textContent=u?(u.name.trim()[0]||"?"):"?";$("#un").textContent=u?u.name:"ผู้เยี่ยมชม";$("#uh").textContent=(u?"เข้าสู่ระบบในชื่อ "+u.name:"ยังไม่ได้เข้าสู่ระบบ")+(admin?" · โหมดหลังบ้าน":"")}
+function renderNav(){
+  if(!loaded)return $("#nav").innerHTML="";
+  const it=(id,l,on)=>`<button class="nav ${on?"on":""}" data-act="tab" data-id="${id}">${l}</button>`,inCat=tab!=="log"&&tab!=="users";
+  $("#nav").innerHTML=it(lastCat||S.cats[0]?.id||"","🛒 เบิกของ",inCat)+it("log","📜 ประวัติการเบิก",tab==="log")+(admin?`<div class="relative"><button class="nav ${tab==="users"?"on":""}" data-m="bo">⚙️ หลังบ้าน ▾</button><div id="m-bo" class="menu"><button class="mi" data-act="tab" data-id="${lastCat||S.cats[0]?.id||""}">📦 จัดการหมวดและรายการ</button><button class="mi" data-act="tab" data-id="users">👤 ผู้เบิก (เพิ่ม / แก้ไข)</button></div></div>`:"")}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-m]");document.querySelectorAll(".menu").forEach(m=>{if(!t||m.id!=="m-"+t.dataset.m)m.classList.remove("open")});if(t)$("#m-"+t.dataset.m).classList.toggle("open")});
+const banner=()=>{const u=me();return u?`<div class="mb-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-4 text-white shadow-lg shadow-indigo-500/25"><div class="grid h-11 w-11 place-items-center rounded-xl bg-white/20 text-2xl">👋</div><div class="min-w-0"><div class="truncate font-semibold">สวัสดี คุณ${esc(u.name)}</div><div class="text-xs text-indigo-100">เลือกรายการแล้วกด “＋ เบิก” จากนั้นยืนยันในใบเบิกด้านล่าง</div></div></div>`:`<div class="mb-5 flex flex-wrap items-center gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200"><div class="text-2xl">🔐</div><div class="mr-auto"><div class="font-semibold">เข้าสู่ระบบก่อนจึงจะเบิกของได้</div><div class="text-xs opacity-80">ใช้ชื่อผู้ใช้และรหัสผ่านที่ผู้ดูแลระบบให้ไว้</div></div><button class="p" data-act="login">เข้าสู่ระบบ</button></div>`};
 function logout(){user=null;sessionStorage.removeItem("uid");cart=[];ci={};cartBar();lgBtn();render()}
 const bumpU=()=>{clearTimeout(uidle);if(user)uidle=setTimeout(logout,900000)};document.addEventListener("click",bumpU);
 $("#frm").onkeydown=e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();$("#ok")?.click()}};
