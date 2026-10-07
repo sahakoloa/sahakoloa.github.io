@@ -2,7 +2,7 @@
 <html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ระบบเบิกของติดตั้ง</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{sans:['"Noto Sans Thai"','system-ui','sans-serif']}}}}</script>
@@ -59,7 +59,130 @@
 #pr h2{font-size:20px;font-weight:700;text-align:center;margin:0 0 4px}#pr .m{display:flex;justify-content:space-between;margin:10px 0}
 #pr table{border:1px solid #000}#pr th,#pr td{border:1px solid #000;padding:5px 7px;color:#000;background:#fff;font-size:13px}
 #pr .sg{display:flex;justify-content:space-around;margin-top:60px;text-align:center}#pr .sg div{width:30%}#pr .sg i{display:block;border-top:1px dotted #000;margin-top:40px;padding-top:4px;font-style:normal}}
-</style></head><body>
+/* Material Design 3 — complete light color scheme and component styling */
+:root{
+ color-scheme:light;
+ --md-primary:#6750a4;--md-on-primary:#fff;--md-primary-container:#eaddff;--md-on-primary-container:#21005d;
+ --md-secondary:#625b71;--md-on-secondary:#fff;--md-secondary-container:#e8def8;--md-on-secondary-container:#1d192b;
+ --md-tertiary:#7d5260;--md-on-tertiary:#fff;--md-tertiary-container:#ffd8e4;--md-on-tertiary-container:#31111d;
+ --md-error:#b3261e;--md-on-error:#fff;--md-error-container:#f9dedc;--md-on-error-container:#410e0b;
+ --md-background:#f7f2fa;--md-on-background:#1d1b20;--md-surface:#f7f2fa;--md-on-surface:#1d1b20;
+ --md-surface-variant:#e7e0ec;--md-on-surface-variant:#49454f;--md-surface-container-lowest:#fff;
+ --md-surface-container-low:#f7f2fa;--md-surface-container:#f3edf7;--md-surface-container-high:#ece6f0;--md-surface-container-highest:#e6e0e9;
+ --md-outline:#79747e;--md-outline-variant:#cac4d0;--md-shadow:#000;--md-scrim:#000;
+ --md-radius-xs:4px;--md-radius-sm:8px;--md-radius-md:12px;--md-radius-lg:16px;--md-radius-xl:28px;--md-radius-full:999px;
+ --md-elevation-1:0 1px 2px #1d1b201f,0 1px 3px 1px #1d1b2014;
+ --md-elevation-2:0 1px 2px #1d1b261f,0 2px 6px 2px #1d1b2614;
+ --md-elevation-3:0 4px 8px 3px #1d1b2614,0 1px 3px #1d1b2626;
+ --md-focus:0 0 0 3px #6750a433;
+ --md-motion-fast:150ms;--md-motion-standard:220ms;
+}
+html{background:var(--md-background);scroll-behavior:smooth}
+body{background:var(--md-background)!important;background-image:none!important;color:var(--md-on-background)!important;font-family:Roboto,"Noto Sans Thai",system-ui,sans-serif!important;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+::selection{background:var(--md-primary-container);color:var(--md-on-primary-container)}
+:focus-visible{outline:0;box-shadow:var(--md-focus)!important}
+button,a,input,select,textarea{font:inherit}
+a{color:var(--md-primary)}
+button{min-height:40px;padding:0 16px!important;border:1px solid transparent!important;border-radius:var(--md-radius-full)!important;background:transparent!important;color:var(--md-primary)!important;box-shadow:none!important;font-weight:500!important;letter-spacing:.1px;transition:background-color var(--md-motion-fast),box-shadow var(--md-motion-fast),transform var(--md-motion-fast),color var(--md-motion-fast)!important}
+button:hover{transform:none!important;background:color-mix(in srgb,var(--md-primary) 8%,transparent)!important}
+button:active{background:color-mix(in srgb,var(--md-primary) 12%,transparent)!important}
+button:disabled{opacity:.38!important;cursor:default!important;transform:none!important}
+button.p,.pills button.on,.seg button.on{background:var(--md-primary)!important;color:var(--md-on-primary)!important;border-color:var(--md-primary)!important;box-shadow:var(--md-elevation-1)!important}
+button.p:hover,.pills button.on:hover,.seg button.on:hover{background:#5b4697!important;box-shadow:var(--md-elevation-2)!important}
+button.d{color:var(--md-error)!important}
+button.d:hover{background:color-mix(in srgb,var(--md-error) 8%,transparent)!important}
+button.s{min-height:32px;padding:0 12px!important;font-size:12px!important}
+button.mi{justify-content:flex-start;min-height:48px;padding:0 12px!important;border-radius:var(--md-radius-full)!important;color:var(--md-on-surface-variant)!important;font-weight:500!important}
+button.mi:hover{background:var(--md-surface-container-high)!important}
+label{display:block;margin:14px 0 6px!important;color:var(--md-on-surface-variant)!important;font-size:12px!important;font-weight:500!important;letter-spacing:.2px}
+input,select,textarea{width:100%;min-height:48px;padding:12px 14px!important;border:1px solid var(--md-outline)!important;border-radius:var(--md-radius-sm)!important;background:var(--md-surface-container-lowest)!important;color:var(--md-on-surface)!important;box-shadow:none!important;font-size:14px!important;transition:border-color var(--md-motion-fast),box-shadow var(--md-motion-fast)!important}
+input:hover,select:hover,textarea:hover{border-color:var(--md-on-surface)!important}
+input:focus,select:focus,textarea:focus{border:2px solid var(--md-primary)!important;outline:0!important;box-shadow:none!important;padding-left:13px!important}
+input::placeholder,textarea::placeholder{color:var(--md-on-surface-variant);opacity:.75}
+input[type=checkbox],input[type=radio]{width:18px;min-height:18px;accent-color:var(--md-primary)}
+input[type=number]{font-variant-numeric:tabular-nums}
+.card,.kpi,.cc{border:1px solid var(--md-outline-variant)!important;border-radius:var(--md-radius-lg)!important;background:var(--md-surface-container-lowest)!important;box-shadow:none!important}
+.kpi,.cc{transition:background-color var(--md-motion-fast),border-color var(--md-motion-fast),box-shadow var(--md-motion-fast)!important}
+.kpi:hover,.cc:hover{box-shadow:var(--md-elevation-1)!important}
+.cc.on{border:2px solid var(--md-primary)!important;background:var(--md-primary-container)!important;color:var(--md-on-primary-container)!important;box-shadow:none!important}
+.pills{gap:8px!important}
+.pills button{min-height:40px;padding:0 16px!important;border:1px solid var(--md-outline)!important;background:transparent!important;color:var(--md-on-surface-variant)!important}
+.pills button.on{border-color:var(--md-primary)!important;background:var(--md-secondary-container)!important;color:var(--md-on-secondary-container)!important;box-shadow:none!important}
+.seg{gap:0!important;padding:4px!important;border:1px solid var(--md-outline)!important;border-radius:var(--md-radius-full)!important;background:var(--md-surface-container)!important;box-shadow:none!important}
+.seg button{min-height:36px!important;border-radius:var(--md-radius-full)!important;color:var(--md-on-surface)!important}
+.seg button.on{background:var(--md-secondary-container)!important;color:var(--md-on-secondary-container)!important;box-shadow:none!important}
+.menu{padding:8px!important;border:1px solid var(--md-outline-variant)!important;border-radius:var(--md-radius-sm)!important;background:var(--md-surface-container)!important;box-shadow:var(--md-elevation-2)!important}
+.menu .mh{color:var(--md-on-surface-variant)!important;font-size:11px!important;font-weight:600!important;letter-spacing:.4px}
+.nav{min-height:40px;border-radius:var(--md-radius-full)!important;color:var(--md-on-surface-variant)!important;font-weight:500!important}
+.nav.on{background:var(--md-secondary-container)!important;color:var(--md-on-secondary-container)!important}
+#app>div.min-h-screen>aside{background:var(--md-surface-container)!important;color:var(--md-on-surface)!important;border-right:1px solid var(--md-outline-variant)}
+#app>div.min-h-screen>aside .text-white{color:var(--md-on-surface)!important}
+.sb{min-height:48px!important;border-radius:var(--md-radius-full)!important;color:var(--md-on-surface-variant)!important}
+.sb:hover{background:var(--md-surface-container-high)!important;color:var(--md-on-surface)!important}
+.sb.on{background:var(--md-secondary-container)!important;color:var(--md-on-secondary-container)!important}
+#app header,#app .sticky.top-0.z-30{background:color-mix(in srgb,var(--md-surface) 94%,transparent)!important;border-color:var(--md-outline-variant)!important;backdrop-filter:blur(16px)}
+#app section.bg-gradient-to-br{background:var(--md-primary-container)!important;color:var(--md-on-primary-container)!important;box-shadow:none!important}
+#app section.bg-gradient-to-br .text-indigo-100,#app section.bg-gradient-to-br .text-indigo-200{color:#494066!important}
+#app section.bg-gradient-to-br button{background:var(--md-primary)!important;color:var(--md-on-primary)!important}
+#st,.b{display:inline-flex;align-items:center;justify-content:center;min-height:24px;padding:2px 10px!important;border-radius:var(--md-radius-full)!important;background:var(--md-surface-container-high)!important;color:var(--md-on-surface-variant)!important;font-size:11px!important;font-weight:500!important;letter-spacing:.1px}
+#st.ok,.b.ok{background:#c4eed0!important;color:#072b13!important}
+#st.wa,.b.wa{background:#fce2b8!important;color:#3c2d00!important}
+.b.er{background:var(--md-error-container)!important;color:var(--md-on-error-container)!important}
+#cartbar{min-height:56px;padding:8px 10px 8px 20px!important;border-radius:var(--md-radius-full)!important;background:var(--md-primary)!important;color:var(--md-on-primary)!important;box-shadow:var(--md-elevation-3)!important}
+#cartbar button{background:var(--md-primary-container)!important;color:var(--md-on-primary-container)!important}
+#toast>div{min-height:48px;padding:12px 16px!important;border-radius:var(--md-radius-sm)!important;background:#322f35!important;color:#f5eff7!important;box-shadow:var(--md-elevation-3)!important}
+#toast>div.bg-red-600{background:var(--md-error-container)!important;color:var(--md-on-error-container)!important}
+dialog{width:min(560px,calc(100vw - 32px))!important;max-height:calc(100dvh - 48px);padding:24px!important;border:0!important;border-radius:var(--md-radius-xl)!important;background:var(--md-surface-container-low)!important;color:var(--md-on-surface)!important;box-shadow:var(--md-elevation-3)!important}
+dialog::backdrop{background:rgb(29 27 32 / 32%)!important;backdrop-filter:blur(2px)}
+dialog h3{font-size:22px!important;font-weight:500!important;letter-spacing:0!important}
+.act{gap:8px!important}
+th{background:var(--md-surface-container)!important;color:var(--md-on-surface-variant)!important;font-size:12px!important;font-weight:600!important;letter-spacing:.2px!important}
+td{border-color:var(--md-surface-container-high)!important;color:var(--md-on-surface)!important}
+tr:hover>td{background:var(--md-surface-container-low)!important}
+.sum,.hint{color:var(--md-on-surface-variant)!important}
+.empty{color:var(--md-on-surface-variant)!important}
+hr{border-color:var(--md-outline-variant)!important}
+*{scrollbar-color:var(--md-outline-variant) transparent;scrollbar-width:thin}
+@media(prefers-color-scheme:dark){
+ :root{
+  color-scheme:dark;
+  --md-primary:#d0bcff;--md-on-primary:#381e72;--md-primary-container:#4f378b;--md-on-primary-container:#eaddff;
+  --md-secondary:#ccc2dc;--md-on-secondary:#332d41;--md-secondary-container:#4a4458;--md-on-secondary-container:#e8def8;
+  --md-tertiary:#efb8c8;--md-on-tertiary:#492532;--md-tertiary-container:#633b48;--md-on-tertiary-container:#ffd8e4;
+  --md-error:#f2b8b5;--md-on-error:#601410;--md-error-container:#8c1d18;--md-on-error-container:#f9dedc;
+  --md-background:#141218;--md-on-background:#e6e0e9;--md-surface:#141218;--md-on-surface:#e6e0e9;
+  --md-surface-variant:#49454f;--md-on-surface-variant:#cac4d0;--md-surface-container-lowest:#0f0d13;
+  --md-surface-container-low:#1d1b20;--md-surface-container:#211f26;--md-surface-container-high:#2b2930;--md-surface-container-highest:#36343b;
+  --md-outline:#938f99;--md-outline-variant:#49454f;--md-shadow:#000;--md-scrim:#000;
+  --md-elevation-1:0 1px 2px #0005,0 1px 3px 1px #0003;
+  --md-elevation-2:0 1px 2px #0005,0 2px 6px 2px #0003;
+  --md-elevation-3:0 4px 8px 3px #0004,0 1px 3px #0005;
+  --md-focus:0 0 0 3px #d0bcff55;
+ }
+ .card,.kpi,.cc{background:var(--md-surface-container-low)!important;border-color:var(--md-outline-variant)!important}
+ input,select,textarea{background:var(--md-surface-container-highest)!important;color:var(--md-on-surface)!important}
+ .cc.on{background:var(--md-primary-container)!important;color:var(--md-on-primary-container)!important}
+ .pills button{color:var(--md-on-surface-variant)!important;border-color:var(--md-outline)!important}
+ .pills button.on,.seg button.on{background:var(--md-secondary-container)!important;color:var(--md-on-secondary-container)!important}
+ .menu{background:var(--md-surface-container)!important}
+ .nav.on,.sb.on{background:var(--md-secondary-container)!important;color:var(--md-on-secondary-container)!important}
+ #st.ok,.b.ok{background:#123923!important;color:#b7f0c2!important}
+ #st.wa,.b.wa{background:#3f3215!important;color:#f5d88c!important}
+ .b.er{background:var(--md-error-container)!important;color:var(--md-on-error-container)!important}
+ #toast>div{background:#e6e0e9!important;color:#322f35!important}
+ #toast>div.bg-red-600{background:var(--md-error-container)!important;color:var(--md-on-error-container)!important}
+ #app section.bg-gradient-to-br .text-white{color:var(--md-on-primary-container)!important}
+}
+@media(max-width:640px){
+ .pills{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.pills button{white-space:nowrap;flex:0 0 auto}
+ .row{flex-direction:column;gap:0!important}.act{flex-wrap:wrap}.act button{flex:1 1 auto}
+ dialog{padding:20px!important;border-radius:var(--md-radius-lg)!important}
+ #cartbar{max-width:calc(100vw - 24px);white-space:normal!important;gap:8px!important}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media print{
+ body{background:#fff!important;color:#000!important}#app,dialog,#cartbar,#toast{display:none!important}#pr{display:block!important}
+}</style></head><body>
 <div id="app"></div><div id="pr"></div><div id="cartbar"></div><div id="toast" class="pointer-events-none fixed right-4 top-4 z-50 flex flex-col gap-2"></div>
 <dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
 <script>
@@ -104,7 +227,7 @@ const idbSet=async h=>{try{(await idb()).transaction("h","readwrite").objectStor
 const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{const x=d.transaction("h").objectStore("h").get("fh");x.onsuccess=()=>r(x.result);x.onerror=()=>r(null)})}catch(e){return null}};
 const FP={types:[{description:"ข้อมูลเบิกของ (JSON)",accept:{"application/json":[".json"]}}]};
 async function persist(){
-  if(!loaded)return;try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  if(!loaded)return;try{localStorage.setItem("stock-data-v1",JSON.stringify(S))}catch(e){}
   if(src==="gh")return ghQueue();
   if(fh){try{const w=await fh.createWritable();await w.write(JSON.stringify(S,null,1));await w.close();setStatus("ออฟไลน์ · บันทึกลงไฟล์ "+fh.name+" แล้ว","ok")}catch(e){setStatus("บันทึกไฟล์ไม่สำเร็จ: "+e.message,"wa")}return}
   setStatus("ออฟไลน์ · เก็บในเบราว์เซอร์นี้เท่านั้น — ควรสำรองข้อมูลเป็นระยะ","wa")}
@@ -114,13 +237,13 @@ async function useData(txt,h,sr,keep){
   user=sessionStorage.getItem("uid");if(!S.users.some(u=>u.id===user))user=null;
   tab=S.cats[0]?.id;bcat=S.cats[0]?.id;cart=[];ci={};admin=false;
   if(keep){if(S.cats.some(c=>c.id===k.tab))tab=k.tab;admin=k.admin;cart=k.cart;ci=k.ci}
-  try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  try{localStorage.setItem("stock-data-v1",JSON.stringify(S))}catch(e){}
   if(fh){idbSet(fh);setStatus("ออฟไลน์ · เชื่อมไฟล์ "+fh.name+" (บันทึกอัตโนมัติ)","ok")}else if(src!=="gh")setStatus("ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์ — ไปที่หลังบ้าน > ข้อมูลและสำรอง","wa");
   render()}
 async function openFile(){try{let f,h=null;if(window.showOpenFilePicker){[h]=await showOpenFilePicker(FP);f=await h.getFile()}else f=await pick(".json");if(f)await useData(await f.text(),h)}catch(e){if(e.name!=="AbortError")toast("เปิดไฟล์ไม่สำเร็จ: "+e.message,"er")}}
-async function saveAs(){if(!window.showSaveFilePicker)return dl("stock.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
+async function saveAs(){if(!window.showSaveFilePicker)return dl("stock-data.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
 /* ================= storage: online (GitHub) ================= */
-const GH0={owner:"sahakoloa",repo:"sahakoloa.github.io",path:"stock.json",token:""};
+const GH0={owner:"sahakoloa",repo:"sahakoloa.github.io",path:"database/stock-data.json",token:""};
 const ghCfg=()=>{try{return{...GH0,...JSON.parse(localStorage.getItem("gh-cfg")||"{}")}}catch(e){return{...GH0}}};
 const online=()=>!localStorage.getItem("gh-off")&&(location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg"));
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
@@ -146,7 +269,7 @@ async function ghPush(retry){
 async function ghMerge(){const g=await ghGet();ghSha=g.sha;if(!g.txt)return;const Rm=JSON.parse(g.txt),ids=new Set(S.log.map(l=>l.id));
   (Rm.log||[]).forEach(l=>{if(!ids.has(l.id))S.log.push(l)});S.seq=Math.max(S.seq||0,Rm.seq||0);
   if(!admin){S.cats=Rm.cats;if(Rm.admin)S.admin=Rm.admin;if(Rm.users)S.users=Rm.users}render()}
-async function ghBackup(){const c=ghCfg();if(!c.token)throw Error("ต้องตั้งค่า token ก่อน");const name=`backups/stock-${stamp()}.json`;
+async function ghBackup(){const c=ghCfg();if(!c.token)throw Error("ต้องตั้งค่า token ก่อน");const name=`backups/stock-data-${stamp()}.json`;
   const r=await fetch(ghUrl({...c,path:name}),{method:"PUT",headers:{...ghH(c),"Content-Type":"application/json"},body:JSON.stringify({message:"backup "+name,content:b64e(JSON.stringify(S,null,1))})});
   if(!r.ok)throw Error("GitHub "+r.status);toast("สำรองไปที่ "+name+" ใน repo แล้ว")}
 function ghDlg(){const c=ghCfg();
@@ -186,7 +309,7 @@ ${lastH?`<button class="p" data-act="reconnect">${fa("link")} เชื่อม
 <button class="${lastH?"":"p"}" data-act="f-open">${fa("folder-open")} เปิดไฟล์ข้อมูล .json</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ข้อมูลใหม่</button>
 <div class="mh !px-0">ออนไลน์ · GitHub</div><button data-act="gh-set">${fa("cloud")} ตั้งค่า / เชื่อมต่อ GitHub</button>
 <div class="mh !px-0">นำเข้าข้อมูล</div><button data-act="im-restore">${fa("file-import")} กู้คืนจากไฟล์สำรอง (.json)</button><button data-act="im-any">${fa("file-csv")} นำเข้าข้อมูล (.json / .csv)</button>
-${localStorage.getItem("stock-v1")?`<button data-act="usebackup">${fa("clock-rotate-left")} ใช้ข้อมูลสำรองในเบราว์เซอร์</button>`:""}
+${localStorage.getItem("stock-data-v1")?`<button data-act="usebackup">${fa("clock-rotate-left")} ใช้ข้อมูลสำรองในเบราว์เซอร์</button>`:""}
 <button data-act="blank">${fa("wand-magic-sparkles")} เริ่มใช้งานแบบว่าง (ยังไม่ผูกไฟล์)</button></div>
 <div class="mt-4 text-xs text-slate-400">${esc(stat.t)}</div></div></div>`}
 /* ================= connection menu ================= */
@@ -372,8 +495,8 @@ function mergeJson(txt,upd){
 async function newFile(){
   const prev={S,loaded,src,fh};if(loaded&&!confirm("สร้างไฟล์ข้อมูลใหม่ (ว่าง)?\nข้อมูลที่เปิดอยู่ในหน้านี้จะถูกแทนที่ (บัญชีผู้ดูแลยังคงอยู่) — ควรสำรองข้อมูลก่อน"))return;
   S=norm({cats:[],admin:S.admin});loaded=true;fh=null;tab="all";bcat=undefined;
-  try{if(!window.showSaveFilePicker){dl("stock.json",JSON.stringify(S,null,1),"application/json");src=null;render();toast("ดาวน์โหลดไฟล์ข้อมูลใหม่แล้ว — ใช้ “เปิดไฟล์ข้อมูล” เพื่อเชื่อมต่อ");return}
-    fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);src="file";await persist();render();toast("สร้างไฟล์ข้อมูลใหม่แล้ว")}
+  try{if(!window.showSaveFilePicker){dl("stock-data.json",JSON.stringify(S,null,1),"application/json");src=null;render();toast("ดาวน์โหลดไฟล์ข้อมูลใหม่แล้ว — ใช้ “เปิดไฟล์ข้อมูล” เพื่อเชื่อมต่อ");return}
+    fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render();toast("สร้างไฟล์ข้อมูลใหม่แล้ว")}
   catch(e){({S,loaded,src,fh}=prev);render();if(e.name!=="AbortError")toast("สร้างไฟล์ไม่สำเร็จ: "+e.message,"er")}}
 /* ================= actions ================= */
 const ADM=new Set(["addcat","rencat","delcat","additem","edititem","delitem","adduser","edituser","deluser","dellog","bk-json","bk-gh","ex-items","ex-log","tpl","acct","undo","f-save","f-new","im-restore","im-any","tr-restore","tr-del","tr-empty","rp-print","rp-csv"]);
@@ -435,7 +558,7 @@ const A={
     ()=>{try{const r=(csv?importItemsCsv:mergeJson)(txt,v("f1")==="upd");tab=tab||"all";bcat=bcat||S.cats[0]?.id;change();toast(`นำเข้าแล้ว: เพิ่มใหม่ ${r.add} · อัปเดต ${r.up} · ข้าม ${r.skip} รายการ`)}catch(e){toast("นำเข้าไม่สำเร็จ: "+e.message,"er");return false}})},
   undo:()=>{const t=localStorage.getItem("stock-undo");if(!t)return;if(!confirm("ย้อนกลับไปก่อนการนำเข้า/กู้คืนครั้งล่าสุด?"))return;S=norm(JSON.parse(t));localStorage.removeItem("stock-undo");tab="all";bcat=S.cats[0]?.id;change();toast("ย้อนกลับแล้ว")},
   reconnect:async()=>{try{if(await lastH.requestPermission({mode:"readwrite"})!=="granted")return;await useData(await(await lastH.getFile()).text(),lastH)}catch(e){toast("เชื่อมต่อไม่สำเร็จ: "+e.message,"er")}},
-  usebackup:()=>useData(localStorage.getItem("stock-v1"),null,ghMissing?"gh":null).catch(e=>toast(e.message,"er")),
+  usebackup:()=>useData(localStorage.getItem("stock-data-v1"),null,ghMissing?"gh":null).catch(e=>toast(e.message,"er")),
   blank:()=>useData('{"cats":[]}',null,ghMissing?"gh":null).then(persist)
 };
 /* ================= events ================= */
@@ -460,7 +583,12 @@ setInterval(ghTick,60000);document.addEventListener("visibilitychange",ghTick);
 window.onbeforeunload=e=>{if(loaded&&!src&&!fh){e.preventDefault();e.returnValue=""}};
 async function init(){
   if(online()){try{await ghLoad(false)}catch(e){setStatus("โหลดออนไลน์ไม่สำเร็จ: "+e.message,"wa")}if(loaded)return}
-  try{const r=await fetch("stock.json",{cache:"no-store"});if(r.ok){await useData(await r.text(),null);setStatus("ออฟไลน์ · โหลดจาก stock.json (ยังไม่เชื่อมไฟล์สำหรับบันทึก)","wa");return}}catch(e){}
+  try{const r=await fetch("database/stock-data.json",{cache:"no-store"});if(r.ok){await useData(await r.text(),null);setStatus("ออฟไลน์ · โหลดจาก database/stock-data.json (อ่านอย่างเดียว — ใช้ “บันทึกเป็น” เพื่อบันทึกไฟล์)","wa");return}}catch(e){}
   setStatus("ยังไม่ได้โหลดข้อมูล","wa");lastH=await idbGet();render()}
 render();init();
 </script></body></html>
+
+
+
+
+
