@@ -118,7 +118,7 @@
     <div class="card">
      <h3>⚙️ ตั้งค่า</h3>
      <div class="g" style="grid-template-columns:1fr">
-      <div><label>ประเภทเครื่อง (บรรทัดละ 1 รายการ)</label><textarea id="sType" rows="5"></textarea></div>
+      <div><label>หมวดหมู่เครื่อง และยี่ห้อ (บรรทัดละ 1 หมวด · รูปแบบ หมวด: ยี่ห้อ1, ยี่ห้อ2)</label><textarea id="sType" rows="9"></textarea></div>
       <div><label>เปลี่ยนรหัสผ่านผู้ดูแล</label><input id="sPin"></div>
      </div>
      <div class="mt-4 flex flex-wrap gap-2"><button class="p" id="bSet">บันทึกการตั้งค่า</button><button id="bTpl">⬇ แม่แบบ Excel</button><button id="bBak">⬇ สำรองข้อมูล .json</button></div>
@@ -144,7 +144,8 @@
   <div><label>เบอร์โทรลูกค้า</label><input id="fPhone" inputmode="tel"></div>
   <div><label>LINE ID</label><input id="fLine"></div>
   <div><label>เลขที่ SV.</label><input id="fSv"></div>
-  <div><label>ประเภทเครื่อง</label><input id="fType" list="dlType"></div>
+  <div><label>หมวดหมู่เครื่อง</label><select id="fType"></select></div>
+  <div><label>ยี่ห้อ</label><select id="fBrand"></select><input id="fBrandO" class="mt-2" placeholder="ระบุยี่ห้อ" style="display:none"></div>
   <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
   <div><label>ช่างผู้ซ่อม</label><select id="fTech"></select></div>
   <div class="full"><label>อาการที่ส่งซ่อม</label><textarea id="fSym" rows="2"></textarea></div>
@@ -328,7 +329,7 @@ async function connectGH(cfg,save,mode){
     }
   }catch(e){G=old;throw e}
   H=null;if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
-  $('#bRe').style.display='none';base='☁ ออนไลน์'+(G.token?'':' (อ่านอย่างเดียว)')+' · '+G.owner+'/'+G.repo;render();
+  $('#bRe').style.display='none';base='☁ ออนไลน์'+(G.token?'':' (อ่านอย่างเดียว)');render();
 }
 const ft=[{description:'JSON',accept:{'application/json':['.json']}}];
 $('#bOpen').onclick=async()=>{try{const[h]=await showOpenFilePicker({types:ft});await connect(h,false)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
@@ -348,8 +349,8 @@ function table(rows,mode){
   const act=r=>mode==='del'
     ?`<button class="s" data-a="res" data-id="${r.id}">กู้คืน</button> <button class="s d" data-a="purge" data-id="${r.id}">ลบถาวร</button>`
     :`<button class="s" data-a="edit" data-id="${r.id}">แก้ไข</button>`+(mode==='adm'?` <button class="s d" data-a="del" data-id="${r.id}">ลบ</button>`:'');
-  return `<table><thead><tr><th>ที่</th><th>ว/ด/ป</th><th>ชื่อลูกค้า</th><th>SV.</th><th>ประเภทเครื่อง</th><th>S/N</th><th>อาการที่ส่งซ่อม</th><th>รายการซ่อม</th><th>อะไหล่เก่า</th><th>อะไหล่ใหม่</th><th>ค่าแรง</th><th>ช่าง</th><th>Remark</th><th></th></tr></thead><tbody>`+
-  rows.map(r=>`<tr><td><span class="no">${r.seq||'-'}</span></td><td>${fdate(r.date)}</td><td><b>${esc(r.cus)}</b>${r.imp?' <span class="tag" title="นำเข้าจาก Excel">📥</span>':''}${ci(r.cus)}</td><td>${esc(r.sv)}</td><td>${r.type?`<span class="tag">${esc(r.type)}</span>`:''}</td><td>${esc(r.sn)}</td><td>${esc(r.sym)}</td><td>${esc(r.work)}</td><td>${pcol(r,'o')}</td><td>${pcol(r,'n')}</td><td class="n">${r.labor?fmt(r.labor):''}</td><td>${esc(r.tech)}</td><td>${esc(r.rem)}</td><td style="white-space:nowrap">${act(r)}</td></tr>`).join('')+'</tbody></table>';
+  return `<table><thead><tr><th>ที่</th><th>ว/ด/ป</th><th>ชื่อลูกค้า</th><th>SV.</th><th>หมวด / ยี่ห้อ</th><th>S/N</th><th>อาการที่ส่งซ่อม</th><th>รายการซ่อม</th><th>อะไหล่เก่า</th><th>อะไหล่ใหม่</th><th>ค่าแรง</th><th>ช่าง</th><th>Remark</th><th></th></tr></thead><tbody>`+
+  rows.map(r=>`<tr><td><span class="no">${r.seq||'-'}</span></td><td>${fdate(r.date)}</td><td><b>${esc(r.cus)}</b>${r.imp?' <span class="tag" title="นำเข้าจาก Excel">📥</span>':''}${ci(r.cus)}</td><td>${esc(r.sv)}</td><td>${r.type?`<span class="tag">${esc(r.type)}</span>`:''}${r.brand?`<div class="sub">${esc(r.brand)}</div>`:''}</td><td>${esc(r.sn)}</td><td>${esc(r.sym)}</td><td>${esc(r.work)}</td><td>${pcol(r,'o')}</td><td>${pcol(r,'n')}</td><td class="n">${r.labor?fmt(r.labor):''}</td><td>${esc(r.tech)}</td><td>${esc(r.rem)}</td><td style="white-space:nowrap">${act(r)}</td></tr>`).join('')+'</tbody></table>';
 }
 function custTable(){
   const k=$('#cq').value.trim().toLowerCase(),st={};
@@ -376,7 +377,7 @@ function render(){
     `<button class="chip ${cur==='all'?'on':''}" data-m="all">ทั้งหมด<b>${live.length}</b></button>`;
   const inM=live.filter(r=>cur==='all'||mk(r)===cur).sort((a,b)=>cur==='all'?(b.date||'').localeCompare(a.date||'')||b.seq-a.seq:b.seq-a.seq);
   const k=$('#q').value.trim().toLowerCase();
-  const f=k?inM.filter(r=>[r.cus,r.sv,r.sn,r.sym,r.work,r.type,r.tech,r.rem].join(' ').toLowerCase().includes(k)):inM;
+  const f=k?inM.filter(r=>[r.cus,r.sv,r.sn,r.sym,r.work,r.type,r.brand,r.tech,r.rem].join(' ').toLowerCase().includes(k)):inM;
   CI={};D.customers.filter(c=>!c.del).forEach(c=>CI[cn(c.name)]=c);
   $('#list').innerHTML=table(f,'main');
   $('#stats').innerHTML=[['🛠',inM.length,'งานในเดือนที่เลือก'],['📚',live.length,'งานซ่อมทั้งหมด'],['👥',D.customers.filter(c=>!c.del).length,'ลูกค้าในฐานข้อมูล'],['🧑‍🔧',new Set(inM.map(r=>r.tech).filter(Boolean)).size,'ช่างที่มีงาน']].map(([i,n,t])=>`<div class="stat"><div class="ic">${i}</div><div><b>${n}</b><span>${t}</span></div></div>`).join('');
@@ -440,7 +441,7 @@ function showCus(){
     if(c){if(!pf.value||pf.value===AF.p){pf.value=c.phone||'';AF.p=pf.value}if(!lf.value||lf.value===AF.l){lf.value=c.line||'';AF.l=lf.value}}
     h=`<div class="hint"><b>📜 ${esc(ex)}</b>`+(c&&(c.phone||c.line)?` · 📞 ${esc(c.phone)} · <span class="line">LINE ${esc(c.line)}</span>`:'')+
       ` · ${rs.length?`ซ่อมมาแล้ว ${rs.length} ครั้ง (ล่าสุด ${fdate(rs[0].date)})`:'ลูกค้าในฐานข้อมูล ยังไม่มีประวัติซ่อม'}`+
-      rs.slice(0,5).map(r=>`<div class="hrow"><span>${fdate(r.date)} · ${esc(r.type)} ${esc(r.sn)} · ${esc(r.sym)}</span>${(r.type||r.sn)?`<button class="s" type="button" data-use="${r.id}">ใช้เครื่องนี้</button>`:''}</div>`).join('')+'</div>';
+      rs.slice(0,5).map(r=>`<div class="hrow"><span>${fdate(r.date)} · ${esc(r.type)} ${esc(r.brand)} ${esc(r.sn)} · ${esc(r.sym)}</span>${(r.type||r.sn)?`<button class="s" type="button" data-use="${r.id}">ใช้เครื่องนี้</button>`:''}</div>`).join('')+'</div>';
   }else{
     const ms=names.filter(n=>n.toLowerCase().includes(v)).slice(0,8);
     if(ms.length)h='<div class="hint">ลูกค้าในระบบ: '+ms.map(n=>`<button class="s" type="button" data-cus="${esc(n)}">${esc(n)} · ${m.get(n).length} ครั้ง</button>`).join(' ')+'</div>';
@@ -451,13 +452,13 @@ $('#fCus').oninput=showCus;
 $('#cusHint').onclick=e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.cus!=null){$('#fCus').value=b.dataset.cus;showCus()}
-  if(b.dataset.use){const r=D.records.find(x=>x.id===b.dataset.use);if(r){$('#fType').value=r.type||'';$('#fSn').value=r.sn||''}}
+  if(b.dataset.use){const r=D.records.find(x=>x.id===b.dataset.use);if(r){fillCat(r.type||'',r.brand||'');$('#fSn').value=r.sn||''}}
 };
 function openForm(id){
   if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return}
   editId=id;const r=D.records.find(x=>x.id===id)||{date:new Date().toISOString().slice(0,10),parts:[{}]};
   $('#dT').textContent=id?`แก้ไขรายการ ลำดับที่ ${r.seq}`:'เพิ่มรายการซ่อม';
-  $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';$('#fType').value=r.type||'';
+  $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';fillCat(r.type||'',r.brand||'');
   $('#fSn').value=r.sn||'';fillTech(r.tech||'');$('#fSym').value=r.sym||'';$('#fWork').value=r.work||'';
   $('#fLab').value=r.labor||'';$('#fRem').value=r.rem||'';
   AF={p:'',l:''};const cc=custByName(r.cus||'');$('#fPhone').value=cc?cc.phone||'':'';$('#fLine').value=cc?cc.line||'':'';
@@ -467,7 +468,7 @@ $('#bAdd').onclick=()=>openForm(null);
 $('#bCancel').onclick=()=>$('#dlg').close();
 $('#bSave').onclick=async()=>{
   const parts=[...$('#parts').children].map(r=>{const i=r.querySelectorAll('input');return{o:i[0].value.trim(),op:i[1].value,n:i[2].value.trim(),np:i[3].value}}).filter(p=>p.o||p.n||p.op||p.np);
-  const v={date:$('#fDate').value,cus:$('#fCus').value.trim(),sv:$('#fSv').value.trim(),type:$('#fType').value.trim(),sn:$('#fSn').value.trim(),
+  const v={date:$('#fDate').value,cus:$('#fCus').value.trim(),sv:$('#fSv').value.trim(),type:$('#fType').value.trim(),brand:$('#fBrand').value==='__o'?$('#fBrandO').value.trim():$('#fBrand').value,sn:$('#fSn').value.trim(),
     tech:$('#fTech').value.trim(),sym:$('#fSym').value.trim(),work:$('#fWork').value.trim(),parts,labor:$('#fLab').value,rem:$('#fRem').value.trim(),upd:Date.now()};
   const ph=$('#fPhone').value.trim(),ln=$('#fLine').value.trim();
   if(!v.cus){alert('กรุณากรอกชื่อลูกค้า');return}
@@ -489,7 +490,7 @@ document.addEventListener('click',e=>{
 });
 
 /* ---------- Excel นำเข้า/ส่งออก ---------- */
-const HEAD=['ลำดับที่','ว/ด/ป','ชื่อลูกค้า','เลขที่ SV.','ประเภทเครื่อง','หมายเลขเครื่อง S/N','อาการที่ส่งซ่อม','รายการซ่อม','อะไหล่เก่า','ราคา','อะไหล่ใหม่','ราคา','ค่าแรง','ชื่อช่าง','Remark'];
+const HEAD=['ลำดับที่','ว/ด/ป','ชื่อลูกค้า','เลขที่ SV.','ประเภทเครื่อง','หมายเลขเครื่อง S/N','อาการที่ส่งซ่อม','รายการซ่อม','อะไหล่เก่า','ราคา','อะไหล่ใหม่','ราคา','ค่าแรง','ชื่อช่าง','Remark','ยี่ห้อ'];
 const iso=d=>d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
 function pdate(v){
   if(v===''||v==null)return '';
@@ -499,7 +500,7 @@ function pdate(v){
   let y=+m[3];if(y>2400)y-=543;else if(y<100){y+=2000;if(y>new Date().getFullYear()+20)y-=43}
   return iso(new Date(Date.UTC(y,+m[2]-1,+m[1])));
 }
-const KEYS=[['seq',/ลำดับ/],['date',/ว\/ด\/ป|วันที่/],['cus',/ลูกค้า/],['sv',/sv/i],['type',/ประเภท/],['sn',/s\/n|หมายเลข/i],['sym',/อาการ/],['work',/รายการซ่อม/],['o',/เก่า/],['n',/ใหม่/],['labor',/ค่าแรง/],['tech',/ช่าง/],['rem',/remark|หมายเหตุ/i]];
+const KEYS=[['seq',/ลำดับ/],['brand',/ยี่ห้อ/],['date',/ว\/ด\/ป|วันที่/],['cus',/ลูกค้า/],['sv',/sv/i],['type',/ประเภท/],['sn',/s\/n|หมายเลข/i],['sym',/อาการ/],['work',/รายการซ่อม/],['o',/เก่า/],['n',/ใหม่/],['labor',/ค่าแรง/],['tech',/ช่าง/],['rem',/remark|หมายเหตุ/i]];
 function parseSheet(rows){
   const hi=rows.findIndex(r=>r.some(c=>/ลูกค้า/.test(c)));if(hi<0)return null;
   let start=hi+1,sub=rows[hi+1];
@@ -519,7 +520,7 @@ function parseSheet(rows){
     const cus=String(g(r,'cus')).trim();
     if(!cus&&prev&&hasP){prev.parts.push(p);continue}
     if(!cus)continue;
-    prev={id:crypto.randomUUID(),seq:0,date:pdate(g(r,'date')),cus,sv:String(g(r,'sv')).trim(),type:String(g(r,'type')).trim(),sn:String(g(r,'sn')).trim(),
+    prev={id:crypto.randomUUID(),seq:0,date:pdate(g(r,'date')),cus,sv:String(g(r,'sv')).trim(),type:String(g(r,'type')).trim(),brand:String(g(r,'brand')).trim(),sn:String(g(r,'sn')).trim(),
       sym:String(g(r,'sym')).trim(),work:String(g(r,'work')).trim(),parts:hasP?[p]:[],labor:g(r,'labor'),tech:String(g(r,'tech')).trim(),rem:String(g(r,'rem')).trim(),upd:Date.now()};
     out.push(prev);
   }
@@ -552,10 +553,10 @@ $('#bExp').onclick=()=>{
     const rows=[HEAD];
     live.filter(r=>mk(r)===m).sort((a,b)=>a.seq-b.seq).forEach(r=>{
       const ps=r.parts?.length?r.parts:[{}];
-      ps.forEach((p,i)=>rows.push(i?['','','','','','','','',p.o||'',p.op||'',p.n||'',p.np||'','','','']:
-        [r.seq,fdate(r.date),r.cus,r.sv,r.type,r.sn,r.sym,r.work,p.o||'',p.op||'',p.n||'',p.np||'',r.labor||'',r.tech,r.rem]));
+      ps.forEach((p,i)=>rows.push(i?['','','','','','','','',p.o||'',p.op||'',p.n||'',p.np||'','','','','']:
+        [r.seq,fdate(r.date),r.cus,r.sv,r.type,r.sn,r.sym,r.work,p.o||'',p.op||'',p.n||'',p.np||'',r.labor||'',r.tech,r.rem,r.brand||'']));
     });
-    const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=HEAD.map((_,i)=>({wch:[7,12,22,12,16,18,28,28,16,9,16,9,9,14,20][i]}));
+    const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=HEAD.map((_,i)=>({wch:[7,12,22,12,16,18,28,28,16,9,16,9,9,14,20,14][i]}));
     XLSX.utils.book_append_sheet(wb,ws,m.slice(0,31).replace(/[\\\/?*\[\]:]/g,'-'));
   });
   const cs=D.customers.filter(c=>!c.del);
@@ -579,19 +580,19 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
 $('#bLogin').onclick=()=>{
   if($('#pin').value!==D.meta.pin){alert('รหัสผ่านไม่ถูกต้อง');return}
   admin=true;$('#lock').style.display='none';$('#admin').style.display='';
-  $('#sType').value=D.meta.types.join('\n');$('#sPin').value=D.meta.pin;render();
+  $('#sType').value=catText();$('#sPin').value=D.meta.pin;render();
 };
 $('#pin').onkeydown=e=>{if(e.key==='Enter')$('#bLogin').click()};
 $('#bSet').onclick=async()=>{
   const ls=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
   if(!$('#sPin').value.trim()){alert('รหัสผ่านห้ามว่าง');return}
-  if(await commit(()=>{D.meta.types=ls($('#sType').value);D.meta.pin=$('#sPin').value.trim()}))alert('บันทึกการตั้งค่าแล้ว');
+  if(await commit(()=>{setCatalog($('#sType').value);D.meta.pin=$('#sPin').value.trim()}))alert('บันทึกการตั้งค่าแล้ว');
 };
 $('#bBak').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,1)],{type:'application/json'}));a.download='repair-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
 
 /* ---------- GitHub ---------- */
 $('#bGh').onclick=()=>{const c=G||gcfg()||{};
-  $('#gOwner').value=c.owner||'sahakoloa';$('#gRepo').value=c.repo||'sahakoloa.github.io';
+  $('#gOwner').value=c.owner||'';$('#gRepo').value=c.repo||'';
   $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gOff').style.display=G?'':'none';$('#gdlg').showModal()};
 $('#gCancel').onclick=()=>$('#gdlg').close();
 $('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';$('#st').className='rounded-full bg-white/20 px-3 py-1 text-xs';render();$('#gdlg').close()};
@@ -606,6 +607,34 @@ async function ghAction(fn){
   $('#gGo').disabled=false;
 }
 $('#gGo').onclick=()=>{const cfg=readCfg();if(cfg)ghAction(async()=>{await connectGH(cfg,true,'open');$('#gdlg').close()})};
+
+/* ---------- หมวดหมู่เครื่อง / ยี่ห้อ ---------- */
+const DEF_CAT=[
+ {name:'PC',brands:['Dell','HP','Lenovo','Acer','ASUS','MSI','Gigabyte','Apple','ประกอบเอง']},
+ {name:'AIO',brands:['Dell','HP','Lenovo','Acer','ASUS','MSI','Apple']},
+ {name:'Printer',brands:['Canon','Epson','HP','Brother','Samsung','Ricoh','Fujifilm','Kyocera','Xerox','Lexmark','Pantum','OKI']},
+ {name:'Scanner',brands:['Epson','Canon','Fujitsu','Brother','HP','Plustek','Avision','Kodak','Panasonic','Ricoh']},
+ {name:'เครื่องถ่ายเอกสาร',brands:['Ricoh','Canon','Fujifilm','Xerox','Kyocera','Sharp','Konica Minolta','Toshiba']}];
+function syncCat(){const m=D.meta;if(!Array.isArray(m.catalog))m.catalog=DEF_CAT.map(c=>({name:c.name,brands:[...c.brands]}));m.types=m.catalog.map(c=>c.name)}
+const catText=()=>D.meta.catalog.map(c=>c.name+': '+c.brands.join(', ')).join('\n');
+function setCatalog(t){
+  D.meta.catalog=t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
+    const i=l.search(/[:：]/),name=(i<0?l:l.slice(0,i)).trim();
+    return{name,brands:[...new Set(i<0?[]:l.slice(i+1).split(/[,，]/).map(x=>x.trim()).filter(Boolean))]}}).filter(c=>c.name);
+  D.meta.types=D.meta.catalog.map(c=>c.name);
+}
+function fillCat(t,b){
+  const names=(D.meta.catalog||[]).map(c=>c.name);if(t&&!names.includes(t))names.push(t);
+  $('#fType').innerHTML='<option value="">— เลือกหมวด —</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  $('#fType').value=t||'';fillBrand(t||'',b||'');
+}
+function fillBrand(t,b){
+  const c=(D.meta.catalog||[]).find(x=>x.name===t),L=c?[...c.brands]:[];if(b&&!L.includes(b))L.push(b);
+  $('#fBrand').innerHTML='<option value="">— เลือกยี่ห้อ —</option>'+L.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')+'<option value="__o">อื่นๆ (ระบุเอง)</option>';
+  $('#fBrand').value=b||'';$('#fBrandO').value='';$('#fBrandO').style.display='none';
+}
+$('#fType').onchange=()=>fillBrand($('#fType').value,'');
+$('#fBrand').onchange=()=>{const o=$('#fBrand').value==='__o';$('#fBrandO').style.display=o?'':'none';if(o)$('#fBrandO').focus()};
 
 /* ---------- ช่างผู้ซ่อม ---------- */
 let tEdit=null;
@@ -642,7 +671,7 @@ $('#techList').onclick=e=>{
   else if(confirm('ลบช่างคนนี้ออกจากรายชื่อ? (ประวัติงานซ่อมยังอยู่ ถ้าแค่ไม่ให้เลือกแนะนำให้ "ปิดใช้งาน")'))commit(()=>{D.meta.techList=D.meta.techList.filter(y=>y.id!==id)});
 };
 function syncTech(){
-  const m=D.meta;
+  const m=D.meta;syncCat();
   if(!Array.isArray(m.techList))m.techList=(m.techs||[]).map(n=>({id:'t-'+n,name:n,phone:'',active:true}));
   m.techs=m.techList.filter(t=>t.active!==false).map(t=>t.name);
 }
