@@ -17,6 +17,12 @@
    "name": "network",
    "icon": "wifi",
    "items": []
+  },
+  {
+   "id": "zaah0hmn",
+   "name": "led wall",
+   "icon": "tv",
+   "items": []
   }
  ],
  "log": [],
