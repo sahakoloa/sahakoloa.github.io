@@ -2,5 +2,9 @@
  "cats": [],
  "log": [],
  "users": [],
- "seq": 0
+ "seq": 0,
+ "admin": {
+  "salt": "k3arxzpwbvaz7xl5",
+  "hash": "833369822d98b12d711f1f21766a6afb93b982ff695f3c2332639e260ed3a674"
+ }
 }
