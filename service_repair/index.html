@@ -68,6 +68,7 @@
    <div><h1 class="text-xl font-bold leading-tight">ระบบบันทึกงานซ่อม</h1><p class="text-xs opacity-80">แยกบันทึกรายเดือนอัตโนมัติ · ใช้งานพร้อมกันได้หลายเครื่อง</p></div>
   </div>
   <span id="st" class="rounded-full bg-white/20 px-3 py-1 text-xs">ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล</span>
+  <span id="who" class="text-sm font-medium"></span><button id="bOut" class="hb" style="display:none">ออกจากระบบ</button>
   <button id="bRe" class="hb" style="display:none"></button>
   <button id="bOpen" class="hb">📂 เปิดไฟล์ .json</button>
   <button id="bNew" class="hb">➕ สร้างไฟล์ใหม่</button>
@@ -76,6 +77,20 @@
 </header>
 <main class="mx-auto max-w-[1600px] px-4 py-5 sm:px-6">
  <div id="warn" class="card text-red-600" style="display:none"></div>
+ <div id="gate" class="mx-auto mt-8 max-w-sm">
+  <div class="card text-center">
+   <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-500 text-3xl">🔐</div>
+   <h2 class="text-xl font-bold">เข้าสู่ระบบช่าง</h2>
+   <p id="lgMsg" class="mb-4 mt-1 text-sm text-slate-500"></p>
+   <div class="space-y-3 text-left">
+    <div><label>ช่างผู้ซ่อม</label><select id="lgUser"></select></div>
+    <div><label>รหัสผ่าน</label><input type="password" id="lgPin" autocomplete="current-password"></div>
+    <p id="lgErr" class="text-sm text-red-600"></p>
+    <button class="p w-full" id="lgGo">เข้าสู่ระบบ</button>
+   </div>
+  </div>
+ </div>
+ <div id="app" style="display:none">
  <div class="tabs"><button class="on" data-t="a">📋 บันทึกซ่อม</button><button data-t="c">👥 ลูกค้า</button><button data-t="b">⚙️ หลังบ้าน</button></div>
 
  <section id="ta">
@@ -107,9 +122,10 @@
   <div id="admin" style="display:none">
    <div class="card">
     <h3>👷 จัดการช่างผู้ซ่อม</h3>
-    <div class="grid items-end gap-3 sm:grid-cols-[1fr_1fr_auto]">
+    <div class="grid items-end gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
      <div><label>ชื่อช่าง</label><input id="tName" placeholder="เช่น ช่างเอ"></div>
      <div><label>เบอร์โทร</label><input id="tPhone" inputmode="tel"></div>
+     <div><label>รหัสผ่านเข้าระบบ</label><input id="tPin" type="password" autocomplete="new-password" placeholder="เว้นว่าง = ไม่เปลี่ยน"></div>
      <div class="flex gap-2"><button id="tCancel" style="display:none">ยกเลิก</button><button id="tSave" class="p">+ เพิ่มช่าง</button></div>
     </div>
     <div class="wrap mt-4" id="techList"></div>
@@ -133,6 +149,7 @@
    <div class="card"><h3>🗑 รายการที่ลบ (กู้คืนได้)</h3><div class="wrap" id="delList"></div></div>
   </div>
  </section>
+ </div>
 </main>
 
 <dialog id="dlg">
@@ -191,7 +208,7 @@ const fdate=d=>d?new Date(d+'T00:00').toLocaleDateString('th-TH',{day:'2-digit',
 const mlabel=m=>m==='all'?'ทั้งหมด':new Date(m+'-01T00:00').toLocaleDateString('th-TH',{month:'long',year:'numeric'});
 const mk=r=>(r.date||'').slice(0,7)||'ไม่ระบุวันที่';
 const empty=()=>({v:1,meta:{techs:[],types:[],pin:'1234',imports:[]},records:[],customers:[]});
-let H=null,D=empty(),lastMod=0,editId=null,admin=false,cur=null;
+let H=null,D=empty(),lastMod=0,editId=null,admin=false,cur=null,user=null;
 
 /* ---------- จำไฟล์ที่เชื่อมต่อ ---------- */
 const idb=()=>new Promise(r=>{const q=indexedDB.open('repairlog',1);q.onupgradeneeded=()=>q.result.createObjectStore('k');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)});
@@ -364,9 +381,10 @@ function custTable(){
 }
 let lastSync=null;
 function stat(){const n=D.records.filter(r=>!r.del).length;
-  $('#st').textContent=base+(lastSync?' · ซิงก์ล่าสุด '+lastSync.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'')+' · '+n+' รายการ';
+  $('#st').textContent=base+(lastSync?' · ซิงก์ล่าสุด '+lastSync.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'')+(user?' · '+n+' รายการ':'');
   $('#st').className='rounded-full px-3 py-1 text-xs font-medium '+(G&&!G.token?'bg-amber-300 text-amber-950':'bg-emerald-300 text-emerald-950')}
 function render(){
+  gateUI();if(base)stat();if(!user){clearUI();return}
   const live=D.records.filter(r=>!r.del);
   if(base)stat();
   const nowM=new Date().toISOString().slice(0,7), cnt={};
@@ -642,31 +660,33 @@ function techTable(){
   const L=D.meta.techList||[];
   if(!L.length)return '<div class="empty">👷 ยังไม่มีช่าง กรอกชื่อด้านบนแล้วกด "เพิ่มช่าง"</div>';
   const st={};D.records.filter(r=>!r.del&&r.tech).forEach(r=>{const o=st[r.tech]||(st[r.tech]={c:0,l:0});o.c++;o.l+=num(r.labor)});
-  return '<table><thead><tr><th>ช่าง</th><th>เบอร์โทร</th><th>สถานะ</th><th>จำนวนงาน</th><th>ค่าแรงรวม</th><th></th></tr></thead><tbody>'+
+  return '<table><thead><tr><th>ช่าง</th><th>เบอร์โทร</th><th>สถานะ</th><th>รหัสเข้าระบบ</th><th>จำนวนงาน</th><th>ค่าแรงรวม</th><th></th></tr></thead><tbody>'+
     L.map(t=>{const s=st[t.name]||{c:0,l:0},on=t.active!==false;
-      return `<tr class="${on?'':'opacity-50'}"><td><div class="cname"><span class="av">${esc([...t.name][0]||'?')}</span><b>${esc(t.name)}</b></div></td><td>${t.phone?`<a href="tel:${esc(t.phone)}">${esc(t.phone)}</a>`:'-'}</td><td><span class="tag">${on?'🟢 ใช้งาน':'⚪ ปิดใช้งาน'}</span></td><td><span class="no">${s.c}</span></td><td class="n">${fmt(s.l)}</td><td class="whitespace-nowrap"><button class="s" data-ta="edit" data-id="${t.id}">แก้ไข</button> <button class="s" data-ta="tog" data-id="${t.id}">${on?'ปิดใช้งาน':'เปิดใช้งาน'}</button> <button class="s d" data-ta="del" data-id="${t.id}">ลบ</button></td></tr>`}).join('')+'</tbody></table>';
+      return `<tr class="${on?'':'opacity-50'}"><td><div class="cname"><span class="av">${esc([...t.name][0]||'?')}</span><b>${esc(t.name)}</b></div></td><td>${t.phone?`<a href="tel:${esc(t.phone)}">${esc(t.phone)}</a>`:'-'}</td><td><span class="tag">${on?'🟢 ใช้งาน':'⚪ ปิดใช้งาน'}</span></td><td>${t.pin?'🔑 ตั้งแล้ว':'<span class="d">⚠ ยังไม่ตั้ง</span>'}</td><td><span class="no">${s.c}</span></td><td class="n">${fmt(s.l)}</td><td class="whitespace-nowrap"><button class="s" data-ta="edit" data-id="${t.id}">แก้ไข</button> <button class="s" data-ta="tog" data-id="${t.id}">${on?'ปิดใช้งาน':'เปิดใช้งาน'}</button> <button class="s d" data-ta="del" data-id="${t.id}">ลบ</button></td></tr>`}).join('')+'</tbody></table>';
 }
 function fillTech(v){
   const L=(D.meta.techList||[]).filter(t=>t.active!==false).map(t=>t.name);if(v&&!L.includes(v))L.push(v);
   $('#fTech').innerHTML='<option value="">— เลือกช่าง —</option>'+L.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');$('#fTech').value=v;
 }
-function techReset(){tEdit=null;$('#tName').value=$('#tPhone').value='';$('#tSave').textContent='+ เพิ่มช่าง';$('#tCancel').style.display='none'}
+function techReset(){tEdit=null;$('#tName').value=$('#tPhone').value=$('#tPin').value='';$('#tSave').textContent='+ เพิ่มช่าง';$('#tCancel').style.display='none'}
 $('#tCancel').onclick=techReset;
 $('#tSave').onclick=async()=>{
-  const name=$('#tName').value.trim(),phone=$('#tPhone').value.trim();
+  const name=$('#tName').value.trim(),phone=$('#tPhone').value.trim(),pin=$('#tPin').value.trim(),nid=crypto.randomUUID();
   if(!name){alert('กรุณากรอกชื่อช่าง');return}
+  if(!tEdit&&!pin){alert('กรุณาตั้งรหัสผ่านให้ช่าง');return}
+  const ph=pin?await hp(tEdit||nid,pin):null;
   const ok=await commit(()=>{
     const L=D.meta.techList;
     if(L.some(t=>t.id!==tEdit&&cn(t.name)===cn(name)))throw new Error('มีช่างชื่อนี้อยู่แล้ว');
     const t=tEdit&&L.find(x=>x.id===tEdit);
-    if(t){if(t.name!==name)D.records.forEach(r=>{if(r.tech===t.name)r.tech=name});Object.assign(t,{name,phone,upd:Date.now()})}
-    else L.push({id:crypto.randomUUID(),name,phone,active:true,upd:Date.now()});
+    if(t){if(t.name!==name)D.records.forEach(r=>{if(r.tech===t.name)r.tech=name});Object.assign(t,{name,phone,upd:Date.now()});if(ph)t.pin=ph}
+    else L.push({id:nid,name,phone,pin:ph,active:true,upd:Date.now()});
   });
   if(ok)techReset();
 };
 $('#techList').onclick=e=>{
   const b=e.target.closest('[data-ta]');if(!b)return;const id=b.dataset.id,a=b.dataset.ta,t=(D.meta.techList||[]).find(x=>x.id===id);if(!t)return;
-  if(a==='edit'){tEdit=id;$('#tName').value=t.name;$('#tPhone').value=t.phone||'';$('#tSave').textContent='บันทึกการแก้ไข';$('#tCancel').style.display='';$('#tName').focus()}
+  if(a==='edit'){tEdit=id;$('#tName').value=t.name;$('#tPhone').value=t.phone||'';$('#tPin').value='';$('#tSave').textContent='บันทึกการแก้ไข';$('#tCancel').style.display='';$('#tName').focus()}
   else if(a==='tog')commit(()=>{const x=D.meta.techList.find(y=>y.id===id);if(x)x.active=x.active===false})
   else if(confirm('ลบช่างคนนี้ออกจากรายชื่อ? (ประวัติงานซ่อมยังอยู่ ถ้าแค่ไม่ให้เลือกแนะนำให้ "ปิดใช้งาน")'))commit(()=>{D.meta.techList=D.meta.techList.filter(y=>y.id!==id)});
 };
@@ -675,6 +695,46 @@ function syncTech(){
   if(!Array.isArray(m.techList))m.techList=(m.techs||[]).map(n=>({id:'t-'+n,name:n,phone:'',active:true}));
   m.techs=m.techList.filter(t=>t.active!==false).map(t=>t.name);
 }
+
+/* ---------- เข้าสู่ระบบช่าง ---------- */
+try{user=JSON.parse(sessionStorage.getItem('rl_user')||'null')}catch{}
+async function hp(id,pin){
+  const t=new TextEncoder().encode('rl|'+id+'|'+pin);
+  if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest('SHA-256',t);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+  let x=5381;for(const c of t)x=(x*33^c)>>>0;return 'x'+x;
+}
+function clearUI(){['#list','#cusList','#stats','#chips','#techList','#allList','#delList','#impList'].forEach(k=>$(k).innerHTML='')}
+function gateUI(){
+  if(ready()&&user&&!user.admin&&!(D.meta.techList||[]).some(t=>t.id===user.id&&t.active!==false&&t.pin)){user=null;sessionStorage.removeItem('rl_user')}
+  const ok=!!user;
+  $('#app').style.display=ok?'':'none';$('#gate').style.display=ok?'none':'';
+  $('#bOut').style.display=ok?'':'none';$('#who').textContent=ok?'👤 '+user.name:'';
+  if(ok)return;
+  const sel=$('#lgUser'),cur=sel.value,L=(D.meta.techList||[]).filter(t=>t.active!==false&&t.pin);
+  $('#lgMsg').textContent=!ready()?'กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ที่มุมขวาบนก่อน':L.length?'เลือกชื่อและใส่รหัสผ่านเพื่อดูงานซ่อมและข้อมูลลูกค้า':'ยังไม่มีช่างที่ตั้งรหัสผ่าน — เข้าด้วยบัญชีผู้ดูแล แล้วเพิ่มช่างที่หลังบ้าน';
+  sel.innerHTML=ready()?L.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('')+'<option value="__admin">🛡 ผู้ดูแลระบบ</option>':'';
+  if(cur&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
+}
+$('#lgGo').onclick=async()=>{
+  const id=$('#lgUser').value,pin=$('#lgPin').value,err=$('#lgErr');err.textContent='';
+  if(!ready()||!id){err.textContent='ยังไม่ได้เชื่อมต่อข้อมูล';return}
+  if(!pin){err.textContent='กรุณาใส่รหัสผ่าน';return}
+  if(id==='__admin'){
+    if(pin!==D.meta.pin){err.textContent='รหัสผ่านไม่ถูกต้อง';return}
+    user={admin:true,name:'ผู้ดูแลระบบ'};$('#pin').value=pin;$('#bLogin').click();
+  }else{
+    const t=(D.meta.techList||[]).find(x=>x.id===id);
+    if(!t||await hp(t.id,pin)!==t.pin){err.textContent='รหัสผ่านไม่ถูกต้อง';return}
+    user={id:t.id,name:t.name};
+  }
+  sessionStorage.setItem('rl_user',JSON.stringify(user));$('#lgPin').value='';render();
+};
+$('#lgPin').onkeydown=e=>{if(e.key==='Enter')$('#lgGo').click()};
+$('#bOut').onclick=()=>{
+  user=null;sessionStorage.removeItem('rl_user');admin=false;
+  $('#lock').style.display='';$('#admin').style.display='none';$('#pin').value='';
+  document.querySelectorAll('dialog[open]').forEach(d=>{if(d.id!=='gdlg')d.close()});render();
+};
 
 /* ---------- เริ่มต้น ---------- */
 (async()=>{
