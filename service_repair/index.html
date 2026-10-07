@@ -25,9 +25,14 @@
  .d{@apply text-red-600 dark:text-red-400}
  .s{@apply rounded-lg px-2.5 py-1 text-xs}
  .hb{@apply border-white/25 bg-white/15 text-white hover:bg-white/25}
- .tabs{@apply mb-4 inline-flex gap-1 rounded-2xl bg-white p-1.5 shadow-sm dark:bg-slate-900}
- .tabs button{@apply border-transparent bg-transparent shadow-none dark:bg-transparent}
- .tabs button.on{@apply bg-gradient-to-r from-indigo-600 to-sky-500 text-white dark:bg-transparent}
+ .tabs{@apply flex gap-1}
+ .dd{@apply relative}
+ .dd-menu{@apply absolute right-0 z-40 mt-2 hidden w-64 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-700 dark:bg-slate-800}
+ .dd.open .dd-menu{@apply block}
+ .dd-menu button{@apply flex w-full items-center gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-left shadow-none hover:translate-y-0 hover:bg-slate-100 hover:shadow-none dark:bg-transparent dark:hover:bg-slate-700}
+ .dd-sep{@apply my-1 h-px bg-slate-200 dark:bg-slate-700}
+ .tabs button{@apply whitespace-nowrap rounded-lg border-transparent bg-transparent px-3.5 py-2 text-slate-600 shadow-none hover:translate-y-0 hover:bg-slate-100 hover:shadow-none dark:bg-transparent dark:text-slate-300 dark:hover:bg-slate-800}
+ .tabs button.on{@apply bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300}
  .chips{@apply mb-4 flex flex-wrap gap-2}
  .chip{@apply rounded-full px-4 py-1.5 text-sm}
  .chip b{@apply ml-1.5 rounded-full bg-slate-100 px-2 text-xs text-indigo-600 dark:bg-slate-700 dark:text-indigo-300}
@@ -60,19 +65,34 @@
 }
 </style>
 </head>
-<body class="min-h-screen bg-slate-100 text-[15px] text-slate-800 dark:bg-slate-950 dark:text-slate-100">
-<header class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-sky-500 text-white shadow-lg">
- <div class="mx-auto flex max-w-[1600px] flex-wrap items-center gap-3 px-4 py-5 sm:px-6">
-  <div class="flex min-w-[240px] flex-1 items-center gap-3">
-   <div class="grid h-11 w-11 place-items-center rounded-2xl bg-white/20 text-2xl">🔧</div>
-   <div><h1 class="text-xl font-bold leading-tight">ระบบบันทึกงานซ่อม</h1><p class="text-xs opacity-80">แยกบันทึกรายเดือนอัตโนมัติ · ใช้งานพร้อมกันได้หลายเครื่อง</p></div>
+<body class="min-h-screen bg-slate-50 text-[15px] text-slate-800 dark:bg-slate-950 dark:text-slate-100">
+<header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
+ <div class="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 sm:px-6">
+  <div class="flex items-center gap-2.5">
+   <div class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-sky-500 text-lg text-white shadow">🔧</div>
+   <div class="leading-tight"><div class="font-bold">ระบบบันทึกงานซ่อม</div><div class="text-[11px] text-slate-500">Repair Log</div></div>
   </div>
-  <span id="st" class="rounded-full bg-white/20 px-3 py-1 text-xs">ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล</span>
-  <span id="who" class="text-sm font-medium"></span><button id="bOut" class="hb" style="display:none">ออกจากระบบ</button>
-  <button id="bRe" class="hb" style="display:none"></button>
-  <button id="bOpen" class="hb">📂 เปิดไฟล์ .json</button>
-  <button id="bNew" class="hb">➕ สร้างไฟล์ใหม่</button>
-  <button id="bGh" class="hb">☁ GitHub</button>
+  <nav id="nav" class="tabs order-last w-full overflow-x-auto sm:order-none sm:w-auto" style="display:none"><button class="on" data-t="a">📋 บันทึกซ่อม</button><button data-t="c">👥 ลูกค้า</button><button data-t="b">⚙️ หลังบ้าน</button></nav>
+  <span class="flex-1"></span>
+  <span id="st" class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล</span>
+  <button id="bRe" class="s" style="display:none"></button>
+  <div class="dd">
+   <button data-dd>☁ การเชื่อมต่อ ▾</button>
+   <div class="dd-menu">
+    <button id="bOpen">📂 เปิดไฟล์ข้อมูล .json</button>
+    <button id="bNew">➕ สร้างไฟล์ข้อมูลใหม่</button>
+    <div class="dd-sep"></div>
+    <button id="bGh">☁ ตั้งค่าออนไลน์ (GitHub)</button>
+   </div>
+  </div>
+  <div class="dd" id="uDd" style="display:none">
+   <button data-dd class="flex items-center gap-2 !px-2 !py-1.5"><span class="av !h-7 !w-7 text-sm" id="uAv"></span><span id="who" class="max-w-[120px] truncate"></span><span>▾</span></button>
+   <div class="dd-menu">
+    <button onclick="document.querySelector('.tabs [data-t=b]').click()">⚙️ ระบบหลังบ้าน</button>
+    <div class="dd-sep"></div>
+    <button id="bOut" class="d">🚪 ออกจากระบบ</button>
+   </div>
+  </div>
  </div>
 </header>
 <main class="mx-auto max-w-[1600px] px-4 py-5 sm:px-6">
@@ -91,15 +111,14 @@
   </div>
  </div>
  <div id="app" style="display:none">
- <div class="tabs"><button class="on" data-t="a">📋 บันทึกซ่อม</button><button data-t="c">👥 ลูกค้า</button><button data-t="b">⚙️ หลังบ้าน</button></div>
-
+ 
  <section id="ta">
   <div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4" id="stats"></div>
   <div class="chips" id="chips"></div>
   <div class="bar">
    <input id="q" class="max-w-sm" placeholder="🔍 ค้นหา ลูกค้า / SV / S/N / อาการ ...">
    <span class="flex-1"></span>
-   <button id="bImp">📥 นำเข้า Excel</button><button id="bExp">📤 ส่งออก Excel</button><button class="p" id="bAdd">+ เพิ่มรายการซ่อม</button>
+   <div class="dd"><button data-dd>🧰 เครื่องมือ ▾</button><div class="dd-menu"><button id="bImp">📥 นำเข้าจาก Excel</button><button id="bExp">📤 ส่งออกเป็น Excel</button></div></div><button class="p" id="bAdd">+ เพิ่มรายการซ่อม</button>
    <input type="file" id="fileX" accept=".xlsx,.xls,.csv,.json" style="display:none">
   </div>
   <div class="wrap" id="list"></div>
@@ -109,7 +128,7 @@
   <div class="bar">
    <input id="cq" class="max-w-sm" placeholder="🔍 ค้นหา ชื่อ / เบอร์ / LINE ...">
    <span class="flex-1"></span>
-   <button id="bCusSync">🔄 ดึงรายชื่อจากประวัติงานซ่อม</button><button class="p" id="bCusAdd">+ เพิ่มลูกค้า</button>
+   <div class="dd"><button data-dd>🧰 เครื่องมือ ▾</button><div class="dd-menu"><button id="bCusSync">🔄 ดึงรายชื่อจากประวัติงานซ่อม</button></div></div><button class="p" id="bCusAdd">+ เพิ่มลูกค้า</button>
   </div>
   <div class="wrap" id="cusList"></div>
  </section>
@@ -382,7 +401,7 @@ function custTable(){
 let lastSync=null;
 function stat(){const n=D.records.filter(r=>!r.del).length;
   $('#st').textContent=base+(lastSync?' · ซิงก์ล่าสุด '+lastSync.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'')+(user?' · '+n+' รายการ':'');
-  $('#st').className='rounded-full px-3 py-1 text-xs font-medium '+(G&&!G.token?'bg-amber-300 text-amber-950':'bg-emerald-300 text-emerald-950')}
+  $('#st').className='rounded-full px-3 py-1 text-xs font-medium '+(G&&!G.token?'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300':'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300')}
 function render(){
   gateUI();if(base)stat();if(!user){clearUI();return}
   const live=D.records.filter(r=>!r.del);
@@ -613,7 +632,7 @@ $('#bGh').onclick=()=>{const c=G||gcfg()||{};
   $('#gOwner').value=c.owner||'';$('#gRepo').value=c.repo||'';
   $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gOff').style.display=G?'':'none';$('#gdlg').showModal()};
 $('#gCancel').onclick=()=>$('#gdlg').close();
-$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';$('#st').className='rounded-full bg-white/20 px-3 py-1 text-xs';render();$('#gdlg').close()};
+$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';$('#st').className='rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300';render();$('#gdlg').close()};
 function readCfg(){
   const cfg={owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:(G||gcfg()||{}).branch||'',path:$('#gPath').value.trim().replace(/^\/+/,''),token:$('#gTok').value.trim()};
   if(!cfg.owner||!cfg.repo||!cfg.path){alert('กรุณากรอก owner, repository และไฟล์ข้อมูล');return null}
@@ -708,7 +727,7 @@ function gateUI(){
   if(ready()&&user&&!user.admin&&!(D.meta.techList||[]).some(t=>t.id===user.id&&t.active!==false&&t.pin)){user=null;sessionStorage.removeItem('rl_user')}
   const ok=!!user;
   $('#app').style.display=ok?'':'none';$('#gate').style.display=ok?'none':'';
-  $('#bOut').style.display=ok?'':'none';$('#who').textContent=ok?'👤 '+user.name:'';
+  $('#nav').style.display=$('#uDd').style.display=ok?'':'none';$('#who').textContent=ok?user.name:'';$('#uAv').textContent=ok?[...user.name][0]:'';
   if(ok)return;
   const sel=$('#lgUser'),cur=sel.value,L=(D.meta.techList||[]).filter(t=>t.active!==false&&t.pin);
   $('#lgMsg').textContent=!ready()?'กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ที่มุมขวาบนก่อน':L.length?'เลือกชื่อและใส่รหัสผ่านเพื่อดูงานซ่อมและข้อมูลลูกค้า':'ยังไม่มีช่างที่ตั้งรหัสผ่าน — เข้าด้วยบัญชีผู้ดูแล แล้วเพิ่มช่างที่หลังบ้าน';
@@ -735,6 +754,13 @@ $('#bOut').onclick=()=>{
   $('#lock').style.display='';$('#admin').style.display='none';$('#pin').value='';
   document.querySelectorAll('dialog[open]').forEach(d=>{if(d.id!=='gdlg')d.close()});render();
 };
+
+/* ---------- dropdown ---------- */
+document.addEventListener('click',e=>{
+  const tg=e.target.closest('[data-dd]'),dd=tg&&tg.closest('.dd');
+  document.querySelectorAll('.dd.open').forEach(d=>{if(d!==dd)d.classList.remove('open')});
+  if(dd)dd.classList.toggle('open');
+});
 
 /* ---------- เริ่มต้น ---------- */
 (async()=>{
