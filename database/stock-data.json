@@ -11,6 +11,12 @@
    "name": "cctv",
    "icon": "video",
    "items": []
+  },
+  {
+   "id": "5rq0zgzr",
+   "name": "network",
+   "icon": "wifi",
+   "items": []
   }
  ],
  "log": [],
