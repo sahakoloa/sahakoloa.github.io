@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <meta name="description" content="ศูนย์รวมบริการภายในองค์กร เลือกเข้าใช้งานระบบขอใช้บริการและระบบแจ้งซ่อมได้จากที่เดียว">
+  <title>ศูนย์บริการออนไลน์ | สหโคโล</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172b32;
+      --muted: #66777b;
+      --paper: #f5f7f4;
+      --white: #fff;
+      --line: #e5ebe6;
+      --green: #147d68;
+      --green-dark: #0c5c4d;
+      --mint: #e2f2e9;
+      --coral: #df795d;
+      --shadow: 0 20px 60px rgba(31, 67, 56, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Noto Sans Thai', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar { height: 84px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: inline-flex; gap: 12px; align-items: center; text-decoration: none; }
+    .brand-mark { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; color: white; background: var(--green); font-size: 18px; box-shadow: 0 8px 18px rgba(20,125,104,.2); }
+    .brand-name { font-size: 15px; line-height: 1.2; font-weight: 800; letter-spacing: -.02em; }
+    .brand-caption { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 500; }
+    .top-note { display: flex; align-items: center; gap: 8px; color: #557269; font-size: 12px; font-weight: 600; }
+    .top-note i { color: var(--green); }
+    main { padding: 34px 0 68px; }
+    .hero { position: relative; overflow: hidden; min-height: 354px; padding: 54px 60px; border-radius: 28px; color: white; background: #123f39; box-shadow: var(--shadow); }
+    .hero:before, .hero:after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; }
+    .hero:before { width: 440px; height: 440px; right: -35px; top: -170px; border: 1px solid rgba(222,244,232,.18); box-shadow: 0 0 0 38px rgba(222,244,232,.035), 0 0 0 78px rgba(222,244,232,.025); }
+    .hero:after { width: 310px; height: 310px; right: 130px; bottom: -255px; background: rgba(223,121,93,.8); filter: blur(1px); }
+    .hero-content { position: relative; z-index: 1; max-width: 630px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 99px; color: #d6eee3; background: rgba(255,255,255,.07); font-size: 11px; font-weight: 600; letter-spacing: .02em; }
+    h1 { margin: 0; font-size: clamp(30px, 4vw, 45px); line-height: 1.35; letter-spacing: -.04em; font-weight: 800; }
+    .hero p { max-width: 535px; margin: 14px 0 0; color: #c5ddd5; font-size: 15px; line-height: 1.9; }
+    .hero-decoration { position: absolute; right: 80px; top: 80px; width: 192px; height: 192px; border-radius: 32px; transform: rotate(9deg); display: grid; place-items: center; color: rgba(231,247,238,.88); background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.13); }
+    .hero-decoration i { font-size: 66px; transform: rotate(-9deg); }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 42px 0 18px; }
+    .section-heading h2 { margin: 0; font-size: 20px; line-height: 1.5; font-weight: 800; letter-spacing: -.02em; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .service-card { display: flex; flex-direction: column; min-height: 246px; padding: 26px; border: 1px solid var(--line); border-radius: 20px; text-decoration: none; background: var(--white); box-shadow: 0 8px 28px rgba(27,55,47,.035); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #bdd9cb; }
+    .service-card:focus-visible { outline: 3px solid #76b99e; outline-offset: 3px; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .service-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 17px; font-size: 21px; }
+    .service-icon.request { color: #17745f; background: #e4f4eb; }
+    .service-icon.repair { color: #bd654b; background: #fff0e9; }
+    .arrow { color: #93a39e; font-size: 15px; transition: transform .2s ease, color .2s ease; }
+    .service-card:hover .arrow { color: var(--green); transform: translate(3px,-3px); }
+    .service-card h3 { margin: 20px 0 7px; font-size: 18px; font-weight: 800; }
+    .service-card p { max-width: 440px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.85; }
+    .card-action { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 21px; color: var(--green-dark); font-size: 12px; font-weight: 700; }
+    .info-strip { display: flex; align-items: center; gap: 14px; margin-top: 22px; padding: 17px 20px; border: 1px solid #e5ebe6; border-radius: 15px; background: rgba(255,255,255,.58); }
+    .info-icon { flex: 0 0 34px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: #5b816f; background: var(--mint); }
+    .info-strip p { margin: 0; color: #62736f; font-size: 12px; line-height: 1.7; }
+    footer { display: flex; justify-content: space-between; gap: 16px; padding: 22px 0 30px; border-top: 1px solid #e4eae5; color: #82908c; font-size: 11px; }
+    footer .footer-brand { color: #5e716b; font-weight: 700; }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 32px, 560px); }
+      .topbar { height: 72px; }
+      .top-note { font-size: 0; gap: 0; width: 34px; height: 34px; justify-content: center; border-radius: 50%; background: #e8f1eb; }
+      main { padding: 20px 0 44px; }
+      .hero { min-height: 310px; padding: 38px 28px; border-radius: 23px; }
+      .hero-decoration { width: 112px; height: 112px; top: auto; bottom: 22px; right: 20px; border-radius: 24px; opacity: .6; }
+      .hero-decoration i { font-size: 42px; }
+      .hero-content { max-width: 100%; }
+      .hero p { max-width: 380px; font-size: 13px; }
+      .hero:before { right: -185px; }
+      .section-heading { align-items: flex-start; flex-direction: column; margin-top: 34px; }
+      .service-grid { grid-template-columns: 1fr; gap: 13px; }
+      .service-card { min-height: 220px; padding: 22px; }
+      footer { flex-direction: column; gap: 5px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#top" aria-label="ศูนย์บริการออนไลน์ สหโคโล">
+      <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
+      <span><span class="brand-name">SAHAKOL SERVICE</span><span class="brand-caption">ศูนย์บริการออนไลน์</span></span>
+    </a>
+    <div class="top-note"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> ใช้งานง่าย ครบจบในที่เดียว</div>
+  </header>
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="eyebrow"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> SERVICE PORTAL</div>
+        <h1 id="hero-title">ทุกบริการที่คุณต้องการ<br>เริ่มต้นได้ที่นี่</h1>
+        <p>เลือกใช้บริการออนไลน์ได้สะดวกในหน้าเดียว ทั้งการส่งคำขอใช้บริการและการแจ้งซ่อม ติดตามงานได้ง่าย ช่วยให้ทุกวันทำงานราบรื่นยิ่งขึ้น</p>
+      </div>
+      <div class="hero-decoration" aria-hidden="true"><i class="fa-solid fa-headset"></i></div>
+    </section>
+
+    <section aria-labelledby="services-title">
+      <div class="section-heading">
+        <div><h2 id="services-title">เลือกบริการ</h2><p>เลือกหัวข้อที่ต้องการเพื่อเข้าสู่ระบบบริการ</p></div>
+      </div>
+      <div class="service-grid">
+        <a class="service-card" href="https://sahakoloa.github.io/service_requisition/index.html" target="_blank" rel="noopener noreferrer" aria-label="เปิดระบบขอใช้บริการในแท็บใหม่">
+          <div class="card-top"><span class="service-icon request" aria-hidden="true"><i class="fa-solid fa-clipboard-list"></i></span><i class="fa-solid fa-arrow-up-right-from-square arrow" aria-hidden="true"></i></div>
+          <h3>ขอใช้บริการ</h3>
+          <p>ส่งคำขอใช้บริการและแจ้งความต้องการของคุณให้ทีมงานรับเรื่องและดำเนินการ</p>
+          <span class="card-action">เข้าสู่ระบบขอใช้บริการ <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="service-card" href="https://sahakoloa.github.io/service_repair/index.html" target="_blank" rel="noopener noreferrer" aria-label="เปิดระบบแจ้งซ่อมในแท็บใหม่">
+          <div class="card-top"><span class="service-icon repair" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></span><i class="fa-solid fa-arrow-up-right-from-square arrow" aria-hidden="true"></i></div>
+          <h3>แจ้งซ่อม</h3>
+          <p>แจ้งปัญหาอุปกรณ์หรือพื้นที่ใช้งาน เพื่อให้ทีมช่างเข้าตรวจสอบและแก้ไข</p>
+          <span class="card-action">เข้าสู่ระบบแจ้งซ่อม <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+      </div>
+      <div class="info-strip"><span class="info-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></span><p>หากต้องการความช่วยเหลือเพิ่มเติม โปรดเตรียมรายละเอียดสถานที่และข้อมูลติดต่อไว้ เพื่อให้ทีมงานประสานงานได้รวดเร็วยิ่งขึ้น</p></div>
+    </section>
+  </main>
+  <footer class="shell"><span class="footer-brand">SAHAKOL SERVICE</span><span>© 2026 ศูนย์บริการออนไลน์</span></footer>
+</body>
+</html>
