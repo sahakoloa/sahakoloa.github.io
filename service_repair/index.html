@@ -430,28 +430,28 @@ function partRow(p={}){
 }
 $('#bPart').onclick=()=>partRow();
 function showCus(){
-  const box=$('#cusHint'),v=$('#fCus').value.trim().toLowerCase();
-  if(editId||!v){box.style.display='none';return}
+  const box=$('#cusHint'),v=$('#fCus').value.trim().toLowerCase(),vp=$('#fPhone').value.replace(/[\s-]/g,'');
+  if(editId||(!v&&!vp)){box.style.display='none';return}
   const m=new Map();
-  D.customers.filter(c=>!c.del).forEach(c=>m.set(c.name.trim(),[]));
-  D.records.filter(r=>!r.del&&r.cus).forEach(r=>{const k=r.cus.trim();if(!m.has(k))m.set(k,[]);m.get(k).push(r)});
-  const names=[...m.keys()],ex=names.find(n=>n.toLowerCase()===v);let h='';
+  D.customers.filter(c=>!c.del).forEach(c=>m.set(c.name.trim(),{n:c.name.trim(),c,rs:[]}));
+  D.records.filter(r=>!r.del&&r.cus).forEach(r=>{const k=r.cus.trim();if(!m.has(k))m.set(k,{n:k,c:null,rs:[]});m.get(k).rs.push(r)});
+  const all=[...m.values()],ex=v&&all.find(o=>o.n.toLowerCase()===v);let h='';
   if(ex){
-    const c=custByName(ex),rs=m.get(ex).sort((a,b)=>(b.date||'').localeCompare(a.date||'')),pf=$('#fPhone'),lf=$('#fLine');
+    const c=ex.c,rs=ex.rs.sort((a,b)=>(b.date||'').localeCompare(a.date||'')),pf=$('#fPhone'),lf=$('#fLine');
     if(c){if(!pf.value||pf.value===AF.p){pf.value=c.phone||'';AF.p=pf.value}if(!lf.value||lf.value===AF.l){lf.value=c.line||'';AF.l=lf.value}}
-    h=`<div class="hint"><b>📜 ${esc(ex)}</b>`+(c&&(c.phone||c.line)?` · 📞 ${esc(c.phone)} · <span class="line">LINE ${esc(c.line)}</span>`:'')+
+    h=`<div class="hint"><b>📜 ${esc(ex.n)}</b>`+(c&&(c.phone||c.line)?` · 📞 ${esc(c.phone)} · <span class="line">LINE ${esc(c.line)}</span>`:'')+
       ` · ${rs.length?`ซ่อมมาแล้ว ${rs.length} ครั้ง (ล่าสุด ${fdate(rs[0].date)})`:'ลูกค้าในฐานข้อมูล ยังไม่มีประวัติซ่อม'}`+
       rs.slice(0,5).map(r=>`<div class="hrow"><span>${fdate(r.date)} · ${esc(r.type)} ${esc(r.brand)} ${esc(r.sn)} · ${esc(r.sym)}</span>${(r.type||r.sn)?`<button class="s" type="button" data-use="${r.id}">ใช้เครื่องนี้</button>`:''}</div>`).join('')+'</div>';
   }else{
-    const ms=names.filter(n=>n.toLowerCase().includes(v)).slice(0,8);
-    if(ms.length)h='<div class="hint">ลูกค้าในระบบ: '+ms.map(n=>`<button class="s" type="button" data-cus="${esc(n)}">${esc(n)} · ${m.get(n).length} ครั้ง</button>`).join(' ')+'</div>';
+    const ms=all.filter(o=>(v&&o.n.toLowerCase().includes(v))||(vp&&((o.c&&o.c.phone)||'').replace(/[\s-]/g,'').includes(vp))).slice(0,8);
+    if(ms.length)h='<div class="hint"><div class="text-xs text-slate-500">ลูกค้าเก่าในระบบ — แตะเพื่อดึงชื่อ เบอร์โทร และ LINE</div>'+ms.map(o=>`<div class="hrow cursor-pointer rounded-lg px-2 hover:bg-indigo-50 dark:hover:bg-slate-700" data-cus="${esc(o.n)}"><span><b>${esc(o.n)}</b>${o.c&&o.c.phone?' · 📞 '+esc(o.c.phone):''}${o.c&&o.c.line?' · LINE '+esc(o.c.line):''}</span><span class="tag">${o.rs.length} ครั้ง</span></div>`).join('')+'</div>';
   }
   box.innerHTML=h;box.style.display=h?'':'none';
 }
-$('#fCus').oninput=showCus;
+$('#fCus').oninput=showCus;$('#fPhone').oninput=showCus;
 $('#cusHint').onclick=e=>{
-  const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.cus!=null){$('#fCus').value=b.dataset.cus;showCus()}
+  const b=e.target.closest('[data-cus],[data-use]');if(!b)return;
+  if(b.dataset.cus!=null){const n=b.dataset.cus,c=custByName(n)||{};$('#fCus').value=n;$('#fPhone').value=AF.p=c.phone||'';$('#fLine').value=AF.l=c.line||'';showCus()}
   if(b.dataset.use){const r=D.records.find(x=>x.id===b.dataset.use);if(r){fillCat(r.type||'',r.brand||'');$('#fSn').value=r.sn||''}}
 };
 function openForm(id){
