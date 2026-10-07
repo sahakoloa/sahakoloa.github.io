@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ระบบบันทึกงานซ่อม</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Sarabun','Tahoma','sans-serif']}}}}</script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Noto Sans Thai','Tahoma','sans-serif']}}}}</script>
 <style type="text/tailwindcss">
 @layer base{
  input,select,textarea{@apply w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-900}
@@ -64,33 +65,48 @@
  .empty{@apply p-12 text-center text-slate-400}
 }
 </style>
+<style>
+#printArea{display:none}
+@media print{
+@page{size:A4 landscape;margin:12mm}
+body>*:not(#printArea){display:none!important}
+#printArea{display:block!important;color:#000!important;background:#fff!important;font-size:12px}
+#printArea h2{font-size:18px;font-weight:700;margin-bottom:4px}
+#printArea table{width:100%;border-collapse:collapse;margin-top:8px}
+#printArea th,#printArea td{border:1px solid #555;padding:4px 6px;position:static;background:#fff!important;color:#000!important;text-transform:none}
+#printArea th{background:#eee!important;font-weight:700}
+#printArea .r{text-align:right}
+#printArea .tot td{font-weight:700}
+#printArea .sign{display:flex;justify-content:space-around;margin-top:48px}
+#printArea .small{font-size:10px;color:#555;margin-top:24px}}
+</style>
 </head>
 <body class="min-h-screen bg-slate-50 text-[15px] text-slate-800 dark:bg-slate-950 dark:text-slate-100">
 <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
  <div class="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 sm:px-6">
   <div class="flex items-center gap-2.5">
-   <div class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-sky-500 text-lg text-white shadow">🔧</div>
+   <div class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-sky-500 text-lg text-white shadow"><i class="fa-solid fa-screwdriver-wrench"></i></div>
    <div class="leading-tight"><div class="font-bold">ระบบบันทึกงานซ่อม</div><div class="text-[11px] text-slate-500">Repair Log</div></div>
   </div>
-  <nav id="nav" class="tabs order-last w-full overflow-x-auto sm:order-none sm:w-auto" style="display:none"><button class="on" data-t="a">📋 บันทึกซ่อม</button><button data-t="c">👥 ลูกค้า</button><button data-t="b">⚙️ หลังบ้าน</button></nav>
+  <nav id="nav" class="tabs order-last w-full overflow-x-auto sm:order-none sm:w-auto" style="display:none"><button class="on" data-t="a"><i class="fa-solid fa-clipboard-list"></i> บันทึกซ่อม</button><button data-t="c"><i class="fa-solid fa-users"></i> ลูกค้า</button><button data-t="b"><i class="fa-solid fa-gear"></i> หลังบ้าน</button></nav>
   <span class="flex-1"></span>
   <span id="st" class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล</span>
   <button id="bRe" class="s" style="display:none"></button>
   <div class="dd">
-   <button data-dd>☁ การเชื่อมต่อ ▾</button>
+   <button data-dd><i class="fa-solid fa-cloud"></i> การเชื่อมต่อ <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
    <div class="dd-menu">
-    <button id="bOpen">📂 เปิดไฟล์ข้อมูล .json</button>
-    <button id="bNew">➕ สร้างไฟล์ข้อมูลใหม่</button>
+    <button id="bOpen"><i class="fa-solid fa-folder-open"></i> เปิดไฟล์ข้อมูล .json</button>
+    <button id="bNew"><i class="fa-solid fa-file-circle-plus"></i> สร้างไฟล์ข้อมูลใหม่</button>
     <div class="dd-sep"></div>
-    <button id="bGh">☁ ตั้งค่าออนไลน์ (GitHub)</button>
+    <button id="bGh"><i class="fa-brands fa-github"></i> ตั้งค่าออนไลน์ (GitHub)</button>
    </div>
   </div>
   <div class="dd" id="uDd" style="display:none">
-   <button data-dd class="flex items-center gap-2 !px-2 !py-1.5"><span class="av !h-7 !w-7 text-sm" id="uAv"></span><span id="who" class="max-w-[120px] truncate"></span><span>▾</span></button>
+   <button data-dd class="flex items-center gap-2 !px-2 !py-1.5"><span class="av !h-7 !w-7 text-sm" id="uAv"></span><span id="who" class="max-w-[120px] truncate"></span><i class="fa-solid fa-chevron-down text-[10px]"></i></button>
    <div class="dd-menu">
-    <button onclick="document.querySelector('.tabs [data-t=b]').click()">⚙️ ระบบหลังบ้าน</button>
+    <button class="adm-only" onclick="document.querySelector('.tabs [data-t=b]').click()"><i class="fa-solid fa-gear"></i> ระบบหลังบ้าน</button>
     <div class="dd-sep"></div>
-    <button id="bOut" class="d">🚪 ออกจากระบบ</button>
+    <button id="bOut" class="d"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
    </div>
   </div>
  </div>
@@ -99,12 +115,12 @@
  <div id="warn" class="card text-red-600" style="display:none"></div>
  <div id="gate" class="mx-auto mt-8 max-w-sm">
   <div class="card text-center">
-   <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-500 text-3xl">🔐</div>
+   <div class="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-indigo-600 to-sky-500 text-3xl"><i class="fa-solid fa-lock"></i></div>
    <h2 class="text-xl font-bold">เข้าสู่ระบบช่าง</h2>
    <p id="lgMsg" class="mb-4 mt-1 text-sm text-slate-500"></p>
    <div class="space-y-3 text-left">
-    <div><label>ช่างผู้ซ่อม</label><select id="lgUser"></select></div>
-    <div><label>รหัสผ่าน</label><input type="password" id="lgPin" autocomplete="current-password"></div>
+    <div><label>Username</label><input id="lgUser" autocomplete="username"></div>
+    <div><label>Password</label><input type="password" id="lgPin" autocomplete="current-password"></div>
     <p id="lgErr" class="text-sm text-red-600"></p>
     <button class="p w-full" id="lgGo">เข้าสู่ระบบ</button>
    </div>
@@ -116,9 +132,9 @@
   <div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4" id="stats"></div>
   <div class="chips" id="chips"></div>
   <div class="bar">
-   <input id="q" class="max-w-sm" placeholder="🔍 ค้นหา ลูกค้า / SV / S/N / อาการ ...">
+   <input id="q" class="max-w-sm" placeholder="ค้นหา ลูกค้า / SV / S/N / อาการ ...">
    <span class="flex-1"></span>
-   <div class="dd"><button data-dd>🧰 เครื่องมือ ▾</button><div class="dd-menu"><button id="bImp">📥 นำเข้าจาก Excel</button><button id="bExp">📤 ส่งออกเป็น Excel</button></div></div><button class="p" id="bAdd">+ เพิ่มรายการซ่อม</button>
+   <div class="dd"><button data-dd><i class="fa-solid fa-toolbox"></i> เครื่องมือ <i class="fa-solid fa-chevron-down text-[10px]"></i></button><div class="dd-menu"><button id="bImp"><i class="fa-solid fa-file-import"></i> นำเข้าจาก Excel</button><button id="bExp"><i class="fa-solid fa-file-export"></i> ส่งออกเป็น Excel</button></div></div><button class="p" id="bAdd"><i class="fa-solid fa-plus"></i> เพิ่มรายการซ่อม</button>
    <input type="file" id="fileX" accept=".xlsx,.xls,.csv,.json" style="display:none">
   </div>
   <div class="wrap" id="list"></div>
@@ -126,46 +142,68 @@
 
  <section id="tc" style="display:none">
   <div class="bar">
-   <input id="cq" class="max-w-sm" placeholder="🔍 ค้นหา ชื่อ / เบอร์ / LINE ...">
+   <input id="cq" class="max-w-sm" placeholder="ค้นหา ชื่อ / เบอร์ / LINE ...">
    <span class="flex-1"></span>
-   <div class="dd"><button data-dd>🧰 เครื่องมือ ▾</button><div class="dd-menu"><button id="bCusSync">🔄 ดึงรายชื่อจากประวัติงานซ่อม</button></div></div><button class="p" id="bCusAdd">+ เพิ่มลูกค้า</button>
+   <div class="dd"><button data-dd><i class="fa-solid fa-toolbox"></i> เครื่องมือ <i class="fa-solid fa-chevron-down text-[10px]"></i></button><div class="dd-menu"><button id="bCusSync"><i class="fa-solid fa-rotate"></i> ดึงรายชื่อจากประวัติงานซ่อม</button></div></div><button class="p" id="bCusAdd"><i class="fa-solid fa-plus"></i> เพิ่มลูกค้า</button>
   </div>
   <div class="wrap" id="cusList"></div>
  </section>
 
  <section id="tb" style="display:none">
   <div id="lock" class="card max-w-sm">
-   <h3>🔒 เข้าสู่ระบบหลังบ้าน</h3>
+   <h3><i class="fa-solid fa-lock"></i> เข้าสู่ระบบหลังบ้าน</h3>
    <label>รหัสผ่านผู้ดูแล</label><input type="password" id="pin" class="mb-4"><button class="p" id="bLogin">เข้าสู่ระบบ</button>
   </div>
   <div id="admin" style="display:none">
+   <div id="admStats" class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4"></div>
    <div class="card">
-    <h3>👷 จัดการช่างผู้ซ่อม</h3>
-    <div class="grid items-end gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+    <h3><i class="fa-solid fa-user-gear"></i> จัดการช่างผู้ซ่อม</h3>
+    <div class="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto]">
      <div><label>ชื่อช่าง</label><input id="tName" placeholder="เช่น ช่างเอ"></div>
      <div><label>เบอร์โทร</label><input id="tPhone" inputmode="tel"></div>
-     <div><label>รหัสผ่านเข้าระบบ</label><input id="tPin" type="password" autocomplete="new-password" placeholder="เว้นว่าง = ไม่เปลี่ยน"></div>
+     <div><label>Username</label><input id="tUser" autocomplete="off" placeholder="เว้นว่าง = ไม่เปลี่ยน"></div>
+     <div><label>Password</label><input id="tPin" type="password" autocomplete="new-password" placeholder="เว้นว่าง = ไม่เปลี่ยน"></div>
      <div class="flex gap-2"><button id="tCancel" style="display:none">ยกเลิก</button><button id="tSave" class="p">+ เพิ่มช่าง</button></div>
     </div>
     <div class="wrap mt-4" id="techList"></div>
    </div>
    <div class="grid gap-4 lg:grid-cols-2">
     <div class="card">
-     <h3>⚙️ ตั้งค่า</h3>
-     <div class="g" style="grid-template-columns:1fr">
-      <div><label>หมวดหมู่เครื่อง และยี่ห้อ (บรรทัดละ 1 หมวด · รูปแบบ หมวด: ยี่ห้อ1, ยี่ห้อ2)</label><textarea id="sType" rows="9"></textarea></div>
-      <div><label>เปลี่ยนรหัสผ่านผู้ดูแล</label><input id="sPin"></div>
-     </div>
-     <div class="mt-4 flex flex-wrap gap-2"><button class="p" id="bSet">บันทึกการตั้งค่า</button><button id="bTpl">⬇ แม่แบบ Excel</button><button id="bBak">⬇ สำรองข้อมูล .json</button></div>
+     <h3><i class="fa-solid fa-user-shield"></i> บัญชีผู้ดูแลระบบ</h3>
+     <p id="admWarn" class="mb-3 hidden rounded-lg bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-300"><i class="fa-solid fa-triangle-exclamation"></i> ยังใช้บัญชีเริ่มต้น (admin / รหัสเดิม) กรุณาตั้ง Username และ Password ใหม่</p>
+     <div class="grid gap-3 sm:grid-cols-2"><div><label>Username ใหม่</label><input id="aUser" autocomplete="off"></div><div><label>Password ใหม่</label><input id="aPass" type="password" autocomplete="new-password"></div></div>
+     <p class="mt-2 text-xs text-slate-500">Username และ Password ถูกเข้ารหัสก่อนเก็บ (SHA-256 / PBKDF2) ดูย้อนหลังไม่ได้ ถ้าลืมให้ตั้งใหม่</p>
+     <button class="p mt-3" id="aSave"><i class="fa-solid fa-floppy-disk"></i> บันทึกบัญชีผู้ดูแล</button>
     </div>
     <div class="card">
-     <h3>📥 ข้อมูลที่นำเข้าจาก Excel</h3>
+     <h3><i class="fa-solid fa-layer-group"></i> หมวดหมู่เครื่องและยี่ห้อ</h3>
+     <label>บรรทัดละ 1 หมวด · รูปแบบ หมวด: ยี่ห้อ1, ยี่ห้อ2</label><textarea id="sType" rows="9"></textarea>
+     <button class="p mt-3" id="bSet"><i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่า</button>
+    </div>
+    <div class="card">
+     <h3><i class="fa-solid fa-database"></i> สำรองและกู้คืนข้อมูล</h3>
+     <p id="bakInfo" class="mb-3 text-sm text-slate-500"></p>
+     <div class="flex flex-wrap gap-2">
+      <button class="p" id="bBak"><i class="fa-solid fa-download"></i> ดาวน์โหลดสำรองข้อมูล</button>
+      <button id="bRest"><i class="fa-solid fa-upload"></i> กู้คืนจากไฟล์สำรอง</button>
+      <button id="bTpl"><i class="fa-solid fa-file-excel"></i> แม่แบบ Excel</button>
+      <input type="file" id="fileRest" accept=".json" style="display:none">
+     </div>
+     <p class="mt-3 text-xs text-slate-500">ก่อนกู้คืน ระบบจะดาวน์โหลดสำรองข้อมูลปัจจุบันให้อัตโนมัติ</p>
+    </div>
+    <div class="card">
+     <h3><i class="fa-solid fa-print"></i> รายงานการซ่อมที่ใช้อะไหล่เก่า ประจำเดือน</h3>
+     <div class="flex flex-wrap items-end gap-2"><div><label>เดือน</label><input type="month" id="rpMonth"></div><button class="p" id="bRpt"><i class="fa-solid fa-print"></i> พิมพ์รายงาน</button></div>
+     <p class="mt-2 text-xs text-slate-500">แสดงเฉพาะงานที่บันทึกอะไหล่เก่าไว้ พร้อมสรุปจำนวนงาน รายการ และมูลค่ารวม</p>
+    </div>
+    <div class="card lg:col-span-2">
+     <h3><i class="fa-solid fa-file-import"></i> ข้อมูลที่นำเข้าจาก Excel</h3>
      <div class="wrap" id="impList"></div>
-     <button class="d mt-4" id="bImpAll">🗑 ลบข้อมูลที่นำเข้าทั้งหมด</button>
+     <button class="d mt-4" id="bImpAll"><i class="fa-solid fa-trash"></i> ลบข้อมูลที่นำเข้าทั้งหมด</button>
     </div>
    </div>
    <div class="card"><h3>จัดการรายการ (เดือนที่เลือก)</h3><div class="wrap" id="allList"></div></div>
-   <div class="card"><h3>🗑 รายการที่ลบ (กู้คืนได้)</h3><div class="wrap" id="delList"></div></div>
+   <div class="card"><h3><i class="fa-solid fa-trash-can"></i> รายการที่ลบ (กู้คืนได้)</h3><div class="wrap" id="delList"></div></div>
   </div>
  </section>
  </div>
@@ -182,6 +220,7 @@
   <div><label>เลขที่ SV.</label><input id="fSv"></div>
   <div><label>หมวดหมู่เครื่อง</label><select id="fType"></select></div>
   <div><label>ยี่ห้อ</label><select id="fBrand"></select><input id="fBrandO" class="mt-2" placeholder="ระบุยี่ห้อ" style="display:none"></div>
+  <div><label>รุ่น (Model)</label><input id="fModel" placeholder="เช่น LaserJet Pro M404dn"></div>
   <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
   <div><label>ช่างผู้ซ่อม</label><select id="fTech"></select></div>
   <div class="full"><label>อาการที่ส่งซ่อม</label><textarea id="fSym" rows="2"></textarea></div>
@@ -198,13 +237,13 @@
  <div class="mt-5 flex justify-end gap-2"><button id="bCancel">ยกเลิก</button><button class="p" id="bSave">บันทึก</button></div>
 </dialog>
 <dialog id="gdlg" style="width:min(440px,96vw)">
- <h3 class="mb-4 text-lg font-semibold">☁ ตั้งค่าออนไลน์ (GitHub)</h3>
+ <h3 class="mb-4 text-lg font-semibold"><i class="fa-brands fa-github"></i> ตั้งค่าออนไลน์ (GitHub)</h3>
  <div class="grid gap-3.5">
   <div><label>เจ้าของ (owner)</label><input id="gOwner"></div>
   <div><label>ชื่อ repository</label><input id="gRepo"></div>
   <div><label>ไฟล์ข้อมูล</label><input id="gPath"></div>
   <div><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input type="password" id="gTok" placeholder="github_pat_...">
-   <p class="mt-1.5 text-xs leading-relaxed text-slate-400">ใช้ Fine-grained token สิทธิ์ Contents: Read and write เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br>⚠ repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</p></div>
+   <p class="mt-1.5 text-xs leading-relaxed text-slate-400">ใช้ Fine-grained token สิทธิ์ Contents: Read and write เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br><i class="fa-solid fa-triangle-exclamation"></i> repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</p></div>
  </div>
  <div class="mt-5 flex items-center justify-end gap-2"><button class="d mr-auto" id="gOff" style="display:none">ยกเลิกการเชื่อมต่อ</button><button id="gCancel">ยกเลิก</button><button class="p" id="gGo">ตกลง</button></div>
 </dialog>
@@ -219,6 +258,7 @@
 </dialog>
 <datalist id="dlType"></datalist>
 
+<div id="printArea"></div>
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -273,7 +313,7 @@ async function gput(text){
 let CONV=false,base='',AF={p:'',l:''},CI={};
 const cn=n=>String(n||'').trim().toLowerCase();
 const custByName=n=>D.customers.find(c=>!c.del&&cn(c.name)===cn(n));
-const ci=n=>{const c=CI[cn(n)];return c&&(c.phone||c.line)?`<div class="sub">${c.phone?'📞 '+esc(c.phone):''}${c.line?' <span class="line">LINE '+esc(c.line)+'</span>':''}</div>`:''};
+const ci=n=>{const c=CI[cn(n)];return c&&(c.phone||c.line)?`<div class="sub">${c.phone?'<i class="fa-solid fa-phone"></i> '+esc(c.phone):''}${c.line?' <span class="line">LINE '+esc(c.line)+'</span>':''}</div>`:''};
 function upCus(name,phone,line){
   if(!name)return;const c=D.customers.find(x=>cn(x.name)===cn(name));
   if(!c)D.customers.push({id:crypto.randomUUID(),name,phone:phone||'',line:line||'',upd:Date.now()});
@@ -381,12 +421,12 @@ setInterval(async()=>{
 /* ---------- แสดงผล ---------- */
 const pcol=(r,k)=>(r.parts||[]).map(p=>`<div class="pt">${p[k]?esc(p[k])+(p[k+'p']?` <i>${fmt(p[k+'p'])}</i>`:''):'&nbsp;'}</div>`).join('');
 function table(rows,mode){
-  if(!rows.length)return '<div class="empty">📭 ยังไม่มีรายการ</div>';
+  if(!rows.length)return '<div class="empty"><i class="fa-solid fa-folder-open"></i> ยังไม่มีรายการ</div>';
   const act=r=>mode==='del'
     ?`<button class="s" data-a="res" data-id="${r.id}">กู้คืน</button> <button class="s d" data-a="purge" data-id="${r.id}">ลบถาวร</button>`
-    :`<button class="s" data-a="edit" data-id="${r.id}">แก้ไข</button>`+(mode==='adm'?` <button class="s d" data-a="del" data-id="${r.id}">ลบ</button>`:'');
-  return `<table><thead><tr><th>ที่</th><th>ว/ด/ป</th><th>ชื่อลูกค้า</th><th>SV.</th><th>หมวด / ยี่ห้อ</th><th>S/N</th><th>อาการที่ส่งซ่อม</th><th>รายการซ่อม</th><th>อะไหล่เก่า</th><th>อะไหล่ใหม่</th><th>ค่าแรง</th><th>ช่าง</th><th>Remark</th><th></th></tr></thead><tbody>`+
-  rows.map(r=>`<tr><td><span class="no">${r.seq||'-'}</span></td><td>${fdate(r.date)}</td><td><b>${esc(r.cus)}</b>${r.imp?' <span class="tag" title="นำเข้าจาก Excel">📥</span>':''}${ci(r.cus)}</td><td>${esc(r.sv)}</td><td>${r.type?`<span class="tag">${esc(r.type)}</span>`:''}${r.brand?`<div class="sub">${esc(r.brand)}</div>`:''}</td><td>${esc(r.sn)}</td><td>${esc(r.sym)}</td><td>${esc(r.work)}</td><td>${pcol(r,'o')}</td><td>${pcol(r,'n')}</td><td class="n">${r.labor?fmt(r.labor):''}</td><td>${esc(r.tech)}</td><td>${esc(r.rem)}</td><td style="white-space:nowrap">${act(r)}</td></tr>`).join('')+'</tbody></table>';
+    :`<button class="s" data-a="edit" data-id="${r.id}"><i class="fa-solid fa-pen"></i> แก้ไข</button>`+(mode==='adm'?` <button class="s d" data-a="del" data-id="${r.id}"><i class="fa-solid fa-trash"></i> ลบ</button>`:'');
+  return `<table><thead><tr><th>ที่</th><th>ว/ด/ป</th><th>ชื่อลูกค้า</th><th>SV.</th><th>หมวด / ยี่ห้อ / รุ่น</th><th>S/N</th><th>อาการที่ส่งซ่อม</th><th>รายการซ่อม</th><th>อะไหล่เก่า</th><th>อะไหล่ใหม่</th><th>ค่าแรง</th><th>ช่าง</th><th>Remark</th><th></th></tr></thead><tbody>`+
+  rows.map(r=>`<tr><td><span class="no">${r.seq||'-'}</span></td><td>${fdate(r.date)}</td><td><b>${esc(r.cus)}</b>${r.imp?' <span class="tag" title="นำเข้าจาก Excel"><i class="fa-solid fa-file-import"></i></span>':''}${ci(r.cus)}</td><td>${esc(r.sv)}</td><td>${r.type?`<span class="tag">${esc(r.type)}</span>`:''}${(r.brand||r.model)?`<div class="sub">${esc([r.brand,r.model].filter(Boolean).join(' '))}</div>`:''}</td><td>${esc(r.sn)}</td><td>${esc(r.sym)}</td><td>${esc(r.work)}</td><td>${pcol(r,'o')}</td><td>${pcol(r,'n')}</td><td class="n">${r.labor?fmt(r.labor):''}</td><td>${esc(r.tech)}</td><td>${esc(r.rem)}</td><td style="white-space:nowrap">${act(r)}</td></tr>`).join('')+'</tbody></table>';
 }
 function custTable(){
   const k=$('#cq').value.trim().toLowerCase(),st={};
@@ -394,9 +434,9 @@ function custTable(){
   let list=D.customers.filter(c=>!c.del);
   if(k)list=list.filter(c=>[c.name,c.phone,c.line].join(' ').toLowerCase().includes(k));
   list.sort((a,b)=>a.name.localeCompare(b.name,'th'));
-  if(!list.length)return '<div class="empty">👥 ยังไม่มีลูกค้าในฐานข้อมูล</div>';
+  if(!list.length)return '<div class="empty"><i class="fa-solid fa-users"></i> ยังไม่มีลูกค้าในฐานข้อมูล</div>';
   return '<table><thead><tr><th>ลูกค้า</th><th>เบอร์โทร</th><th>LINE</th><th>งานซ่อม</th><th>ล่าสุด</th><th></th></tr></thead><tbody>'+
-    list.map(c=>{const s=st[cn(c.name)]||{c:0,last:''};return `<tr><td><div class="cname"><span class="av">${esc([...c.name.trim()][0]||'?')}</span><b>${esc(c.name)}</b></div></td><td>${c.phone?`<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:'-'}</td><td>${c.line?`<span class="line">${esc(c.line)}</span>`:'-'}</td><td><span class="no">${s.c}</span></td><td>${fdate(s.last)}</td><td style="white-space:nowrap"><button class="s" data-ca="edit" data-id="${c.id}">แก้ไข</button> <button class="s d" data-ca="del" data-id="${c.id}">ลบ</button></td></tr>`}).join('')+'</tbody></table>';
+    list.map(c=>{const s=st[cn(c.name)]||{c:0,last:''};return `<tr><td><div class="cname"><span class="av">${esc([...c.name.trim()][0]||'?')}</span><b>${esc(c.name)}</b></div></td><td>${c.phone?`<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:'-'}</td><td>${c.line?`<span class="line">${esc(c.line)}</span>`:'-'}</td><td><span class="no">${s.c}</span></td><td>${fdate(s.last)}</td><td style="white-space:nowrap"><button class="s" data-ca="edit" data-id="${c.id}"><i class="fa-solid fa-pen"></i> แก้ไข</button> <button class="s d" data-ca="del" data-id="${c.id}"><i class="fa-solid fa-trash"></i> ลบ</button></td></tr>`}).join('')+'</tbody></table>';
 }
 let lastSync=null;
 function stat(){const n=D.records.filter(r=>!r.del).length;
@@ -414,16 +454,18 @@ function render(){
     `<button class="chip ${cur==='all'?'on':''}" data-m="all">ทั้งหมด<b>${live.length}</b></button>`;
   const inM=live.filter(r=>cur==='all'||mk(r)===cur).sort((a,b)=>cur==='all'?(b.date||'').localeCompare(a.date||'')||b.seq-a.seq:b.seq-a.seq);
   const k=$('#q').value.trim().toLowerCase();
-  const f=k?inM.filter(r=>[r.cus,r.sv,r.sn,r.sym,r.work,r.type,r.brand,r.tech,r.rem].join(' ').toLowerCase().includes(k)):inM;
+  const f=k?inM.filter(r=>[r.cus,r.sv,r.sn,r.sym,r.work,r.type,r.brand,r.model,r.tech,r.rem].join(' ').toLowerCase().includes(k)):inM;
   CI={};D.customers.filter(c=>!c.del).forEach(c=>CI[cn(c.name)]=c);
   $('#list').innerHTML=table(f,'main');
-  $('#stats').innerHTML=[['🛠',inM.length,'งานในเดือนที่เลือก'],['📚',live.length,'งานซ่อมทั้งหมด'],['👥',D.customers.filter(c=>!c.del).length,'ลูกค้าในฐานข้อมูล'],['🧑‍🔧',new Set(inM.map(r=>r.tech).filter(Boolean)).size,'ช่างที่มีงาน']].map(([i,n,t])=>`<div class="stat"><div class="ic">${i}</div><div><b>${n}</b><span>${t}</span></div></div>`).join('');
+  $('#stats').innerHTML=[['<i class="fa-solid fa-screwdriver-wrench"></i>',inM.length,'งานในเดือนที่เลือก'],['<i class="fa-solid fa-boxes-stacked"></i>',live.length,'งานซ่อมทั้งหมด'],['<i class="fa-solid fa-users"></i>',D.customers.filter(c=>!c.del).length,'ลูกค้าในฐานข้อมูล'],['<i class="fa-solid fa-user-gear"></i>',new Set(inM.map(r=>r.tech).filter(Boolean)).size,'ช่างที่มีงาน']].map(([i,n,t])=>`<div class="stat"><div class="ic">${i}</div><div><b>${n}</b><span>${t}</span></div></div>`).join('');
   $('#cusList').innerHTML=custTable();
   $('#dlType').innerHTML=[...new Set([...D.meta.types,...live.map(r=>r.type)])].filter(Boolean).map(x=>`<option value="${esc(x)}">`).join('');
     if(admin){
     const im=D.meta.imports||[];
     $('#impList').innerHTML=im.length?`<table><thead><tr><th>ไฟล์</th><th>วันที่นำเข้า</th><th>จำนวนรายการ</th><th></th></tr></thead><tbody>`+
       im.slice().reverse().map(b=>`<tr><td>${esc(b.name)}</td><td>${new Date(b.at).toLocaleString('th-TH')}</td><td>${D.records.filter(r=>r.imp===b.id).length}</td><td><button class="s d" data-a="impdel" data-id="${b.id}">ลบทั้งชุดนี้</button></td></tr>`).join('')+'</tbody></table>':'<div class="empty">ยังไม่มีประวัติการนำเข้า</div>';
+    const lab=inM.reduce((a,r)=>a+num(r.labor),0),oldN=inM.filter(r=>(r.parts||[]).some(p=>String(p.o||'').trim())).length;
+    $('#admStats').innerHTML=[['screwdriver-wrench','งานในเดือนที่เลือก',inM.length],['baht-sign','ค่าแรงรวม',fmt(lab)],['recycle','งานที่ใช้อะไหล่เก่า',oldN],['user-gear','ช่างที่ใช้งาน',(D.meta.techList||[]).filter(t=>t.active!==false).length]].map(([i,t,v])=>`<div class="stat"><div class="ic"><i class="fa-solid fa-${i}"></i></div><div><b>${v}</b><span>${t}</span></div></div>`).join('');
     $('#techList').innerHTML=techTable();$('#allList').innerHTML=table(inM,'adm');$('#delList').innerHTML=table(D.records.filter(r=>r.del),'del')}
 }
 $('#q').oninput=render;$('#cq').oninput=render;
@@ -476,12 +518,12 @@ function showCus(){
   if(ex){
     const c=ex.c,rs=ex.rs.sort((a,b)=>(b.date||'').localeCompare(a.date||'')),pf=$('#fPhone'),lf=$('#fLine');
     if(c){if(!pf.value||pf.value===AF.p){pf.value=c.phone||'';AF.p=pf.value}if(!lf.value||lf.value===AF.l){lf.value=c.line||'';AF.l=lf.value}}
-    h=`<div class="hint"><b>📜 ${esc(ex.n)}</b>`+(c&&(c.phone||c.line)?` · 📞 ${esc(c.phone)} · <span class="line">LINE ${esc(c.line)}</span>`:'')+
+    h=`<div class="hint"><b><i class="fa-solid fa-clock-rotate-left"></i> ${esc(ex.n)}</b>`+(c&&(c.phone||c.line)?` · <i class="fa-solid fa-phone"></i> ${esc(c.phone)} · <span class="line">LINE ${esc(c.line)}</span>`:'')+
       ` · ${rs.length?`ซ่อมมาแล้ว ${rs.length} ครั้ง (ล่าสุด ${fdate(rs[0].date)})`:'ลูกค้าในฐานข้อมูล ยังไม่มีประวัติซ่อม'}`+
-      rs.slice(0,5).map(r=>`<div class="hrow"><span>${fdate(r.date)} · ${esc(r.type)} ${esc(r.brand)} ${esc(r.sn)} · ${esc(r.sym)}</span>${(r.type||r.sn)?`<button class="s" type="button" data-use="${r.id}">ใช้เครื่องนี้</button>`:''}</div>`).join('')+'</div>';
+      rs.slice(0,5).map(r=>`<div class="hrow"><span>${fdate(r.date)} · ${esc(r.type)} ${esc(r.brand)} ${esc(r.model)} ${esc(r.sn)} · ${esc(r.sym)}</span>${(r.type||r.sn)?`<button class="s" type="button" data-use="${r.id}">ใช้เครื่องนี้</button>`:''}</div>`).join('')+'</div>';
   }else{
     const ms=all.filter(o=>(v&&o.n.toLowerCase().includes(v))||(vp&&((o.c&&o.c.phone)||'').replace(/[\s-]/g,'').includes(vp))).slice(0,8);
-    if(ms.length)h='<div class="hint"><div class="text-xs text-slate-500">ลูกค้าเก่าในระบบ — แตะเพื่อดึงชื่อ เบอร์โทร และ LINE</div>'+ms.map(o=>`<div class="hrow cursor-pointer rounded-lg px-2 hover:bg-indigo-50 dark:hover:bg-slate-700" data-cus="${esc(o.n)}"><span><b>${esc(o.n)}</b>${o.c&&o.c.phone?' · 📞 '+esc(o.c.phone):''}${o.c&&o.c.line?' · LINE '+esc(o.c.line):''}</span><span class="tag">${o.rs.length} ครั้ง</span></div>`).join('')+'</div>';
+    if(ms.length)h='<div class="hint"><div class="text-xs text-slate-500">ลูกค้าเก่าในระบบ — แตะเพื่อดึงชื่อ เบอร์โทร และ LINE</div>'+ms.map(o=>`<div class="hrow cursor-pointer rounded-lg px-2 hover:bg-indigo-50 dark:hover:bg-slate-700" data-cus="${esc(o.n)}"><span><b>${esc(o.n)}</b>${o.c&&o.c.phone?' · <i class="fa-solid fa-phone"></i> '+esc(o.c.phone):''}${o.c&&o.c.line?' · LINE '+esc(o.c.line):''}</span><span class="tag">${o.rs.length} ครั้ง</span></div>`).join('')+'</div>';
   }
   box.innerHTML=h;box.style.display=h?'':'none';
 }
@@ -489,13 +531,13 @@ $('#fCus').oninput=showCus;$('#fPhone').oninput=showCus;
 $('#cusHint').onclick=e=>{
   const b=e.target.closest('[data-cus],[data-use]');if(!b)return;
   if(b.dataset.cus!=null){const n=b.dataset.cus,c=custByName(n)||{};$('#fCus').value=n;$('#fPhone').value=AF.p=c.phone||'';$('#fLine').value=AF.l=c.line||'';showCus()}
-  if(b.dataset.use){const r=D.records.find(x=>x.id===b.dataset.use);if(r){fillCat(r.type||'',r.brand||'');$('#fSn').value=r.sn||''}}
+  if(b.dataset.use){const r=D.records.find(x=>x.id===b.dataset.use);if(r){fillCat(r.type||'',r.brand||'');$('#fModel').value=r.model||'';$('#fSn').value=r.sn||''}}
 };
 function openForm(id){
   if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return}
   editId=id;const r=D.records.find(x=>x.id===id)||{date:new Date().toISOString().slice(0,10),parts:[{}]};
   $('#dT').textContent=id?`แก้ไขรายการ ลำดับที่ ${r.seq}`:'เพิ่มรายการซ่อม';
-  $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';fillCat(r.type||'',r.brand||'');
+  $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';fillCat(r.type||'',r.brand||'');$('#fModel').value=r.model||'';
   $('#fSn').value=r.sn||'';fillTech(r.tech||'');$('#fSym').value=r.sym||'';$('#fWork').value=r.work||'';
   $('#fLab').value=r.labor||'';$('#fRem').value=r.rem||'';
   AF={p:'',l:''};const cc=custByName(r.cus||'');$('#fPhone').value=cc?cc.phone||'':'';$('#fLine').value=cc?cc.line||'':'';
@@ -505,7 +547,7 @@ $('#bAdd').onclick=()=>openForm(null);
 $('#bCancel').onclick=()=>$('#dlg').close();
 $('#bSave').onclick=async()=>{
   const parts=[...$('#parts').children].map(r=>{const i=r.querySelectorAll('input');return{o:i[0].value.trim(),op:i[1].value,n:i[2].value.trim(),np:i[3].value}}).filter(p=>p.o||p.n||p.op||p.np);
-  const v={date:$('#fDate').value,cus:$('#fCus').value.trim(),sv:$('#fSv').value.trim(),type:$('#fType').value.trim(),brand:$('#fBrand').value==='__o'?$('#fBrandO').value.trim():$('#fBrand').value,sn:$('#fSn').value.trim(),
+  const v={date:$('#fDate').value,cus:$('#fCus').value.trim(),sv:$('#fSv').value.trim(),type:$('#fType').value.trim(),brand:$('#fBrand').value==='__o'?$('#fBrandO').value.trim():$('#fBrand').value,model:$('#fModel').value.trim(),sn:$('#fSn').value.trim(),
     tech:$('#fTech').value.trim(),sym:$('#fSym').value.trim(),work:$('#fWork').value.trim(),parts,labor:$('#fLab').value,rem:$('#fRem').value.trim(),upd:Date.now()};
   const ph=$('#fPhone').value.trim(),ln=$('#fLine').value.trim();
   if(!v.cus){alert('กรุณากรอกชื่อลูกค้า');return}
@@ -527,7 +569,7 @@ document.addEventListener('click',e=>{
 });
 
 /* ---------- Excel นำเข้า/ส่งออก ---------- */
-const HEAD=['ลำดับที่','ว/ด/ป','ชื่อลูกค้า','เลขที่ SV.','ประเภทเครื่อง','หมายเลขเครื่อง S/N','อาการที่ส่งซ่อม','รายการซ่อม','อะไหล่เก่า','ราคา','อะไหล่ใหม่','ราคา','ค่าแรง','ชื่อช่าง','Remark','ยี่ห้อ'];
+const HEAD=['ลำดับที่','ว/ด/ป','ชื่อลูกค้า','เลขที่ SV.','ประเภทเครื่อง','หมายเลขเครื่อง S/N','อาการที่ส่งซ่อม','รายการซ่อม','อะไหล่เก่า','ราคา','อะไหล่ใหม่','ราคา','ค่าแรง','ชื่อช่าง','Remark','ยี่ห้อ','รุ่น'];
 const iso=d=>d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
 function pdate(v){
   if(v===''||v==null)return '';
@@ -537,7 +579,7 @@ function pdate(v){
   let y=+m[3];if(y>2400)y-=543;else if(y<100){y+=2000;if(y>new Date().getFullYear()+20)y-=43}
   return iso(new Date(Date.UTC(y,+m[2]-1,+m[1])));
 }
-const KEYS=[['seq',/ลำดับ/],['brand',/ยี่ห้อ/],['date',/ว\/ด\/ป|วันที่/],['cus',/ลูกค้า/],['sv',/sv/i],['type',/ประเภท/],['sn',/s\/n|หมายเลข/i],['sym',/อาการ/],['work',/รายการซ่อม/],['o',/เก่า/],['n',/ใหม่/],['labor',/ค่าแรง/],['tech',/ช่าง/],['rem',/remark|หมายเหตุ/i]];
+const KEYS=[['seq',/ลำดับ/],['brand',/ยี่ห้อ/],['model',/รุ่น/],['date',/ว\/ด\/ป|วันที่/],['cus',/ลูกค้า/],['sv',/sv/i],['type',/ประเภท/],['sn',/s\/n|หมายเลข/i],['sym',/อาการ/],['work',/รายการซ่อม/],['o',/เก่า/],['n',/ใหม่/],['labor',/ค่าแรง/],['tech',/ช่าง/],['rem',/remark|หมายเหตุ/i]];
 function parseSheet(rows){
   const hi=rows.findIndex(r=>r.some(c=>/ลูกค้า/.test(c)));if(hi<0)return null;
   let start=hi+1,sub=rows[hi+1];
@@ -557,7 +599,7 @@ function parseSheet(rows){
     const cus=String(g(r,'cus')).trim();
     if(!cus&&prev&&hasP){prev.parts.push(p);continue}
     if(!cus)continue;
-    prev={id:crypto.randomUUID(),seq:0,date:pdate(g(r,'date')),cus,sv:String(g(r,'sv')).trim(),type:String(g(r,'type')).trim(),brand:String(g(r,'brand')).trim(),sn:String(g(r,'sn')).trim(),
+    prev={id:crypto.randomUUID(),seq:0,date:pdate(g(r,'date')),cus,sv:String(g(r,'sv')).trim(),type:String(g(r,'type')).trim(),brand:String(g(r,'brand')).trim(),model:String(g(r,'model')).trim(),sn:String(g(r,'sn')).trim(),
       sym:String(g(r,'sym')).trim(),work:String(g(r,'work')).trim(),parts:hasP?[p]:[],labor:g(r,'labor'),tech:String(g(r,'tech')).trim(),rem:String(g(r,'rem')).trim(),upd:Date.now()};
     out.push(prev);
   }
@@ -590,10 +632,10 @@ $('#bExp').onclick=()=>{
     const rows=[HEAD];
     live.filter(r=>mk(r)===m).sort((a,b)=>a.seq-b.seq).forEach(r=>{
       const ps=r.parts?.length?r.parts:[{}];
-      ps.forEach((p,i)=>rows.push(i?['','','','','','','','',p.o||'',p.op||'',p.n||'',p.np||'','','','','']:
-        [r.seq,fdate(r.date),r.cus,r.sv,r.type,r.sn,r.sym,r.work,p.o||'',p.op||'',p.n||'',p.np||'',r.labor||'',r.tech,r.rem,r.brand||'']));
+      ps.forEach((p,i)=>rows.push(i?['','','','','','','','',p.o||'',p.op||'',p.n||'',p.np||'','','','','','']:
+        [r.seq,fdate(r.date),r.cus,r.sv,r.type,r.sn,r.sym,r.work,p.o||'',p.op||'',p.n||'',p.np||'',r.labor||'',r.tech,r.rem,r.brand||'',r.model||'']));
     });
-    const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=HEAD.map((_,i)=>({wch:[7,12,22,12,16,18,28,28,16,9,16,9,9,14,20,14][i]}));
+    const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=HEAD.map((_,i)=>({wch:[7,12,22,12,16,18,28,28,16,9,16,9,9,14,20,14,16][i]}));
     XLSX.utils.book_append_sheet(wb,ws,m.slice(0,31).replace(/[\\\/?*\[\]:]/g,'-'));
   });
   const cs=D.customers.filter(c=>!c.del);
@@ -614,16 +656,10 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
   ['a','b','c'].forEach(t=>$('#t'+t).style.display=b.dataset.t===t?'':'none');
 });
-$('#bLogin').onclick=()=>{
-  if($('#pin').value!==D.meta.pin){alert('รหัสผ่านไม่ถูกต้อง');return}
-  admin=true;$('#lock').style.display='none';$('#admin').style.display='';
-  $('#sType').value=catText();$('#sPin').value=D.meta.pin;render();
-};
+$('#bLogin').onclick=()=>{};
 $('#pin').onkeydown=e=>{if(e.key==='Enter')$('#bLogin').click()};
 $('#bSet').onclick=async()=>{
-  const ls=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
-  if(!$('#sPin').value.trim()){alert('รหัสผ่านห้ามว่าง');return}
-  if(await commit(()=>{setCatalog($('#sType').value);D.meta.pin=$('#sPin').value.trim()}))alert('บันทึกการตั้งค่าแล้ว');
+  if(await commit(()=>{setCatalog($('#sType').value)}))alert('บันทึกการตั้งค่าแล้ว');
 };
 $('#bBak').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,1)],{type:'application/json'}));a.download='repair-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
 
@@ -679,35 +715,40 @@ $('#fBrand').onchange=()=>{const o=$('#fBrand').value==='__o';$('#fBrandO').styl
 let tEdit=null;
 function techTable(){
   const L=D.meta.techList||[];
-  if(!L.length)return '<div class="empty">👷 ยังไม่มีช่าง กรอกชื่อด้านบนแล้วกด "เพิ่มช่าง"</div>';
+  if(!L.length)return '<div class="empty"><i class="fa-solid fa-user-gear"></i> ยังไม่มีช่าง กรอกชื่อด้านบนแล้วกด "เพิ่มช่าง"</div>';
   const st={};D.records.filter(r=>!r.del&&r.tech).forEach(r=>{const o=st[r.tech]||(st[r.tech]={c:0,l:0});o.c++;o.l+=num(r.labor)});
-  return '<table><thead><tr><th>ช่าง</th><th>เบอร์โทร</th><th>สถานะ</th><th>รหัสเข้าระบบ</th><th>จำนวนงาน</th><th>ค่าแรงรวม</th><th></th></tr></thead><tbody>'+
+  return '<table><thead><tr><th>ช่าง</th><th>เบอร์โทร</th><th>สถานะ</th><th>บัญชีเข้าระบบ</th><th>จำนวนงาน</th><th>ค่าแรงรวม</th><th></th></tr></thead><tbody>'+
     L.map(t=>{const s=st[t.name]||{c:0,l:0},on=t.active!==false;
-      return `<tr class="${on?'':'opacity-50'}"><td><div class="cname"><span class="av">${esc([...t.name][0]||'?')}</span><b>${esc(t.name)}</b></div></td><td>${t.phone?`<a href="tel:${esc(t.phone)}">${esc(t.phone)}</a>`:'-'}</td><td><span class="tag">${on?'🟢 ใช้งาน':'⚪ ปิดใช้งาน'}</span></td><td>${t.pin?'🔑 ตั้งแล้ว':'<span class="d">⚠ ยังไม่ตั้ง</span>'}</td><td><span class="no">${s.c}</span></td><td class="n">${fmt(s.l)}</td><td class="whitespace-nowrap"><button class="s" data-ta="edit" data-id="${t.id}">แก้ไข</button> <button class="s" data-ta="tog" data-id="${t.id}">${on?'ปิดใช้งาน':'เปิดใช้งาน'}</button> <button class="s d" data-ta="del" data-id="${t.id}">ลบ</button></td></tr>`}).join('')+'</tbody></table>';
+      return `<tr class="${on?'':'opacity-50'}"><td><div class="cname"><span class="av">${esc([...t.name][0]||'?')}</span><b>${esc(t.name)}</b></div></td><td>${t.phone?`<a href="tel:${esc(t.phone)}">${esc(t.phone)}</a>`:'-'}</td><td><span class="tag">${on?'<i class="fa-solid fa-circle text-[8px] text-emerald-500"></i> ใช้งาน':'<i class="fa-regular fa-circle text-[8px]"></i> ปิดใช้งาน'}</span></td><td>${t.ph?'<i class="fa-solid fa-key text-emerald-600"></i> ตั้งแล้ว':'<span class="d"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ตั้ง</span>'}</td><td><span class="no">${s.c}</span></td><td class="n">${fmt(s.l)}</td><td class="whitespace-nowrap"><button class="s" data-ta="edit" data-id="${t.id}"><i class="fa-solid fa-pen"></i> แก้ไข</button> <button class="s" data-ta="tog" data-id="${t.id}">${on?'ปิดใช้งาน':'เปิดใช้งาน'}</button> <button class="s d" data-ta="del" data-id="${t.id}"><i class="fa-solid fa-trash"></i> ลบ</button></td></tr>`}).join('')+'</tbody></table>';
 }
 function fillTech(v){
   const L=(D.meta.techList||[]).filter(t=>t.active!==false).map(t=>t.name);if(v&&!L.includes(v))L.push(v);
   $('#fTech').innerHTML='<option value="">— เลือกช่าง —</option>'+L.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');$('#fTech').value=v;
 }
-function techReset(){tEdit=null;$('#tName').value=$('#tPhone').value=$('#tPin').value='';$('#tSave').textContent='+ เพิ่มช่าง';$('#tCancel').style.display='none'}
+function techReset(){tEdit=null;$('#tName').value=$('#tPhone').value=$('#tPin').value=$('#tUser').value='';$('#tSave').textContent='+ เพิ่มช่าง';$('#tCancel').style.display='none'}
 $('#tCancel').onclick=techReset;
 $('#tSave').onclick=async()=>{
-  const name=$('#tName').value.trim(),phone=$('#tPhone').value.trim(),pin=$('#tPin').value.trim(),nid=crypto.randomUUID();
+  if(!hasCrypto()){alert('ต้องเปิดเว็บผ่าน https หรือ localhost เพื่อใช้การเข้ารหัสรหัสผ่าน');return}
+  const name=$('#tName').value.trim(),phone=$('#tPhone').value.trim(),us=$('#tUser').value.trim(),pw=$('#tPin').value,nid=crypto.randomUUID();
   if(!name){alert('กรุณากรอกชื่อช่าง');return}
-  if(!tEdit&&!pin){alert('กรุณาตั้งรหัสผ่านให้ช่าง');return}
-  const ph=pin?await hp(tEdit||nid,pin):null;
+  if(!tEdit&&(!us||!pw)){alert('กรุณากำหนด Username และ Password ให้ช่าง');return}
+  if((us||pw)&&!(us&&pw)){alert('การเปลี่ยนบัญชีเข้าสู่ระบบ ต้องกรอกทั้ง Username และ Password');return}
+  if(pw&&pw.length<4){alert('Password ต้องมีอย่างน้อย 4 ตัวอักษร');return}
+  if(us.toLowerCase()==='admin'){alert('ไม่สามารถใช้ Username นี้ได้');return}
+  const uh=us?await uhash(us):null,salt=us?newSalt():null,ph=us?await kdf(pw,salt):null;
   const ok=await commit(()=>{
-    const L=D.meta.techList;
-    if(L.some(t=>t.id!==tEdit&&cn(t.name)===cn(name)))throw new Error('มีช่างชื่อนี้อยู่แล้ว');
-    const t=tEdit&&L.find(x=>x.id===tEdit);
-    if(t){if(t.name!==name)D.records.forEach(r=>{if(r.tech===t.name)r.tech=name});Object.assign(t,{name,phone,upd:Date.now()});if(ph)t.pin=ph}
-    else L.push({id:nid,name,phone,pin:ph,active:true,upd:Date.now()});
+    const L=D.meta.techList,tid=tEdit||nid;
+    if(L.some(t=>t.id!==tid&&cn(t.name)===cn(name)))throw new Error('มีช่างชื่อนี้อยู่แล้ว');
+    if(uh&&(L.some(t=>t.id!==tid&&t.uh===uh)||(D.meta.admin&&D.meta.admin.uh===uh)))throw new Error('Username นี้ถูกใช้แล้ว');
+    const t=tEdit&&L.find(x=>x.id===tEdit),acc=uh?{uh,salt,ph}:{};
+    if(t){if(t.name!==name)D.records.forEach(r=>{if(r.tech===t.name)r.tech=name});Object.assign(t,{name,phone,upd:Date.now()},acc)}
+    else L.push({id:nid,name,phone,active:true,upd:Date.now(),...acc});
   });
   if(ok)techReset();
 };
 $('#techList').onclick=e=>{
   const b=e.target.closest('[data-ta]');if(!b)return;const id=b.dataset.id,a=b.dataset.ta,t=(D.meta.techList||[]).find(x=>x.id===id);if(!t)return;
-  if(a==='edit'){tEdit=id;$('#tName').value=t.name;$('#tPhone').value=t.phone||'';$('#tPin').value='';$('#tSave').textContent='บันทึกการแก้ไข';$('#tCancel').style.display='';$('#tName').focus()}
+  if(a==='edit'){tEdit=id;$('#tName').value=t.name;$('#tPhone').value=t.phone||'';$('#tPin').value=$('#tUser').value='';$('#tSave').textContent='บันทึกการแก้ไข';$('#tCancel').style.display='';$('#tName').focus()}
   else if(a==='tog')commit(()=>{const x=D.meta.techList.find(y=>y.id===id);if(x)x.active=x.active===false})
   else if(confirm('ลบช่างคนนี้ออกจากรายชื่อ? (ประวัติงานซ่อมยังอยู่ ถ้าแค่ไม่ให้เลือกแนะนำให้ "ปิดใช้งาน")'))commit(()=>{D.meta.techList=D.meta.techList.filter(y=>y.id!==id)});
 };
@@ -719,42 +760,89 @@ function syncTech(){
 
 /* ---------- เข้าสู่ระบบช่าง ---------- */
 try{user=JSON.parse(sessionStorage.getItem('rl_user')||'null')}catch{}
-async function hp(id,pin){
-  const t=new TextEncoder().encode('rl|'+id+'|'+pin);
-  if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest('SHA-256',t);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
-  let x=5381;for(const c of t)x=(x*33^c)>>>0;return 'x'+x;
-}
+/* hash helpers: ดูด้านล่าง (เข้ารหัส Username/Password) */
 function clearUI(){['#list','#cusList','#stats','#chips','#techList','#allList','#delList','#impList'].forEach(k=>$(k).innerHTML='')}
 function gateUI(){
-  if(ready()&&user&&!user.admin&&!(D.meta.techList||[]).some(t=>t.id===user.id&&t.active!==false&&t.pin)){user=null;sessionStorage.removeItem('rl_user')}
-  const ok=!!user;
+  if(ready()&&user&&!user.admin&&!(D.meta.techList||[]).some(t=>t.id===user.id&&t.active!==false&&t.ph)){user=null;sessionStorage.removeItem('rl_user')}
+  const ok=!!user,adm=ok&&!!user.admin;
+  if(adm&&!admin){admin=true;$('#sType').value=catText()}
+  if(!adm)admin=false;
   $('#app').style.display=ok?'':'none';$('#gate').style.display=ok?'none':'';
-  $('#nav').style.display=$('#uDd').style.display=ok?'':'none';$('#who').textContent=ok?user.name:'';$('#uAv').textContent=ok?[...user.name][0]:'';
-  if(ok)return;
-  const sel=$('#lgUser'),cur=sel.value,L=(D.meta.techList||[]).filter(t=>t.active!==false&&t.pin);
-  $('#lgMsg').textContent=!ready()?'กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ที่มุมขวาบนก่อน':L.length?'เลือกชื่อและใส่รหัสผ่านเพื่อดูงานซ่อมและข้อมูลลูกค้า':'ยังไม่มีช่างที่ตั้งรหัสผ่าน — เข้าด้วยบัญชีผู้ดูแล แล้วเพิ่มช่างที่หลังบ้าน';
-  sel.innerHTML=ready()?L.map(t=>`<option value="${esc(t.id)}">${esc(t.name)}</option>`).join('')+'<option value="__admin">🛡 ผู้ดูแลระบบ</option>':'';
-  if(cur&&[...sel.options].some(o=>o.value===cur))sel.value=cur;
+  $('#nav').style.display=$('#uDd').style.display=ok?'':'none';
+  document.querySelectorAll('[data-t=b],.adm-only').forEach(e=>e.style.display=adm?'':'none');
+  $('#lock').style.display='none';$('#admin').style.display=adm?'':'none';
+  $('#who').textContent=ok?user.name:'';$('#uAv').textContent=ok?[...user.name][0]:'';
+  if(adm){$('#admWarn').classList.toggle('hidden',!!D.meta.admin);bakInfo()}
+  if(!ok)$('#lgMsg').textContent=ready()?'กรอก Username และ Password เพื่อดูงานซ่อมและข้อมูลลูกค้า':'กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ที่มุมขวาบนก่อน';
 }
+let fails=0,lockUntil=0;
 $('#lgGo').onclick=async()=>{
-  const id=$('#lgUser').value,pin=$('#lgPin').value,err=$('#lgErr');err.textContent='';
-  if(!ready()||!id){err.textContent='ยังไม่ได้เชื่อมต่อข้อมูล';return}
-  if(!pin){err.textContent='กรุณาใส่รหัสผ่าน';return}
-  if(id==='__admin'){
-    if(pin!==D.meta.pin){err.textContent='รหัสผ่านไม่ถูกต้อง';return}
-    user={admin:true,name:'ผู้ดูแลระบบ'};$('#pin').value=pin;$('#bLogin').click();
-  }else{
-    const t=(D.meta.techList||[]).find(x=>x.id===id);
-    if(!t||await hp(t.id,pin)!==t.pin){err.textContent='รหัสผ่านไม่ถูกต้อง';return}
-    user={id:t.id,name:t.name};
-  }
-  sessionStorage.setItem('rl_user',JSON.stringify(user));$('#lgPin').value='';render();
+  const us=$('#lgUser').value.trim(),pw=$('#lgPin').value,err=$('#lgErr');err.textContent='';
+  if(!ready()){err.textContent='ยังไม่ได้เชื่อมต่อข้อมูล';return}
+  if(!us||!pw){err.textContent='กรุณากรอก Username และ Password';return}
+  if(!hasCrypto()){err.textContent='ต้องเปิดเว็บผ่าน https หรือ localhost';return}
+  if(Date.now()<lockUntil){err.textContent='ลองผิดหลายครั้ง กรุณารอสักครู่แล้วลองใหม่';return}
+  const uh=await uhash(us),A=D.meta.admin;let u=null;
+  if(A){if(A.uh===uh&&await kdf(pw,A.salt)===A.ph)u={admin:true,name:'ผู้ดูแลระบบ'}}
+  else if(us.toLowerCase()==='admin'&&pw===D.meta.pin)u={admin:true,name:'ผู้ดูแลระบบ'};
+  if(!u){const t=(D.meta.techList||[]).find(x=>x.active!==false&&x.uh===uh);if(t&&await kdf(pw,t.salt)===t.ph)u={id:t.id,name:t.name}}
+  if(!u){if(++fails>=5){lockUntil=Date.now()+30000;fails=0}err.textContent='Username หรือ Password ไม่ถูกต้อง';return}
+  fails=0;user=u;sessionStorage.setItem('rl_user',JSON.stringify(u));$('#lgPin').value='';$('#lgUser').value='';render();
 };
 $('#lgPin').onkeydown=e=>{if(e.key==='Enter')$('#lgGo').click()};
 $('#bOut').onclick=()=>{
   user=null;sessionStorage.removeItem('rl_user');admin=false;
-  $('#lock').style.display='';$('#admin').style.display='none';$('#pin').value='';
+  document.querySelector('.tabs [data-t=a]').click();
   document.querySelectorAll('dialog[open]').forEach(d=>{if(d.id!=='gdlg')d.close()});render();
+};
+
+/* ---------- เข้ารหัส / บัญชีผู้ดูแล / รายงาน / สำรองข้อมูล ---------- */
+const te=new TextEncoder(),hx=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const hasCrypto=()=>window.crypto&&crypto.subtle;
+const uhash=async u=>hx(await crypto.subtle.digest('SHA-256',te.encode('rl-user|'+u.trim().toLowerCase())));
+const newSalt=()=>hx(crypto.getRandomValues(new Uint8Array(16)));
+async function kdf(pw,salt){
+  const k=await crypto.subtle.importKey('raw',te.encode(pw),'PBKDF2',false,['deriveBits']);
+  return hx(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:te.encode(salt),iterations:150000},k,256));
+}
+$('#aSave').onclick=async()=>{
+  if(!hasCrypto()){alert('ต้องเปิดเว็บผ่าน https หรือ localhost เพื่อใช้การเข้ารหัสรหัสผ่าน');return}
+  const us=$('#aUser').value.trim(),pw=$('#aPass').value;
+  if(!us||pw.length<4){alert('กรุณากรอก Username และ Password (อย่างน้อย 4 ตัวอักษร)');return}
+  const uh=await uhash(us),salt=newSalt(),ph=await kdf(pw,salt);
+  const ok=await commit(()=>{
+    if((D.meta.techList||[]).some(t=>t.uh===uh))throw new Error('Username นี้ถูกใช้โดยช่างแล้ว');
+    D.meta.admin={uh,salt,ph};D.meta.pin='';
+  });
+  if(ok){$('#aUser').value=$('#aPass').value='';alert('บันทึกบัญชีผู้ดูแลแล้ว ใช้บัญชีใหม่เข้าสู่ระบบครั้งถัดไป')}
+};
+function bakInfo(){
+  let t=0;try{t=+localStorage.getItem('rl_bak')||0}catch{}
+  const d=t?Math.floor((Date.now()-t)/864e5):0;
+  $('#bakInfo').innerHTML=t?'สำรองข้อมูลล่าสุดจากเครื่องนี้: '+new Date(t).toLocaleString('th-TH')+(d>=7?' <span class="d font-semibold">(เกิน '+d+' วันแล้ว ควรสำรองใหม่)</span>':''):'<span class="d font-semibold">ยังไม่เคยสำรองข้อมูลจากเครื่องนี้</span>';
+}
+$('#bBak').addEventListener('click',()=>{try{localStorage.setItem('rl_bak',Date.now())}catch{}bakInfo()});
+$('#bRest').onclick=()=>$('#fileRest').click();
+$('#fileRest').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  let nd;try{nd=normalizeData(JSON.parse(await f.text())).d}catch(err){alert('ไฟล์สำรองไม่ถูกต้อง: '+err.message);return}
+  if(!confirm('กู้คืนข้อมูลจากไฟล์ "'+f.name+'" ?\nข้อมูลปัจจุบันทั้งหมดจะถูกแทนที่ (ระบบจะดาวน์โหลดสำรองข้อมูลปัจจุบันให้ก่อน)'))return;
+  $('#bBak').click();
+  if(await commit(()=>{D=nd})){$('#sType').value=catText();alert('กู้คืนข้อมูลเรียบร้อย')}
+};
+$('#rpMonth').value=new Date().toISOString().slice(0,7);
+$('#bRpt').onclick=()=>{
+  const m=$('#rpMonth').value;if(!m){alert('กรุณาเลือกเดือน');return}
+  const rows=[];
+  D.records.filter(r=>!r.del&&mk(r)===m).sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.seq||0)-(b.seq||0))
+    .forEach(r=>(r.parts||[]).forEach(p=>{if(String(p.o||'').trim())rows.push({r,p})}));
+  if(!rows.length){alert('ไม่พบรายการซ่อมที่ใช้อะไหล่เก่าในเดือนนี้');return}
+  const jobs=new Set(rows.map(x=>x.r.id)).size,sumO=rows.reduce((a,x)=>a+num(x.p.op),0),sumN=rows.reduce((a,x)=>a+num(x.p.np),0);
+  const [y,mo]=m.split('-'),title=new Date(+y,+mo-1,1).toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  $('#printArea').innerHTML=`<h2>รายงานการซ่อมที่ใช้อะไหล่เก่า ประจำเดือน ${title}</h2><p>จำนวนงาน ${jobs} งาน · อะไหล่เก่า ${rows.length} รายการ · มูลค่าอะไหล่เก่ารวม ${fmt(sumO)} บาท · มูลค่าอะไหล่ใหม่รวม ${fmt(sumN)} บาท</p><table><thead><tr><th>ที่</th><th>วันที่</th><th>SV.</th><th>ลูกค้า</th><th>เครื่อง</th><th>S/N</th><th>อะไหล่เก่า</th><th>ราคา</th><th>อะไหล่ใหม่</th><th>ราคา</th><th>ช่าง</th></tr></thead><tbody>`+
+    rows.map((x,i)=>`<tr><td>${i+1}</td><td>${fdate(x.r.date)}</td><td>${esc(x.r.sv)}</td><td>${esc(x.r.cus)}</td><td>${esc([x.r.type,x.r.brand,x.r.model].filter(Boolean).join(' '))}</td><td>${esc(x.r.sn)}</td><td>${esc(x.p.o)}</td><td class="r">${x.p.op?fmt(x.p.op):''}</td><td>${esc(x.p.n)}</td><td class="r">${x.p.np?fmt(x.p.np):''}</td><td>${esc(x.r.tech)}</td></tr>`).join('')+
+    `<tr class="tot"><td colspan="7">รวม</td><td class="r">${fmt(sumO)}</td><td></td><td class="r">${fmt(sumN)}</td><td></td></tr></tbody></table><div class="sign"><span>ผู้จัดทำรายงาน ........................................</span><span>ผู้ตรวจสอบ ........................................</span></div><p class="small">พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')} โดย ${esc(user?user.name:'')}</p>`;
+  window.print();
 };
 
 /* ---------- dropdown ---------- */
