@@ -651,8 +651,10 @@ const DEF_CAT=[
  {name:'AIO',brands:['Dell','HP','Lenovo','Acer','ASUS','MSI','Apple']},
  {name:'Printer',brands:['Canon','Epson','HP','Brother','Samsung','Ricoh','Fujifilm','Kyocera','Xerox','Lexmark','Pantum','OKI']},
  {name:'Scanner',brands:['Epson','Canon','Fujitsu','Brother','HP','Plustek','Avision','Kodak','Panasonic','Ricoh']},
- {name:'เครื่องถ่ายเอกสาร',brands:['Ricoh','Canon','Fujifilm','Xerox','Kyocera','Sharp','Konica Minolta','Toshiba']}];
-function syncCat(){const m=D.meta;if(!Array.isArray(m.catalog))m.catalog=DEF_CAT.map(c=>({name:c.name,brands:[...c.brands]}));m.types=m.catalog.map(c=>c.name)}
+ {name:'เครื่องถ่ายเอกสาร',brands:['Ricoh','Canon','Fujifilm','Xerox','Kyocera','Sharp','Konica Minolta','Toshiba']},
+ {name:'UPS',brands:['APC','Eaton','CyberPower','Vertiv','Leonics','Zircon','Syndome','Prolink','Santak','Kstar','Riello','Delta']}];
+function syncCat(){const m=D.meta;if(!Array.isArray(m.catalog))m.catalog=DEF_CAT.map(c=>({name:c.name,brands:[...c.brands]}));if((m.catV||0)<2){const u=DEF_CAT.find(c=>c.name==='UPS');if(u&&!m.catalog.some(c=>c.name===u.name))m.catalog.push({name:u.name,brands:[...u.brands]});m.catV=2}
+  m.types=m.catalog.map(c=>c.name)}
 const catText=()=>D.meta.catalog.map(c=>c.name+': '+c.brands.join(', ')).join('\n');
 function setCatalog(t){
   D.meta.catalog=t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
