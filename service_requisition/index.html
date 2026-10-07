@@ -243,9 +243,9 @@ async function useData(txt,h,sr,keep){
 async function openFile(){try{let f,h=null;if(window.showOpenFilePicker){[h]=await showOpenFilePicker(FP);f=await h.getFile()}else f=await pick(".json");if(f)await useData(await f.text(),h)}catch(e){if(e.name!=="AbortError")toast("เปิดไฟล์ไม่สำเร็จ: "+e.message,"er")}}
 async function saveAs(){if(!window.showSaveFilePicker)return dl("stock-data.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
 /* ================= storage: online (GitHub) ================= */
-const GH0={owner:"sahakoloa",repo:"sahakoloa.github.io",path:"database/stock-data.json",token:""};
+const GH0={owner:"",repo:"",path:"database/stock-data.json",token:""};
 const ghCfg=()=>{try{return{...GH0,...JSON.parse(localStorage.getItem("gh-cfg")||"{}")}}catch(e){return{...GH0}}};
-const online=()=>!localStorage.getItem("gh-off")&&(location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg"));
+const online=()=>{const c=ghCfg();return !localStorage.getItem("gh-off")&&!!c.owner&&!!c.repo&&(location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg"))};
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
 const ghUrl=c=>`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
 const ghH=c=>({Accept:"application/vnd.github+json",...(c.token?{Authorization:"Bearer "+c.token}:{})});
@@ -587,6 +587,7 @@ async function init(){
   setStatus("ยังไม่ได้โหลดข้อมูล","wa");lastH=await idbGet();render()}
 render();init();
 </script></body></html>
+
 
 
 
