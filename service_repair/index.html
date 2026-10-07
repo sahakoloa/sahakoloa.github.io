@@ -40,7 +40,6 @@ body>*:not(#printArea){display:none!important}
     <div class="dd-h">ออฟไลน์ · ไฟล์ในเครื่อง</div>
     <button id="bOpen"><i class="fa-solid fa-folder-open w-4 text-center"></i> เปิดไฟล์ข้อมูล .json</button>
     <button id="bNew"><i class="fa-solid fa-file-circle-plus w-4 text-center"></i> สร้างไฟล์ข้อมูลใหม่</button>
-    <button id="bLoc"><i class="fa-solid fa-database w-4 text-center"></i> เก็บในเบราว์เซอร์นี้ (ไม่ใช้ไฟล์)</button>
     <div class="dd-sep"></div>
     <div class="dd-h">ออนไลน์ · GitHub</div>
     <button id="bGh"><i class="fa-brands fa-github w-4 text-center"></i> ตั้งค่า / เชื่อมต่อ GitHub</button>
@@ -252,13 +251,12 @@ let H=null,D=empty(),lastMod=0,editId=null,admin=false,cur=null,user=null;
 
 /* ---------- จำไฟล์ที่เชื่อมต่อ ---------- */
 const idb=()=>new Promise(r=>{const q=indexedDB.open('repairlog',1);q.onupgradeneeded=()=>q.result.createObjectStore('k');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)});
-async function kv(m,v,key='h'){try{const db=await idb();return await new Promise(r=>{const s=db.transaction('k',m==='get'?'readonly':'readwrite').objectStore('k');const q=m==='get'?s.get(key):s.put(v,key);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})}catch{}}
+async function kv(m,v){try{const db=await idb();return await new Promise(r=>{const s=db.transaction('k',m==='get'?'readonly':'readwrite').objectStore('k');const q=m==='get'?s.get('h'):s.put(v,'h');q.onsuccess=()=>r(q.result);q.onerror=()=>r()})}catch{}}
 
 /* ---------- อ่าน/เขียนไฟล์ ---------- */
 const KEY='repairlog_gh';
 let G=null;
-let LOC=false;
-const ready=()=>H||G||LOC;
+const ready=()=>H||G;
 const gcfg=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch{return null}};
 const b64=t=>{const u=new TextEncoder().encode(t);let x='';for(let i=0;i<u.length;i+=8192)x+=String.fromCharCode(...u.subarray(i,i+8192));return btoa(x)};
 const unb64=c=>new TextDecoder().decode(Uint8Array.from(atob(c.replace(/\s/g,'')),ch=>ch.charCodeAt(0)));
@@ -347,13 +345,11 @@ async function persistConv(){
   alert('แปลงไฟล์ข้อมูลเป็นรูปแบบของระบบเรียบร้อย ('+D.records.length+' รายการ)');
 }
 async function load(){
-  if(LOC){apply((await kv('get',null,'db'))||'');return}
-  if(G){const t=(await gget(true)).text;apply(t);kv('put',t,'cache');lastSync=new Date();return}
+  if(G){apply((await gget(true)).text);lastSync=new Date();return}
   const f=await H.getFile();lastMod=f.lastModified;apply(await f.text());
 }
 async function write(){
-  if(LOC){await kv('put',JSON.stringify(D),'db');return}
-  if(G){const t=JSON.stringify(D);await gput(t);kv('put',t,'cache');return}
+  if(G){await gput(JSON.stringify(D));return}
   const w=await H.createWritable();await w.write(JSON.stringify(D,null,1));await w.close();
   lastMod=(await H.getFile()).lastModified;
 }
@@ -364,7 +360,6 @@ function assignSeq(){
   D.records.filter(r=>!r.seq).forEach(r=>{r.seq=mx[mk(r)]=(mx[mk(r)]||0)+1});
 }
 async function commit(fn){
-  if(G&&G.offline){alert('ขณะนี้ออฟไลน์ (อ่านอย่างเดียว) บันทึกข้อมูลไม่ได้ ต้องต่ออินเทอร์เน็ตก่อน');return false}
   if(G&&!G.token){alert('โหมดอ่านอย่างเดียว (ไม่ได้ใส่ token) บันทึกข้อมูลไม่ได้');return false}
   if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return false}
   try{
@@ -376,8 +371,8 @@ async function commit(fn){
   }catch(e){alert('บันทึกไม่สำเร็จ: '+(e instanceof TypeError?'เชื่อมต่อ GitHub ไม่ได้ (ไม่มีอินเทอร์เน็ต) ข้อมูลยังไม่ถูกบันทึก':e.message));return false}
 }
 async function connect(h,isNew){
-  G=null;LOC=false;try{localStorage.removeItem('repairlog_loc')}catch{}H=h;await kv('put',h);
-  if(isNew){D=empty();await write()}else{await load();await persistConv()}
+  G=null;H=h;await kv('put',h);
+  if(isNew){D=empty();syncTech();await write()}else{await load();await persistConv()}
   $('#bRe').style.display='none';base='ออฟไลน์ · ไฟล์ '+H.name;render();
 }
 async function connectGH(cfg,save,mode){
@@ -386,36 +381,37 @@ async function connectGH(cfg,save,mode){
     await load();await persistConv();
     if(!G.sha){
       if(!G.token)throw new Error('ไม่พบไฟล์ข้อมูลใน repo (ต้องใส่ token ถึงจะสร้างไฟล์ใหม่ได้)');
-      if(mode==='create'||(mode==='open'&&confirm('ไม่พบไฟล์ "'+G.path+'" ใน repo นี้ ต้องการสร้างไฟล์ข้อมูลใหม่หรือไม่?'))){D=empty();await write()}
+      if(mode==='create'||(mode==='open'&&confirm('ไม่พบไฟล์ "'+G.path+'" ใน repo นี้ ต้องการสร้างไฟล์ข้อมูลใหม่หรือไม่?'))){await seedFromOld();await write()}
       else throw new Error('ไม่พบไฟล์ข้อมูลใน repo');
     }
   }catch(e){G=old;throw e}
-  H=null;LOC=false;try{localStorage.removeItem('repairlog_loc')}catch{}if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
+  H=null;if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
   $('#bRe').style.display='none';base='ออนไลน์'+(G.token?'':' (อ่านอย่างเดียว)');render();
 }
 async function ghOffline(c,e){
   if(!(e instanceof TypeError)&&navigator.onLine!==false)return false;
-  const t=await kv('get',null,'cache');if(!t)return false;
-  G=Object.assign({sha:null,etag:null,offline:true},c);H=null;LOC=false;
-  try{apply(t)}catch{G=null;return false}
-  base='ออฟไลน์ · ข้อมูลล่าสุดที่เก็บไว้ (อ่านอย่างเดียว)';render();return true;
+  const h=window.showOpenFilePicker&&await kv('get');if(!h)return false;
+  H=h;
+  try{if(await h.queryPermission({mode:'readwrite'})==='granted'){await connect(h,false);base='ออฟไลน์ · ไฟล์ '+h.name+' (ใช้แทน GitHub ชั่วคราว)';render();return true}}catch{}
+  $('#bRe').textContent='↻ เชื่อมต่อไฟล์ในเครื่อง '+h.name+' (ออฟไลน์)';$('#bRe').style.display='';$('#st').textContent='⚠ ออฟไลน์ — ให้เชื่อมต่อไฟล์ในเครื่องแทน GitHub';return true;
 }
-async function connectLocal(){
-  G=null;H=null;LOC=true;try{localStorage.setItem('repairlog_loc','1')}catch{}
-  await load();await persistConv();$('#bRe').style.display='none';base='ออฟไลน์ · เก็บในเบราว์เซอร์นี้';render();
+async function seedFromOld(){
+  D=empty();syncTech();const OLD='repair-data/data.json';if(G.path===OLD)return;
+  const keep=G.path;
+  try{
+    G.path=OLD;G.sha=null;G.etag=null;
+    const r=await gget(true),found=!!G.sha;
+    G.path=keep;G.sha=null;G.etag=null;
+    if(found&&r.text.trim()&&confirm('พบไฟล์ข้อมูลเดิมที่ '+OLD+'\nต้องการคัดลอกข้อมูลมาไว้ที่ไฟล์ใหม่ ('+keep+') ด้วยหรือไม่?'))apply(r.text);
+  }catch{G.path=keep;G.sha=null;G.etag=null}
 }
 const ft=[{description:'JSON',accept:{'application/json':['.json']}}];
 $('#bOpen').onclick=async()=>{try{const[h]=await showOpenFilePicker({types:ft});await connect(h,false)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
 $('#bNew').onclick=async()=>{try{const h=await showSaveFilePicker({suggestedName:'repair-data.json',types:ft});await connect(h,true)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
-$('#bLoc').onclick=async()=>{
-  if(!confirm('ใช้ที่เก็บข้อมูลในเบราว์เซอร์นี้?\n• ใช้งานได้โดยไม่ต้องมีอินเทอร์เน็ตหรือไฟล์\n• ข้อมูลอยู่เฉพาะเครื่องและเบราว์เซอร์นี้ (ไม่ซิงก์ข้ามเครื่อง)\n• ถ้าล้างข้อมูลเบราว์เซอร์ ข้อมูลจะหาย ควรสำรองข้อมูลเป็นระยะ'))return;
-  try{await connectLocal()}catch(e){alert(e.message)}
-};
 $('#bRe').onclick=async()=>{try{if(await H.requestPermission({mode:'readwrite'})==='granted')await connect(H,false)}catch(e){alert(e.message)}};
 setInterval(async()=>{
   try{
-    if(G&&G.offline){try{const r=await gget(true);G.offline=false;lastSync=new Date();apply(r.text);kv('put',r.text,'cache');base='ออนไลน์'+(G.token?'':' (อ่านอย่างเดียว)');render()}catch{}return}
-    if(G){if(!G.token&&lastSync&&Date.now()-lastSync<30000)return;const r=await gget(false);lastSync=new Date();if(r){apply(r.text);kv('put',r.text,'cache');await persistConv();render()}else stat()}
+    if(G){if(!G.token&&lastSync&&Date.now()-lastSync<30000)return;const r=await gget(false);lastSync=new Date();if(r){apply(r.text);await persistConv();render()}else stat()}
     else if(H){const f=await H.getFile();if(f.lastModified!==lastMod){await load();await persistConv();render()}}
   }catch{}
 },4000);
@@ -441,9 +437,9 @@ function custTable(){
     list.map(c=>{const s=st[cn(c.name)]||{c:0,last:''};return `<tr><td><div class="cname"><span class="av">${esc([...c.name.trim()][0]||'?')}</span><b>${esc(c.name)}</b></div></td><td>${c.phone?`<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:'-'}</td><td>${c.line?`<span class="line">${esc(c.line)}</span>`:'-'}</td><td><span class="no">${s.c}</span></td><td>${fdate(s.last)}</td><td style="white-space:nowrap"><button class="s" data-ca="edit" data-id="${c.id}"><i class="fa-solid fa-pen"></i> แก้ไข</button> <button class="s d" data-ca="del" data-id="${c.id}"><i class="fa-solid fa-trash"></i> ลบ</button></td></tr>`}).join('')+'</tbody></table>';
 }
 let lastSync=null;
-function stat(){const n=D.records.filter(r=>!r.del).length;
-  $('#st').innerHTML=(G?'<i class="fa-solid fa-cloud"></i> ':'<i class="fa-solid fa-hard-drive"></i> ')+esc(base)+(lastSync?' · ซิงก์ล่าสุด '+lastSync.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'')+(user?' · '+n+' รายการ':'');
-  $('#st').className='rounded-full px-3 py-1 text-xs font-medium '+(G&&(!G.token||G.offline)?'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300':'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300')}
+function stat(){
+  $('#st').innerHTML=(G?'<i class="fa-solid fa-cloud"></i> ':'<i class="fa-solid fa-hard-drive"></i> ')+esc(base)+(lastSync?' · ซิงก์ล่าสุด '+lastSync.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'');
+  $('#st').className='rounded-full px-3 py-1 text-xs font-medium '+(G&&!G.token?'bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300':'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300')}
 function render(){
   gateUI();if(base)stat();if(!user){clearUI();return}
   const live=D.records.filter(r=>!r.del);
@@ -465,8 +461,8 @@ function render(){
     if(admin){
     const lab=inM.reduce((a,r)=>a+(r.claimL?0:num(r.labor)),0),oldN=inM.filter(r=>(r.parts||[]).some(p=>String(p.o||'').trim())).length;
     $('#admStats').innerHTML=[['screwdriver-wrench','งานในเดือนที่เลือก',inM.length],['baht-sign','ค่าแรงรวม (ไม่รวมเคลม)',fmt(lab)],['recycle','งานที่ใช้อะไหล่เก่า',oldN],['user-gear','ช่างที่ใช้งาน',(D.meta.techList||[]).filter(t=>t.active!==false).length]].map(([i,t,v])=>`<div class="stat"><div class="ic"><i class="fa-solid fa-${i}"></i></div><div><b>${v}</b><span>${t}</span></div></div>`).join('');
-    const src=G?'GitHub: '+G.owner+'/'+G.repo+' · '+G.path:(H?'ไฟล์ในเครื่อง: '+H.name:(LOC?'เบราว์เซอร์เครื่องนี้':'-'));
-    $('#sysInfo').innerHTML='<table><tbody>'+[['โหมดการเชื่อมต่อ',G?'ออนไลน์ (GitHub)'+(G.token?'':' · อ่านอย่างเดียว'):(LOC?'ออฟไลน์ (เก็บในเบราว์เซอร์)':'ออฟไลน์ (ไฟล์ในเครื่อง)')],['แหล่งข้อมูล',src],['รายการซ่อมทั้งหมด',live.length],['งานเคลมค่าแรง / เคลมอะไหล่',live.filter(r=>r.claimL).length+' / '+live.filter(r=>r.claimP).length],['รายการในถังขยะ',D.records.length-live.length],['ลูกค้าในฐานข้อมูล',D.customers.filter(c=>!c.del).length],['ช่างที่ใช้งาน',(D.meta.techList||[]).filter(t=>t.active!==false).length]].map(([a,b])=>`<tr><td class="text-slate-500">${a}</td><td><b>${esc(String(b))}</b></td></tr>`).join('')+'</tbody></table>';
+    const src=G?'GitHub: '+G.owner+'/'+G.repo+' · '+G.path:(H?'ไฟล์ในเครื่อง: '+H.name:'-');
+    $('#sysInfo').innerHTML='<table><tbody>'+[['โหมดการเชื่อมต่อ',G?'ออนไลน์ (GitHub)'+(G.token?'':' · อ่านอย่างเดียว'):'ออฟไลน์ (ไฟล์ในเครื่อง)'],['แหล่งข้อมูล',src],['รายการซ่อมทั้งหมด',live.length],['งานเคลมค่าแรง / เคลมอะไหล่',live.filter(r=>r.claimL).length+' / '+live.filter(r=>r.claimP).length],['รายการในถังขยะ',D.records.length-live.length],['ลูกค้าในฐานข้อมูล',D.customers.filter(c=>!c.del).length],['ช่างที่ใช้งาน',(D.meta.techList||[]).filter(t=>t.active!==false).length]].map(([a,b])=>`<tr><td class="text-slate-500">${a}</td><td><b>${esc(String(b))}</b></td></tr>`).join('')+'</tbody></table>';
     $('#techList').innerHTML=techTable();$('#allList').innerHTML=table(inM,'adm');$('#delList').innerHTML=table(D.records.filter(r=>r.del),'del')}
 }
 $('#q').oninput=render;$('#cq').oninput=render;
@@ -677,10 +673,9 @@ $('#bGh').onclick=()=>{const c=G||gcfg()||{};
   const w=$('#gWarn'),ex=G||gcfg();let wm='';
   if(ex&&ex.owner)wm='มีการตั้งค่า GitHub อยู่แล้ว: <b>'+esc(ex.owner)+'/'+esc(ex.repo)+'</b> · '+esc(ex.path)+(ex.token?' (มี token)':' (อ่านอย่างเดียว)')+'<br>การกดตกลงจะ<b>เขียนทับค่าเดิม</b>และสลับไปใช้ไฟล์ที่ระบุ (ข้อมูลในไฟล์เดิมไม่ถูกลบ)';
   else if(H)wm='ขณะนี้ใช้ไฟล์ในเครื่อง ('+esc(H.name)+') การเชื่อมต่อ GitHub จะสลับแหล่งข้อมูลไปที่ GitHub ข้อมูลในไฟล์เครื่องจะไม่ถูกย้ายให้อัตโนมัติ (ใช้สำรอง/นำเข้าเพื่อถ่ายโอน)';
-  else if(LOC)wm='ขณะนี้ใช้ที่เก็บในเบราว์เซอร์ การเชื่อมต่อ GitHub จะสลับแหล่งข้อมูล ข้อมูลในเบราว์เซอร์จะไม่ถูกย้ายให้อัตโนมัติ (สำรองก่อนได้)';
   w.innerHTML=wm?'<i class="fa-solid fa-triangle-exclamation"></i> '+wm:'';w.classList.toggle('hidden',!wm);
   $('#gOwner').value=c.owner||'';$('#gRepo').value=c.repo||'';
-  $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gOff').style.display=G?'':'none';$('#gdlg').showModal()};
+  $('#gPath').value=c.path||'database/repair-data.json';$('#gTok').value=c.token||'';$('#gOff').style.display=G?'':'none';$('#gdlg').showModal()};
 $('#gCancel').onclick=()=>$('#gdlg').close();
 $('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';$('#st').className='rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300';render();$('#gdlg').close()};
 function readCfg(){
@@ -697,7 +692,7 @@ $('#gGo').onclick=()=>{
   const cfg=readCfg();if(!cfg)return;
   const ex=G||gcfg(),diff=ex&&ex.owner&&(ex.owner!==cfg.owner||ex.repo!==cfg.repo||ex.path!==cfg.path||(ex.token&&!cfg.token));
   if(diff&&!confirm('มีการตั้งค่า GitHub เดิมอยู่แล้ว ('+ex.owner+'/'+ex.repo+' · '+ex.path+')\nต้องการเปลี่ยนเป็น '+cfg.owner+'/'+cfg.repo+' · '+cfg.path+(cfg.token?'':' (อ่านอย่างเดียว ไม่มี token)')+' หรือไม่?'))return;
-  if(!(ex&&ex.owner)&&(H||LOC)&&!confirm('ตอนนี้ใช้ข้อมูลแบบออฟไลน์อยู่ ต้องการสลับไปใช้ GitHub หรือไม่?\n(ข้อมูลเดิมจะไม่ถูกย้ายให้อัตโนมัติ)'))return;
+  if(!(ex&&ex.owner)&&H&&!confirm('ตอนนี้ใช้ข้อมูลแบบออฟไลน์อยู่ ต้องการสลับไปใช้ GitHub หรือไม่?\n(ข้อมูลเดิมจะไม่ถูกย้ายให้อัตโนมัติ)'))return;
   ghAction(async()=>{await connectGH(cfg,true,'open');$('#gdlg').close()});
 };
 
@@ -793,7 +788,7 @@ function gateUI(){
   $('#lock').style.display='none';$('#admin').style.display=adm?'':'none';
   $('#who').textContent=ok?user.name:'';$('#uAv').textContent=ok?[...user.name][0]:'';
   if(adm){$('#admWarn').classList.toggle('hidden',!!D.meta.admin);bakInfo()}
-  if(!ok)$('#lgMsg').textContent=ready()?'กรอก Username และ Password เพื่อดูงานซ่อมและข้อมูลลูกค้า':'กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ที่มุมขวาบนก่อน (หรือเลือก "เก็บในเบราว์เซอร์นี้" เพื่อใช้แบบออฟไลน์)';
+  if(!ok)$('#lgMsg').textContent=ready()?'กรอก Username และ Password เพื่อดูงานซ่อมและข้อมูลลูกค้า':'กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ที่มุมขวาบนก่อน';
 }
 let fails=0,lockUntil=0;
 $('#lgGo').onclick=async()=>{
@@ -917,14 +912,13 @@ document.addEventListener('click',e=>{
 (async()=>{
   if(!window.showOpenFilePicker){
     $('#bOpen').disabled=$('#bNew').disabled=true;
-    $('#warn').textContent='เบราว์เซอร์นี้เปิดไฟล์ในเครื่องโดยตรงไม่ได้ ให้ใช้ "เก็บในเบราว์เซอร์นี้" (ออฟไลน์) หรือ GitHub แทน หรือเปิดด้วย Chrome/Edge';$('#warn').style.display='';
+    $('#warn').textContent='เบราว์เซอร์นี้ไม่รองรับการเปิดไฟล์โดยตรง ให้ใช้โหมด GitHub หรือเปิดด้วย Chrome/Edge';$('#warn').style.display='';
   }
   const c=gcfg();
   if(c){try{await connectGH(c,false,'auto')}catch(e){if(!(await ghOffline(c,e)))$('#st').textContent='⚠ เชื่อมต่อ GitHub ไม่ได้: '+e.message}}
   else{
     const h=window.showOpenFilePicker&&await kv('get');
-    if(!h&&localStorage.getItem('repairlog_loc')){try{await connectLocal()}catch(e){$('#st').textContent='⚠ '+e.message}}
-    else if(h){H=h;$('#bRe').textContent='↻ เชื่อมต่อ '+h.name+' ต่อ';$('#bRe').style.display='';
+    if(h){H=h;$('#bRe').textContent='↻ เชื่อมต่อ '+h.name+' ต่อ';$('#bRe').style.display='';
       try{if(await h.queryPermission({mode:'readwrite'})==='granted')await connect(h,false)}catch{}}
   }
   render();
