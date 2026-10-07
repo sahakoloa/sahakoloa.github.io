@@ -1,71 +1,137 @@
 <!doctype html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0b0c0f" />
-  <title>drop — ดาวน์โหลดสื่อจากลิงก์</title>
-  <meta name="description" content="วางลิงก์เพื่อบันทึกวิดีโอหรือเสียงจากบริการที่รองรับ" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f4">
+  <meta name="description" content="ศูนย์รวมบริการภายในองค์กร เลือกเข้าใช้งานระบบขอใช้บริการและระบบแจ้งซ่อมได้จากที่เดียว">
+  <title>ศูนย์บริการออนไลน์ | สหโคโล</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
-    :root{color-scheme:dark;--bg:#0b0c0f;--panel:#111318;--panel2:#17191f;--line:#262932;--muted:#858994;--text:#f4f4f2;--lime:#c9f36a;--lime-dark:#a9d84c;--radius:18px}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'Noto Sans Thai',sans-serif;min-height:100vh;overflow-x:hidden}
-    button,input{font:inherit}button{color:inherit;cursor:pointer}.shell{max-width:1120px;margin:auto;padding:0 30px}
-    header{height:82px;border-bottom:1px solid #ffffff0c;display:flex;align-items:center}.nav{display:flex;align-items:center;justify-content:space-between;width:100%}
-    .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:21px;letter-spacing:-.7px;text-decoration:none;color:var(--text)}.brand-mark{width:34px;height:34px;background:var(--lime);color:#10120d;border-radius:11px;display:grid;place-items:center;font-size:15px;transform:rotate(-5deg)}
-    .nav-right{display:flex;align-items:center;gap:9px}.nav-link,.icon-btn{height:40px;padding:0 14px;border:1px solid transparent;border-radius:11px;background:transparent;color:#afb1b9;text-decoration:none;font-size:13px;display:flex;align-items:center;gap:8px;transition:.2s}.nav-link:hover,.icon-btn:hover{background:var(--panel2);color:white;border-color:var(--line)}.icon-btn{width:40px;justify-content:center;padding:0;font-size:15px}
-    main{padding:74px 0 56px}.hero{text-align:center;margin:0 auto 34px}.eyebrow{font-size:12px;color:var(--lime);letter-spacing:1.4px;text-transform:uppercase;font-weight:700}.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.24;letter-spacing:-1.7px;margin:13px 0 9px;font-weight:800}.hero p{color:#9699a3;font-size:15px;margin:0}
-    .download-card{max-width:760px;margin:0 auto;background:linear-gradient(145deg,#15171d,#111318);border:1px solid #30333c;border-radius:23px;padding:11px;box-shadow:0 28px 90px #0008;position:relative}.url-wrap{height:70px;display:flex;align-items:center;gap:14px;padding:0 14px 0 19px}.url-icon{color:#6e727c;font-size:17px}.url-input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;font-size:16px}.url-input::placeholder{color:#777b85}.paste-btn{border:0;background:#252830;color:#c7c8cd;padding:10px 13px;border-radius:10px;font-size:12px;white-space:nowrap}.paste-btn:hover{background:#30333c;color:#fff}.card-bottom{padding:10px 10px 5px;border-top:1px solid #ffffff0c;display:flex;align-items:center;justify-content:space-between;gap:12px}.option-controls{display:flex;align-items:center;gap:8px}.select-btn{height:40px;border:1px solid #30333c;background:#1a1c22;padding:0 13px;border-radius:10px;color:#dedfe2;font-size:12px;display:flex;align-items:center;gap:9px}.select-btn:hover{border-color:#51545e}.select-btn i:first-child{color:#aeb1ba}.select-btn .chevron{font-size:10px;color:#777b84;margin-left:4px}.download-btn{height:43px;padding:0 22px;border:0;border-radius:11px;background:var(--lime);color:#14180b;font-size:13px;font-weight:800;display:flex;align-items:center;gap:10px;transition:.18s}.download-btn:hover{background:#d8ff83;transform:translateY(-1px)}.download-btn:active{transform:translateY(0)}.download-btn:disabled{opacity:.65;cursor:wait}
-    .menu{position:absolute;z-index:10;bottom:57px;left:12px;width:235px;background:#1b1d23;border:1px solid #363943;border-radius:13px;padding:7px;box-shadow:0 16px 45px #000a;display:none}.menu.open{display:block;animation:pop .14s ease-out}@keyframes pop{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}.menu-title{font-size:10px;color:#888d98;padding:8px 10px 5px;text-transform:uppercase;letter-spacing:.8px}.menu-item{width:100%;text-align:left;border:0;background:transparent;padding:10px;border-radius:8px;display:flex;align-items:center;gap:10px;font-size:12px;color:#d5d6da}.menu-item:hover,.menu-item.active{background:#2a2d35}.menu-item .fa-check{margin-left:auto;color:var(--lime);font-size:11px}.menu-item i:not(.fa-check){width:15px;color:#a6aab4}
-    .feedback{min-height:23px;text-align:center;font-size:12px;color:#9397a0;margin:13px 0 0}.feedback.error{color:#ff8c88}.feedback.success{color:var(--lime)}
-    .supported{max-width:760px;margin:58px auto 0}.supported-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}.supported h2{font-size:13px;font-weight:600;color:#b9bbc2;margin:0}.service-count{font-size:11px;color:#747984}.services{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.service{height:76px;border:1px solid #202229;background:#101115;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#aeb0b9;transition:.2s}.service i{font-size:19px}.service span{font-size:10px}.service:hover{border-color:#393d47;background:#15171d;transform:translateY(-2px);color:#fff}.service.youtube i{color:#ff5555}.service.tiktok i{color:#f0f0f0}.service.instagram i{color:#e87cae}.service.x i{color:#e7e7e7}.service.spotify i{color:#74d995}.service.soundcloud i{color:#ff9955}
-    .how{margin:62px auto 0;max-width:760px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.step{padding:17px 16px;border-top:1px solid #25272e}.step-num{color:var(--lime);font-size:11px;font-weight:700;letter-spacing:1px}.step h3{font-size:13px;margin:10px 0 4px}.step p{font-size:11px;line-height:1.7;color:#858994;margin:0}
-    footer{border-top:1px solid #ffffff0c;padding:23px 0;color:#747984;font-size:11px}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}.footer-links{display:flex;gap:20px}.footer-links a{color:inherit;text-decoration:none}.footer-links a:hover{color:#d9dbe0}.note{font-size:10px;color:#6f737c;margin-top:16px}
-    .toast{position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);background:#24272e;border:1px solid #41444c;padding:11px 16px;border-radius:11px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 12px 35px #0009;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
-    dialog{border:1px solid #363943;background:#17191f;color:#eee;border-radius:18px;width:min(440px,calc(100% - 28px));padding:0;box-shadow:0 30px 100px #000b}dialog::backdrop{background:#000a;backdrop-filter:blur(4px)}.modal-head{padding:20px 22px;border-bottom:1px solid #2b2e36;display:flex;justify-content:space-between;align-items:center}.modal-head h2{font-size:16px;margin:0}.close{background:transparent;border:0;color:#9a9da6;font-size:17px}.modal-body{padding:18px 22px}.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #292b32;font-size:12px;color:#d6d7db}.setting-row:last-child{border:0}.setting-row small{display:block;color:#80848f;font-size:10px;margin-top:4px}.toggle{appearance:none;width:36px;height:21px;border-radius:99px;background:#40434c;position:relative;cursor:pointer;transition:.2s}.toggle:checked{background:var(--lime-dark)}.toggle:after{content:'';position:absolute;left:3px;top:3px;width:15px;height:15px;border-radius:50%;background:white;transition:.2s}.toggle:checked:after{left:18px;background:#22270f}
-    @media(max-width:650px){.shell{padding:0 18px}header{height:68px}.nav-link{font-size:0;padding:0 11px}.nav-link i{font-size:14px}.nav-link span{display:none}.brand{font-size:19px}.main{padding-top:55px}main{padding:56px 0 44px}.hero h1{letter-spacing:-1px}.hero p{font-size:13px}.download-card{padding:8px;border-radius:18px}.url-wrap{height:60px;padding:0 9px;gap:10px}.url-input{font-size:13px}.paste-btn{padding:9px;font-size:11px}.card-bottom{padding:9px 4px 3px}.option-controls{gap:5px}.select-btn{padding:0 9px;height:38px;font-size:10px;gap:6px}.download-btn{padding:0 14px;height:40px;font-size:11px}.services{grid-template-columns:repeat(3,1fr)}.service{height:68px}.supported{margin-top:42px}.how{margin-top:42px;grid-template-columns:1fr;gap:5px}.step{display:grid;grid-template-columns:35px 1fr;column-gap:8px;padding:13px 4px}.step-num{grid-row:span 2;padding-top:3px}.step h3{margin:0 0 4px}.footer-inner{align-items:flex-start;flex-direction:column}.footer-links{gap:15px}.note{line-height:1.7}}
-    @media(max-width:390px){.download-btn{gap:6px;padding:0 10px}.select-btn{font-size:9px}.select-btn .fa-chevron-down{display:none}.url-wrap{gap:7px}.paste-btn{font-size:10px}}
+    :root {
+      color-scheme: light;
+      --ink: #172b32;
+      --muted: #66777b;
+      --paper: #f5f7f4;
+      --white: #fff;
+      --line: #e5ebe6;
+      --green: #147d68;
+      --green-dark: #0c5c4d;
+      --mint: #e2f2e9;
+      --coral: #df795d;
+      --shadow: 0 20px 60px rgba(31, 67, 56, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Noto Sans Thai', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    .shell { width: min(1160px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar { height: 84px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: inline-flex; gap: 12px; align-items: center; text-decoration: none; }
+    .brand-mark { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; color: white; background: var(--green); font-size: 18px; box-shadow: 0 8px 18px rgba(20,125,104,.2); }
+    .brand-name { font-size: 15px; line-height: 1.2; font-weight: 800; letter-spacing: -.02em; }
+    .brand-caption { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; font-weight: 500; }
+    .top-note { display: flex; align-items: center; gap: 8px; color: #557269; font-size: 12px; font-weight: 600; }
+    .top-note i { color: var(--green); }
+    main { padding: 34px 0 68px; }
+    .hero { position: relative; overflow: hidden; min-height: 354px; padding: 54px 60px; border-radius: 28px; color: white; background: #123f39; box-shadow: var(--shadow); }
+    .hero:before, .hero:after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; }
+    .hero:before { width: 440px; height: 440px; right: -35px; top: -170px; border: 1px solid rgba(222,244,232,.18); box-shadow: 0 0 0 38px rgba(222,244,232,.035), 0 0 0 78px rgba(222,244,232,.025); }
+    .hero:after { width: 310px; height: 310px; right: 130px; bottom: -255px; background: rgba(223,121,93,.8); filter: blur(1px); }
+    .hero-content { position: relative; z-index: 1; max-width: 630px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 99px; color: #d6eee3; background: rgba(255,255,255,.07); font-size: 11px; font-weight: 600; letter-spacing: .02em; }
+    h1 { margin: 0; font-size: clamp(30px, 4vw, 45px); line-height: 1.35; letter-spacing: -.04em; font-weight: 800; }
+    .hero p { max-width: 535px; margin: 14px 0 0; color: #c5ddd5; font-size: 15px; line-height: 1.9; }
+    .hero-decoration { position: absolute; right: 80px; top: 80px; width: 192px; height: 192px; border-radius: 32px; transform: rotate(9deg); display: grid; place-items: center; color: rgba(231,247,238,.88); background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.13); }
+    .hero-decoration i { font-size: 66px; transform: rotate(-9deg); }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 42px 0 18px; }
+    .section-heading h2 { margin: 0; font-size: 20px; line-height: 1.5; font-weight: 800; letter-spacing: -.02em; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .service-card { display: flex; flex-direction: column; min-height: 246px; padding: 26px; border: 1px solid var(--line); border-radius: 20px; text-decoration: none; background: var(--white); box-shadow: 0 8px 28px rgba(27,55,47,.035); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+    .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #bdd9cb; }
+    .service-card:focus-visible { outline: 3px solid #76b99e; outline-offset: 3px; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .service-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 17px; font-size: 21px; }
+    .service-icon.request { color: #17745f; background: #e4f4eb; }
+    .service-icon.repair { color: #bd654b; background: #fff0e9; }
+    .arrow { color: #93a39e; font-size: 15px; transition: transform .2s ease, color .2s ease; }
+    .service-card:hover .arrow { color: var(--green); transform: translate(3px,-3px); }
+    .service-card h3 { margin: 20px 0 7px; font-size: 18px; font-weight: 800; }
+    .service-card p { max-width: 440px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.85; }
+    .card-action { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 21px; color: var(--green-dark); font-size: 12px; font-weight: 700; }
+    .info-strip { display: flex; align-items: center; gap: 14px; margin-top: 22px; padding: 17px 20px; border: 1px solid #e5ebe6; border-radius: 15px; background: rgba(255,255,255,.58); }
+    .info-icon { flex: 0 0 34px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 11px; color: #5b816f; background: var(--mint); }
+    .info-strip p { margin: 0; color: #62736f; font-size: 12px; line-height: 1.7; }
+    footer { display: flex; justify-content: space-between; gap: 16px; padding: 22px 0 30px; border-top: 1px solid #e4eae5; color: #82908c; font-size: 11px; }
+    footer .footer-brand { color: #5e716b; font-weight: 700; }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 32px, 560px); }
+      .topbar { height: 72px; }
+      .top-note { font-size: 0; gap: 0; width: 34px; height: 34px; justify-content: center; border-radius: 50%; background: #e8f1eb; }
+      main { padding: 20px 0 44px; }
+      .hero { min-height: 310px; padding: 38px 28px; border-radius: 23px; }
+      .hero-decoration { width: 112px; height: 112px; top: auto; bottom: 22px; right: 20px; border-radius: 24px; opacity: .6; }
+      .hero-decoration i { font-size: 42px; }
+      .hero-content { max-width: 100%; }
+      .hero p { max-width: 380px; font-size: 13px; }
+      .hero:before { right: -185px; }
+      .section-heading { align-items: flex-start; flex-direction: column; margin-top: 34px; }
+      .service-grid { grid-template-columns: 1fr; gap: 13px; }
+      .service-card { min-height: 220px; padding: 22px; }
+      footer { flex-direction: column; gap: 5px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
-  <header><div class="shell nav">
-    <a class="brand" href="#" aria-label="drop หน้าแรก"><span class="brand-mark"><i class="fa-solid fa-arrow-down"></i></span><span>drop<span style="color:var(--lime)">.</span></span></a>
-    <nav class="nav-right" aria-label="เมนูหลัก"><a class="nav-link" href="#supported"><i class="fa-solid fa-layer-group"></i><span>บริการที่รองรับ</span></a><button class="nav-link" id="aboutBtn"><i class="fa-regular fa-circle-question"></i><span>เกี่ยวกับ</span></button><button class="icon-btn" id="settingsBtn" aria-label="ตั้งค่า"><i class="fa-solid fa-sliders"></i></button></nav>
-  </div></header>
-  <main class="shell">
-    <section class="hero"><div class="eyebrow">บันทึกสิ่งที่คุณชอบ</div><h1>วางลิงก์ แล้วดาวน์โหลด</h1><p>วิดีโอหรือเสียงที่คุณต้องการ เก็บไว้ในไม่กี่วินาที</p></section>
-    <section class="download-card" aria-label="ดาวน์โหลดสื่อ">
-      <div class="url-wrap"><i class="fa-solid fa-link url-icon" aria-hidden="true"></i><input class="url-input" id="urlInput" type="url" placeholder="วางลิงก์ที่นี่ เช่น https://..." autocomplete="url" aria-label="ลิงก์สื่อ"/><button class="paste-btn" id="pasteBtn"><i class="fa-regular fa-clipboard"></i> วางลิงก์</button></div>
-      <div class="card-bottom"><div class="option-controls"><button class="select-btn" id="formatBtn" aria-haspopup="true"><i class="fa-solid fa-video"></i><span id="formatLabel">วิดีโอ</span><i class="fa-solid fa-chevron-down chevron"></i></button><button class="select-btn" id="qualityBtn" aria-haspopup="true"><i class="fa-solid fa-high-definition"></i><span id="qualityLabel">คุณภาพสูงสุด</span><i class="fa-solid fa-chevron-down chevron"></i></button></div><button class="download-btn" id="downloadBtn"><i class="fa-solid fa-arrow-down"></i> ดาวน์โหลด</button></div>
-      <div class="menu" id="formatMenu" role="menu"><div class="menu-title">รูปแบบไฟล์</div><button class="menu-item active" data-value="วิดีโอ" data-icon="fa-video"><i class="fa-solid fa-video"></i> วิดีโอ <i class="fa-solid fa-check"></i></button><button class="menu-item" data-value="เสียง" data-icon="fa-music"><i class="fa-solid fa-music"></i> เสียงอย่างเดียว</button></div>
-      <div class="menu" id="qualityMenu" role="menu" style="left:176px"><div class="menu-title">คุณภาพ</div><button class="menu-item active" data-value="คุณภาพสูงสุด"><i class="fa-solid fa-wand-magic-sparkles"></i> คุณภาพสูงสุด <i class="fa-solid fa-check"></i></button><button class="menu-item" data-value="1080p"><i class="fa-solid fa-display"></i> 1080p</button><button class="menu-item" data-value="720p"><i class="fa-solid fa-display"></i> 720p</button><button class="menu-item" data-value="480p"><i class="fa-solid fa-display"></i> 480p</button></div>
+  <header class="shell topbar">
+    <a class="brand" href="#top" aria-label="ศูนย์บริการออนไลน์ สหโคโล">
+      <span class="brand-mark" aria-hidden="true"><i class="fa-solid fa-leaf"></i></span>
+      <span><span class="brand-name">SAHAKOL SERVICE</span><span class="brand-caption">ศูนย์บริการออนไลน์</span></span>
+    </a>
+    <div class="top-note"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> ใช้งานง่าย ครบจบในที่เดียว</div>
+  </header>
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="eyebrow"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> SERVICE PORTAL</div>
+        <h1 id="hero-title">ทุกบริการที่คุณต้องการ<br>เริ่มต้นได้ที่นี่</h1>
+        <p>เลือกใช้บริการออนไลน์ได้สะดวกในหน้าเดียว ทั้งการส่งคำขอใช้บริการและการแจ้งซ่อม ติดตามงานได้ง่าย ช่วยให้ทุกวันทำงานราบรื่นยิ่งขึ้น</p>
+      </div>
+      <div class="hero-decoration" aria-hidden="true"><i class="fa-solid fa-headset"></i></div>
     </section>
-    <div class="feedback" id="feedback" aria-live="polite"></div>
-    <section class="supported" id="supported"><div class="supported-top"><h2>รองรับแพลตฟอร์มยอดนิยม</h2><span class="service-count">และอีกมากมาย</span></div><div class="services">
-      <div class="service youtube"><i class="fa-brands fa-youtube"></i><span>YouTube</span></div><div class="service tiktok"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div><div class="service instagram"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div><div class="service x"><i class="fa-brands fa-x-twitter"></i><span>X / Twitter</span></div><div class="service spotify"><i class="fa-brands fa-spotify"></i><span>Spotify</span></div><div class="service soundcloud"><i class="fa-brands fa-soundcloud"></i><span>SoundCloud</span></div>
-    </div></section>
-    <section class="how" aria-label="วิธีใช้งาน"><article class="step"><span class="step-num">01</span><h3>คัดลอกลิงก์</h3><p>เปิดสื่อที่ต้องการ แล้วคัดลอก URL จากแพลตฟอร์ม</p></article><article class="step"><span class="step-num">02</span><h3>เลือกรูปแบบ</h3><p>เลือกบันทึกเป็นวิดีโอหรือเสียง พร้อมคุณภาพที่ต้องการ</p></article><article class="step"><span class="step-num">03</span><h3>กดดาวน์โหลด</h3><p>วางลิงก์และกดปุ่มเพื่อเริ่มบันทึกไฟล์ของคุณ</p></article></section>
-    <p class="note" style="text-align:center">โปรดดาวน์โหลดเฉพาะสื่อที่คุณมีสิทธิ์ใช้งาน และปฏิบัติตามเงื่อนไขของแต่ละแพลตฟอร์ม</p>
+
+    <section aria-labelledby="services-title">
+      <div class="section-heading">
+        <div><h2 id="services-title">เลือกบริการ</h2><p>เลือกหัวข้อที่ต้องการเพื่อเข้าสู่ระบบบริการ</p></div>
+      </div>
+      <div class="service-grid">
+        <a class="service-card" href="https://sahakoloa.github.io/service_requisition/index.html" target="_blank" rel="noopener noreferrer" aria-label="เปิดระบบขอใช้บริการในแท็บใหม่">
+          <div class="card-top"><span class="service-icon request" aria-hidden="true"><i class="fa-solid fa-clipboard-list"></i></span><i class="fa-solid fa-arrow-up-right-from-square arrow" aria-hidden="true"></i></div>
+          <h3>ขอใช้บริการ</h3>
+          <p>ส่งคำขอใช้บริการและแจ้งความต้องการของคุณให้ทีมงานรับเรื่องและดำเนินการ</p>
+          <span class="card-action">เข้าสู่ระบบขอใช้บริการ <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+        <a class="service-card" href="https://sahakoloa.github.io/service_repair/index.html" target="_blank" rel="noopener noreferrer" aria-label="เปิดระบบแจ้งซ่อมในแท็บใหม่">
+          <div class="card-top"><span class="service-icon repair" aria-hidden="true"><i class="fa-solid fa-screwdriver-wrench"></i></span><i class="fa-solid fa-arrow-up-right-from-square arrow" aria-hidden="true"></i></div>
+          <h3>แจ้งซ่อม</h3>
+          <p>แจ้งปัญหาอุปกรณ์หรือพื้นที่ใช้งาน เพื่อให้ทีมช่างเข้าตรวจสอบและแก้ไข</p>
+          <span class="card-action">เข้าสู่ระบบแจ้งซ่อม <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        </a>
+      </div>
+      <div class="info-strip"><span class="info-icon" aria-hidden="true"><i class="fa-regular fa-lightbulb"></i></span><p>หากต้องการความช่วยเหลือเพิ่มเติม โปรดเตรียมรายละเอียดสถานที่และข้อมูลติดต่อไว้ เพื่อให้ทีมงานประสานงานได้รวดเร็วยิ่งขึ้น</p></div>
+    </section>
   </main>
-  <footer><div class="shell footer-inner"><span>© 2026 drop. ทำขึ้นเพื่อการใช้งานที่เรียบง่าย</span><div class="footer-links"><a href="#supported">แพลตฟอร์ม</a><a href="#" id="termsBtn">เงื่อนไขการใช้งาน</a><a href="#" id="aboutFooter">เกี่ยวกับเรา</a></div></div></footer>
-  <dialog id="settingsDialog"><div class="modal-head"><h2><i class="fa-solid fa-sliders" style="color:var(--lime);margin-right:8px"></i>ตั้งค่าการดาวน์โหลด</h2><button class="close" aria-label="ปิด"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><label class="setting-row"><span>ปิดเสียงวิดีโอโดยอัตโนมัติ<small>ดาวน์โหลดวิดีโอแบบไม่มีเสียง</small></span><input type="checkbox" class="toggle" id="muteToggle"></label><label class="setting-row"><span>ตั้งชื่อไฟล์ให้เป็นระเบียบ<small>ใช้ชื่อจากสื่อที่ดาวน์โหลด</small></span><input type="checkbox" class="toggle" checked></label><label class="setting-row"><span>ล้างช่องลิงก์หลังดาวน์โหลด<small>ช่วยให้วางลิงก์ถัดไปได้เร็วขึ้น</small></span><input type="checkbox" class="toggle" checked></label></div></dialog>
-  <div class="toast" id="toast" role="status"></div>
-  <script>
-    const $=s=>document.querySelector(s), input=$('#urlInput'), feedback=$('#feedback'), toast=$('#toast');
-    function showToast(message){toast.textContent=message;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2400)}
-    $('#pasteBtn').addEventListener('click',async()=>{try{const text=await navigator.clipboard.readText();if(text){input.value=text;input.focus();feedback.textContent='วางลิงก์แล้ว พร้อมดาวน์โหลด';feedback.className='feedback success'}else showToast('ไม่พบลิงก์ในคลิปบอร์ด')}catch{input.focus();showToast('แตะค้างที่ช่องลิงก์เพื่อวาง URL')}});
-    input.addEventListener('input',()=>{feedback.textContent='';feedback.className='feedback'});
-    const formatMenu=$('#formatMenu'),qualityMenu=$('#qualityMenu');
-    function closeMenus(){formatMenu.classList.remove('open');qualityMenu.classList.remove('open')}
-    $('#formatBtn').onclick=e=>{e.stopPropagation();qualityMenu.classList.remove('open');formatMenu.classList.toggle('open')};$('#qualityBtn').onclick=e=>{e.stopPropagation();formatMenu.classList.remove('open');qualityMenu.classList.toggle('open')};document.addEventListener('click',closeMenus);
-    formatMenu.querySelectorAll('.menu-item').forEach(item=>item.onclick=()=>{formatMenu.querySelectorAll('.menu-item').forEach(x=>{x.classList.remove('active');x.querySelector('.fa-check')?.remove()});item.classList.add('active');item.insertAdjacentHTML('beforeend',' <i class="fa-solid fa-check"></i>');$('#formatLabel').textContent=item.dataset.value;$('#formatBtn').querySelector('i').className='fa-solid '+item.dataset.icon;closeMenus()});
-    qualityMenu.querySelectorAll('.menu-item').forEach(item=>item.onclick=()=>{qualityMenu.querySelectorAll('.menu-item').forEach(x=>{x.classList.remove('active');x.querySelector('.fa-check')?.remove()});item.classList.add('active');item.insertAdjacentHTML('beforeend',' <i class="fa-solid fa-check"></i>');$('#qualityLabel').textContent=item.dataset.value;closeMenus()});
-    $('#downloadBtn').onclick=()=>{const value=input.value.trim();if(!value){feedback.textContent='วางลิงก์ที่ต้องการดาวน์โหลดก่อนนะ';feedback.className='feedback error';input.focus();return}let parsed;try{parsed=new URL(value)}catch{feedback.textContent='รูปแบบลิงก์ไม่ถูกต้อง กรุณาตรวจสอบ URL';feedback.className='feedback error';input.focus();return}if(!['http:','https:'].includes(parsed.protocol)){feedback.textContent='รองรับเฉพาะลิงก์ http หรือ https';feedback.className='feedback error';return}feedback.textContent='ลิงก์ถูกต้องแล้ว — เชื่อมต่อบริการดาวน์โหลดเพื่อเริ่มบันทึกไฟล์';feedback.className='feedback';showToast('ต้นแบบนี้ต้องเชื่อมต่อ API ฝั่งเซิร์ฟเวอร์เพื่อดาวน์โหลดจริง')};
-    const dlg=$('#settingsDialog');$('#settingsBtn').onclick=()=>dlg.showModal();dlg.querySelector('.close').onclick=()=>dlg.close();dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
-    $('#aboutBtn').onclick=()=>showToast('drop — เครื่องมือวางลิงก์สำหรับบันทึกสื่อ');$('#aboutFooter').onclick=e=>{e.preventDefault();showToast('สร้างขึ้นเพื่อให้ดาวน์โหลดได้ง่ายในที่เดียว')};$('#termsBtn').onclick=e=>{e.preventDefault();showToast('โปรดตรวจสอบสิทธิ์และเงื่อนไขของแพลตฟอร์มก่อนใช้งาน')};
-  </script>
+  <footer class="shell"><span class="footer-brand">SAHAKOL SERVICE</span><span>© 2026 ศูนย์บริการออนไลน์</span></footer>
 </body>
 </html>
