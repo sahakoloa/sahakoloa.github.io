@@ -5,6 +5,12 @@
    "name": "ไฟฟ้า",
    "icon": "bolt",
    "items": []
+  },
+  {
+   "id": "7s6569at",
+   "name": "cctv",
+   "icon": "video",
+   "items": []
   }
  ],
  "log": [],
