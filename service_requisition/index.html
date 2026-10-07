@@ -45,6 +45,11 @@
  .mi{@apply flex w-full cursor-pointer items-center justify-start gap-2 rounded-lg border-0 bg-transparent px-3 py-2 text-left text-sm shadow-none hover:bg-slate-100 dark:bg-transparent dark:hover:bg-slate-700}
  .sb{@apply flex shrink-0 cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/10}
  .sb.on{@apply bg-white/15 text-white}
+ .cc{@apply flex min-w-[9.5rem] shrink-0 flex-col items-start gap-1 rounded-2xl border border-slate-200 bg-white p-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800}
+ .cc.on{@apply border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200 dark:bg-indigo-900/30 dark:ring-indigo-800}
+ .mh{@apply px-3 pb-1 pt-3 text-[11px] font-semibold tracking-wide text-slate-400}
+ .seg{@apply inline-flex rounded-xl bg-white p-1 shadow-sm dark:bg-slate-800}.seg button{@apply rounded-lg border-0 bg-transparent px-3 py-1.5 shadow-none dark:bg-transparent}
+ .seg button.on{@apply bg-indigo-600 text-white dark:bg-indigo-600}
  .kpi{@apply flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-700 dark:bg-slate-800}
  #cartbar{@apply fixed bottom-5 left-1/2 z-20 -translate-x-1/2 items-center gap-4 whitespace-nowrap rounded-full bg-indigo-600 py-2 pl-5 pr-2 text-sm text-white shadow-xl shadow-indigo-500/40;display:none}
  #cartbar button{@apply rounded-full border-0 bg-white px-4 py-1.5 text-indigo-700 hover:bg-indigo-50}
@@ -71,7 +76,7 @@ const stamp=()=>{const n=new Date(),p=x=>String(x).padStart(2,"0");return`${n.ge
 let stat={t:"กำลังโหลด…",c:""};
 function setStatus(t,c){stat={t,c:c||""};const e=$("#st");if(e){e.textContent=t;e.className=c||""}}
 function toast(m,c){const t=document.createElement("div");t.className="pointer-events-auto rounded-xl px-4 py-2.5 text-sm font-medium text-white shadow-xl "+(c==="er"?"bg-red-600":"bg-emerald-600");t.textContent=m;$("#toast").append(t);setTimeout(()=>t.remove(),3800)}
-function ask(title,html,ok,w){$("#dlg").style.width=w||"";$("#frm").innerHTML=`<h3 class="mb-1 text-lg font-bold">${title}</h3>${html}<div class="act"><button type="button" id="cn">ยกเลิก</button><button class="p" id="ok" type="button">ตกลง</button></div>`;
+function ask(title,html,ok,w,extra){$("#dlg").style.width=w||"";$("#frm").innerHTML=`<h3 class="mb-1 text-lg font-bold">${title}</h3>${html}<div class="act">${extra||""}<button type="button" id="cn">ยกเลิก</button><button class="p" id="ok" type="button">ตกลง</button></div>`;
   if(!$("#dlg").open)$("#dlg").showModal();$("#cn").onclick=()=>$("#dlg").close();$("#ok").onclick=()=>{if(ok()!==false)$("#dlg").close()};$("#frm input,#frm select")?.focus()}
 const pick=acc=>new Promise(r=>{const i=document.createElement("input");i.type="file";i.accept=acc;i.onchange=()=>r(i.files[0]||null);i.click()});
 function dl(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
@@ -91,7 +96,7 @@ const used=id=>S.log.reduce((a,l)=>l.item===id?a+l.amt:a,0),rem=i=>i.qty-used(i.
 const me=()=>S.users.find(u=>u.id===user&&u.active!==false);
 const whoList=()=>[...new Set(S.log.map(l=>l.who).filter(Boolean))];
 const R=()=>{const h=location.hash.replace(/^#\/?/,"").split("/");return h[0]==="admin"?{area:"back",page:h[1]||"dash"}:{area:"front",page:h[0]||"stock"}};
-function norm(d){if(!d||!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง (ไม่พบข้อมูลหมวด)");d.log||=[];d.users||=[];d.seq||=0;
+function norm(d){if(!d||!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง (ไม่พบข้อมูลหมวด)");d.log||=[];d.users||=[];d.trash||=[];d.seq||=0;
   d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid();i.qty=+i.qty||0;i.unit||="";i.code||=""})});d.users.forEach(u=>{u.id||=uid()});d.log.forEach(l=>{l.id||=uid();l.amt=+l.amt||0});return d}
 /* ================= storage: file / local ================= */
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("stock-app",1);r.onupgradeneeded=()=>r.result.createObjectStore("h");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
@@ -117,7 +122,7 @@ async function saveAs(){if(!window.showSaveFilePicker)return dl("stock.json",JSO
 /* ================= storage: online (GitHub) ================= */
 const GH0={owner:"sahakoloa",repo:"sahakoloa.github.io",path:"stock.json",token:""};
 const ghCfg=()=>{try{return{...GH0,...JSON.parse(localStorage.getItem("gh-cfg")||"{}")}}catch(e){return{...GH0}}};
-const online=()=>location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg");
+const online=()=>!localStorage.getItem("gh-off")&&(location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg"));
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
 const ghUrl=c=>`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
 const ghH=c=>({Accept:"application/vnd.github+json",...(c.token?{Authorization:"Bearer "+c.token}:{})});
@@ -145,11 +150,16 @@ async function ghBackup(){const c=ghCfg();if(!c.token)throw Error("ต้อง�
   const r=await fetch(ghUrl({...c,path:name}),{method:"PUT",headers:{...ghH(c),"Content-Type":"application/json"},body:JSON.stringify({message:"backup "+name,content:b64e(JSON.stringify(S,null,1))})});
   if(!r.ok)throw Error("GitHub "+r.status);toast("สำรองไปที่ "+name+" ใน repo แล้ว")}
 function ghDlg(){const c=ghCfg();
-  ask("ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}"><label>ไฟล์ข้อมูล</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint">ใช้ Fine-grained token สิทธิ์ Contents: Read and write เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว</div>`,
-  ()=>{localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim(),token:v("g4").trim()}));ghWarned=true;ghLoad(false).catch(e=>setStatus(e.message,"wa"))})}
+  ask("ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}"><label>ไฟล์ข้อมูล</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint mt-2">ใช้ Fine-grained token สิทธิ์ <b>Contents: Read and write</b> เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br>repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</div>`,
+  ()=>{if(loaded&&src!=="gh"&&!confirm("การเชื่อมต่อออนไลน์จะโหลดข้อมูลจาก GitHub มาแทนข้อมูลที่เปิดอยู่ ต้องการดำเนินการต่อหรือไม่?"))return false;
+    localStorage.removeItem("gh-off");localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim(),token:v("g4").trim()}));ghWarned=true;ghLoad(loaded).catch(e=>{setStatus("ออนไลน์ · "+e.message,"wa");toast(e.message,"er")})},
+  undefined,`<button type="button" class="d mr-auto" data-act="gh-off">${fa("link-slash")} ยกเลิกการเชื่อมต่อ</button>`)}
 const ghTick=()=>{if(src==="gh"&&!ghBusy&&!$("#dlg").open&&!document.hidden)ghLoad(true).catch(()=>{})};
 /* ================= auth ================= */
-const hashPw=async(p,salt)=>{const d=new TextEncoder().encode(salt+p);if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest("SHA-256",d);return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("")}let h=5381;for(const b of d)h=(h*33^b)>>>0;return"f"+h};
+const enc=s=>new TextEncoder().encode(s),hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+async function legacyHash(p,salt){const d=enc(salt+p);if(window.crypto&&crypto.subtle)return hex(await crypto.subtle.digest("SHA-256",d));let h=5381;for(const b of d)h=(h*33^b)>>>0;return"f"+h}
+async function hashPw(p,salt){if(window.crypto&&crypto.subtle){const k=await crypto.subtle.importKey("raw",enc(p),"PBKDF2",false,["deriveBits"]);return"p1$"+hex(await crypto.subtle.deriveBits({name:"PBKDF2",salt:enc(salt),iterations:100000,hash:"SHA-256"},k,256))}return legacyHash(p,salt)}
+const chk=async(p,salt,hash)=>!!hash&&(hash.startsWith("p1$")?await hashPw(p,salt)===hash:await legacyHash(p,salt)===hash);
 const locked=()=>{if(Date.now()<lockUntil){toast("ลองผิดหลายครั้ง กรุณารอ 30 วินาที","er");return true}return false};
 const failed=()=>{if(++fails>=5){lockUntil=Date.now()+30000;fails=0}toast("รหัสผ่านหรือชื่อผู้ใช้ไม่ถูกต้อง","er")};
 const bumpA=()=>{clearTimeout(tA);if(admin)tA=setTimeout(()=>{admin=false;toast("ออกจากหลังบ้านอัตโนมัติ (ไม่มีการใช้งาน 10 นาที)");render()},600000)};
@@ -159,120 +169,168 @@ function loginDlg(){
   if(!S.users.some(u=>u.active!==false))return toast("ยังไม่มีผู้เบิกในระบบ ให้ผู้ดูแลเพิ่มในหลังบ้านก่อน","er");
   ask("เข้าสู่ระบบเพื่อเบิกของ",'<label>ชื่อผู้ใช้</label><input id="f1" autocomplete="username"><label>รหัสผ่าน</label><input id="f2" type="password" autocomplete="current-password">',()=>{(async()=>{
     if(locked())return;const u=S.users.find(x=>x.username===v("f1").trim().toLowerCase()&&x.active!==false);
-    if(u&&await hashPw(v("f2"),u.salt)===u.hash){fails=0;user=u.id;sessionStorage.setItem("uid",u.id);$("#dlg").close();bumpU();render()}else failed()})();return false})}
+    if(u&&await chk(v("f2"),u.salt,u.hash)){fails=0;user=u.id;sessionStorage.setItem("uid",u.id);$("#dlg").close();bumpU();render()}else failed()})();return false})}
 /* ================= views: shared ================= */
 const card="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800";
 const title=(ic,t,sub="")=>`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-xl text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">${ic}</span><div><h2 class="text-xl font-bold leading-tight">${t}</h2>${sub?`<div class="text-xs text-slate-500">${sub}</div>`:""}</div></div>`;
 const kpi=(ic,t,x,c)=>`<div class="kpi"><span class="grid h-11 w-11 place-items-center rounded-xl ${c} text-lg">${ic}</span><div><div class="text-xs text-slate-500 dark:text-slate-400">${t}</div><div class="text-2xl font-bold leading-tight">${x}</div></div></div>`;
-const stockBadge=i=>{const r=rem(i),k=r<0?"er":r===0?"wa":"ok";return`<span class="b ${k}">${r}</span>${i.qty>0?`<div class="ml-auto mt-1 h-1 w-16 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full ${k==="ok"?"bg-emerald-500":k==="wa"?"bg-amber-500":"bg-red-500"}" style="width:${Math.max(0,Math.min(100,r/i.qty*100))}%"></div></div>`:""}`};
+const bar=(r,qty)=>qty>0?`<div class="ml-auto mt-1 h-1.5 w-20 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full ${r<=0?"bg-red-500":r/qty<=.1?"bg-amber-500":"bg-emerald-500"}" style="width:${Math.max(0,Math.min(100,r/qty*100))}%"></div></div>`:"";
+const allItems=()=>S.cats.flatMap(c=>c.items.map(i=>({...i,cat:c.name,cid:c.id,cc:c})));
+const thDate=()=>new Date().toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+let flt="all",bq="",rpm=today().slice(0,7),qtys={};
 function vWelcome(){return`<div class="grid min-h-screen place-items-center p-4"><div class="w-full max-w-md ${card} p-8 text-center shadow-xl">
 <div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-3xl text-white shadow-lg shadow-indigo-500/30">${fa("boxes-stacked")}</div>
 <h2 class="mt-4 text-xl font-bold">ระบบเบิกของติดตั้ง</h2><p class="mt-1 text-sm text-slate-500">เลือกแหล่งข้อมูลเพื่อเริ่มใช้งาน ข้อมูลทั้งหมดเก็บในไฟล์ JSON ไม่ได้ฝังอยู่ในหน้านี้</p>
-<div class="mt-6 flex flex-col gap-2 text-left">
+<div class="mt-6 flex flex-col gap-2 text-left"><div class="mh !px-0 !pt-0">ออฟไลน์ · ไฟล์ในเครื่อง</div>
 ${lastH?`<button class="p" data-act="reconnect">${fa("link")} เชื่อมต่อ ${esc(lastH.name)} ต่อ</button>`:""}
-<button class="${lastH?"":"p"}" data-act="f-open">${fa("folder-open")} เปิดไฟล์ข้อมูล (.json)</button>
-<button data-act="gh-set">${fa("cloud")} เชื่อมต่อออนไลน์ (GitHub)</button>
-<button data-act="im-json">${fa("file-import")} นำเข้า / กู้คืนจากไฟล์สำรอง (.json)</button>
-<button data-act="im-csv">${fa("file-csv")} นำเข้ารายการจากไฟล์ .csv</button>
+<button class="${lastH?"":"p"}" data-act="f-open">${fa("folder-open")} เปิดไฟล์ข้อมูล .json</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ข้อมูลใหม่</button>
+<div class="mh !px-0">ออนไลน์ · GitHub</div><button data-act="gh-set">${fa("cloud")} ตั้งค่า / เชื่อมต่อ GitHub</button>
+<div class="mh !px-0">นำเข้าข้อมูล</div><button data-act="im-restore">${fa("file-import")} กู้คืนจากไฟล์สำรอง (.json)</button><button data-act="im-any">${fa("file-csv")} นำเข้าข้อมูล (.json / .csv)</button>
 ${localStorage.getItem("stock-v1")?`<button data-act="usebackup">${fa("clock-rotate-left")} ใช้ข้อมูลสำรองในเบราว์เซอร์</button>`:""}
-<button data-act="blank">${fa("wand-magic-sparkles")} เริ่มใหม่ (ข้อมูลว่าง)</button></div>
+<button data-act="blank">${fa("wand-magic-sparkles")} เริ่มใช้งานแบบว่าง (ยังไม่ผูกไฟล์)</button></div>
 <div class="mt-4 text-xs text-slate-400">${esc(stat.t)}</div></div></div>`}
+/* ================= connection menu ================= */
+function connMenu(){const m=src==="gh"?"ออนไลน์ · GitHub":fh?"ออฟไลน์ · "+fh.name:"ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์",lk=a=>admin?"":fa("lock","ml-auto text-[10px] text-slate-400"),mi=(act,ic,l,g)=>`<button class="mi" data-act="${act}">${fa(ic,"w-4 text-center text-slate-500")} ${l}${g?lk():""}</button>`;
+  return`<div class="relative"><button data-m="cm" class="!gap-2" aria-label="การเชื่อมต่อและข้อมูล"><span class="h-2 w-2 rounded-full ${stat.c==="ok"?"bg-emerald-500":stat.c==="wa"?"bg-amber-500":"bg-slate-400"}"></span><span class="hidden sm:inline">การเชื่อมต่อและข้อมูล</span><span class="sm:hidden">${fa("database")}</span>${fa("chevron-down","text-[10px]")}</button>
+<div id="m-cm" class="menu right !w-72"><div class="px-3 py-2"><div class="text-[11px] text-slate-400">แหล่งข้อมูลปัจจุบัน</div><div class="text-sm font-semibold">${esc(m)}</div></div>
+<div class="mh">ออฟไลน์ · ไฟล์ในเครื่อง</div>${mi("f-open","folder-open","เปิดไฟล์ข้อมูล .json")}${mi("f-new","file-circle-plus","สร้างไฟล์ข้อมูลใหม่",1)}
+<div class="mh">ออนไลน์ · GitHub</div>${mi("gh-set","cloud","ตั้งค่า / เชื่อมต่อ GitHub")}${mi("gh-rf","rotate","ซิงก์ข้อมูลตอนนี้")}
+<div class="mh">สำรองและนำเข้าข้อมูล</div>${mi("bk-json","file-zipper","สำรองข้อมูล (.json)",1)}${mi("im-restore","clock-rotate-left","กู้คืนจากไฟล์สำรอง",1)}${mi("im-any","file-import","นำเข้าข้อมูล (.json / .csv)",1)}${mi("ex-items","file-csv","ส่งออกรายการ (.csv)",1)}
+<div class="mh">ระบบหลังบ้าน</div><a href="#/admin" class="mi">${fa("user-shield","w-4 text-center text-slate-500")} ${admin?"ไปหลังบ้าน":"เข้าหลังบ้าน"}</a></div></div>`}
 /* ================= front ================= */
 function hdr(page){const u=me(),nv=(h,ic,l,on)=>`<a href="${h}" class="nav ${on?"on":""}">${fa(ic)} ${l}</a>`;
-  return`<header class="sticky top-0 z-30 border-b border-slate-200 bg-white/85 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/85"><div class="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
-<div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/30">${fa("boxes-stacked")}</div>
+  return`<header class="sticky top-0 z-30 border-b border-slate-200 bg-white/85 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/85"><div class="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2.5">
+<div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/30">${fa("boxes-stacked")}</div>
 <div class="mr-auto min-w-0"><h1 class="truncate text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1><span id="st" class="${stat.c}">${esc(stat.t)}</span></div>
-<div class="relative"><button data-m="um" class="!gap-2 !rounded-full !py-1 !pl-1 !pr-3"><span class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white">${u?esc(u.name.trim()[0]||"?"):fa("user","text-xs")}</span><span class="max-w-[8rem] truncate text-sm">${u?esc(u.name):"ผู้เยี่ยมชม"}</span>${fa("chevron-down","text-[10px]")}</button>
+${connMenu()}
+<div class="relative"><button data-m="um" class="!gap-2 !rounded-full !py-1 !pl-1 !pr-3" aria-label="เมนูผู้ใช้"><span class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-bold text-white">${u?esc(u.name.trim()[0]||"?"):fa("user","text-xs")}</span><span class="hidden max-w-[8rem] truncate text-sm sm:inline">${u?esc(u.name):"ผู้เยี่ยมชม"}</span>${fa("chevron-down","text-[10px]")}</button>
 <div id="m-um" class="menu right"><div class="px-3 py-2 text-xs text-slate-500">${u?"เข้าสู่ระบบในชื่อ "+esc(u.name):"ยังไม่ได้เข้าสู่ระบบ"}</div>
-${u?`<button class="mi" data-act="logout">${fa("right-from-bracket","w-4")} ออกจากระบบ</button>`:`<button class="mi" data-act="login">${fa("right-to-bracket","w-4")} เข้าสู่ระบบเพื่อเบิกของ</button>`}
-<button class="mi" data-act="refresh">${fa("rotate","w-4")} รีเฟรชข้อมูล</button><hr class="my-1 border-slate-200 dark:border-slate-700"><a href="#/admin" class="mi">${fa("user-shield","w-4")} ${admin?"ไปหลังบ้าน":"เข้าหลังบ้าน"}</a></div></div></div>
-<nav class="mx-auto flex max-w-6xl gap-1 px-4 pb-2">${nv("#/","cart-shopping","เบิกของ",page==="stock")}${nv("#/log","clock-rotate-left","ประวัติการเบิก",page==="log")}</nav></header>`}
-function banner(){const u=me();return u?`<div class="mb-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-4 text-white shadow-lg shadow-indigo-500/25"><div class="grid h-11 w-11 place-items-center rounded-xl bg-white/20 text-xl">${fa("hand")}</div><div class="min-w-0"><div class="truncate font-semibold">สวัสดี คุณ${esc(u.name)}</div><div class="text-xs text-indigo-100">เลือกรายการแล้วกด “เบิก” จากนั้นยืนยันในใบเบิกที่ปุ่มด้านล่างจอ</div></div></div>`
-:`<div class="mb-5 flex flex-wrap items-center gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-200"><div class="text-2xl">${fa("lock")}</div><div class="mr-auto"><div class="font-semibold">เข้าสู่ระบบก่อนจึงจะเบิกของได้</div><div class="text-xs opacity-80">ใช้ชื่อผู้ใช้และรหัสผ่านที่ผู้ดูแลระบบให้ไว้</div></div><button class="p" data-act="login">เข้าสู่ระบบ</button></div>`}
-function vStock(){
-  const c=S.cats.find(x=>x.id===tab)||S.cats[0];if(c)tab=c.id;
-  if(!c)return banner()+`<div class="${card}"><div class="empty">${fa("box-open","text-3xl")}<div class="mt-2">ยังไม่มีรายการในระบบ</div><div class="mt-1 text-xs">ผู้ดูแลระบบต้องเพิ่มหรือนำเข้าข้อมูลในหลังบ้าน</div></div></div>`;
-  const rows=c.items.map((i,n)=>({...i,n:n+1})).filter(i=>(i.name+i.code).toLowerCase().includes(q.toLowerCase())),out=c.items.filter(i=>i.qty>0&&rem(i)<=0).length;
-  return banner()+`<div class="pills">${S.cats.map(x=>`<button class="${x.id===tab?"on":""}" data-act="cat" data-id="${x.id}">${cico(x)} ${esc(x.name)}</button>`).join("")}</div>
-<div class="mb-4 grid grid-cols-3 gap-3">${kpi(fa("list"),"รายการ",c.items.length,"bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40")}${kpi(fa("circle-check"),"มีของ",c.items.filter(i=>rem(i)>0).length,"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40")}${kpi(fa("triangle-exclamation"),"ของหมด",out,"bg-amber-100 text-amber-600 dark:bg-amber-900/40")}</div>
-<div class="bar"><div class="relative w-full max-w-xs"><i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i><input id="q" class="!pl-9" placeholder="ค้นหารายการ / รหัสสินค้า" value="${esc(q)}"></div></div>
-<div class="${card}"><table><tr><th>#</th><th>รายการ / วัสดุอุปกรณ์</th><th class="n">จำนวน</th><th class="n">เบิกใช้</th><th class="n">คงเหลือ</th><th></th></tr>${rows.map(i=>`<tr><td class="text-slate-400">${i.n}</td><td class="font-medium">${esc(i.name)}${i.code?`<div class="text-xs font-normal text-slate-400">${esc(i.code)}</div>`:""}</td><td class="n">${i.qty} ${esc(i.unit)}</td><td class="n">${used(i.id)}</td><td class="n">${stockBadge(i)}</td><td class="ac"><button class="s p" data-act="wd" data-id="${i.id}" ${rem(i)<=0?"disabled":""}>${fa("cart-plus")} เบิก</button></td></tr>`).join("")||`<tr><td colspan="6" class="empty">ไม่พบรายการ</td></tr>`}</table></div>`}
+${u?`<button class="mi" data-act="logout">${fa("right-from-bracket","w-4")} ออกจากระบบ</button>`:`<button class="mi" data-act="login">${fa("right-to-bracket","w-4")} เข้าสู่ระบบเพื่อเบิกของ</button>`}</div></div></div>
+<nav class="mx-auto flex max-w-6xl gap-1 px-4 pb-2">${nv("#/","house","หน้าแรก",page==="stock")}${nv("#/log","clock-rotate-left","ประวัติการเบิก",page==="log")}</nav></header>`}
+function cartForm(){
+  ci.who=me()?.name||"";ci.date||=today();ci.site??=localStorage.getItem("lastsite")||"";ci.note??="";
+  const rows=cart.map((x,n)=>{const f=find(x.item);if(!f)return"";const r=rem(f.i);return`<div class="flex items-center gap-2 border-b border-slate-100 py-2 dark:border-slate-700"><div class="min-w-0 flex-1"><div class="truncate text-sm font-medium">${esc(f.i.name)}</div><div class="text-xs ${x.amt>r?"text-red-500":"text-slate-400"}">คงเหลือ ${r} ${esc(f.i.unit)}${x.amt>r?" · เกินคงเหลือ":""}</div></div><input type="number" min="0" step="any" value="${x.amt}" data-ci="${n}" class="!w-20 text-center" aria-label="จำนวนที่เบิก"><button class="s d" data-act="rm" data-id="${n}" aria-label="เอาออก">${fa("xmark")}</button></div>`}).join("");
+  return`<div class="row"><div><label>ผู้เบิก</label><input value="${esc(ci.who)}" readonly class="opacity-70"></div><div><label>วันที่เบิก</label><input type="date" data-f="date" value="${ci.date}"></div></div>
+<label>โครงการ / สถานที่</label><input data-f="site" value="${esc(ci.site)}" placeholder="เช่น ไซต์งานลูกค้า…"><label>หมายเหตุ</label><input data-f="note" value="${esc(ci.note)}">
+<div class="mt-3 max-h-[40vh] overflow-auto">${rows}</div><div class="sum"><b>สรุป: รวม ${cart.length} รายการ</b></div>
+<div class="mt-3 grid gap-2"><button class="p !py-2.5" data-act="commit">${fa("check")} ยืนยันเบิก</button><button data-act="commit-pr">${fa("print")} ยืนยัน + พิมพ์ / PDF</button><button class="d" data-act="cart-clear">${fa("trash-can")} ล้างใบเบิก</button></div>`}
+function cartPanel(){const u=me(),mine=u?[...S.log].filter(l=>l.uid===u.id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3):[];
+  return`<aside class="sticky top-32 hidden self-start lg:block"><div class="${card} p-4"><div class="mb-2 flex items-center gap-2 font-semibold">${fa("receipt","text-indigo-500")} ใบเบิกของฉัน <span class="b ok ml-auto">${cart.length}</span></div>
+${cart.length?cartForm():`<div class="py-8 text-center text-sm text-slate-400"><div class="mb-2 text-3xl text-slate-300">${fa("cart-shopping")}</div>ยังไม่มีรายการในใบเบิก<div class="mt-1 text-xs">เลือกวัสดุทางซ้าย กำหนดจำนวน แล้วกด “เพิ่ม”</div></div>`}</div>
+${mine.length?`<div class="${card} mt-4 p-4"><div class="mb-2 text-sm font-semibold">${fa("clock-rotate-left","text-slate-400")} เบิกล่าสุดของฉัน</div>${mine.map(l=>{const f=find(l.item);return`<div class="flex justify-between gap-2 border-t border-slate-100 py-1.5 text-xs dark:border-slate-700"><span class="truncate">${esc(f?.i.name||"(ลบแล้ว)")}</span><span class="shrink-0 text-slate-400">${l.amt} · ${dmy(l.date)}</span></div>`}).join("")}</div>`:""}</aside>`}
+function vHome(){
+  const all=allItems(),u=me(),nIn=all.filter(i=>rem(i)>0).length,nOut=all.filter(i=>i.qty>0&&rem(i)<=0).length;
+  if(tab!=="all"&&!S.cats.some(c=>c.id===tab))tab="all";
+  let L=all.filter(i=>(tab==="all"||i.cid===tab)&&(i.name+" "+i.code).toLowerCase().includes(q.toLowerCase()));
+  if(flt==="in")L=L.filter(i=>rem(i)>0);if(flt==="out")L=L.filter(i=>i.qty>0&&(rem(i)<=0||rem(i)/i.qty<=.1));
+  const hero=`<section class="mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 p-6 text-white shadow-xl shadow-indigo-500/20 md:p-8"><div class="flex flex-wrap items-center gap-6"><div class="min-w-0 flex-1 basis-64"><div class="text-xs text-indigo-100">${thDate()}</div>
+<h2 class="mt-1 text-2xl font-bold md:text-3xl">${u?"สวัสดี คุณ"+esc(u.name):"เบิกวัสดุอุปกรณ์ ง่ายและรวดเร็ว"}</h2>
+<p class="mt-1 text-sm text-indigo-100">${u?"ค้นหาหรือเลือกหมวด กำหนดจำนวน แล้วกด “เพิ่ม” ลงใบเบิก":"ทำตามขั้นตอนสั้น ๆ 3 ข้อ เพื่อเบิกของและพิมพ์ใบเบิกได้ทันที"}</p>
+${u?"":`<div class="mt-4 flex flex-wrap items-center gap-2 text-xs">${["เข้าสู่ระบบ","เลือกรายการ","ยืนยันใบเบิก"].map((s,n)=>`<span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5"><b class="grid h-5 w-5 place-items-center rounded-full bg-white text-indigo-700">${n+1}</b>${s}</span>`).join(fa("chevron-right","text-[10px] text-indigo-200"))}</div><button class="mt-4 !border-0 !bg-white !px-5 !py-2.5 !text-indigo-700 shadow-lg" data-act="login">${fa("right-to-bracket")} เข้าสู่ระบบเพื่อเริ่มเบิก</button>`}</div>
+<div class="grid grid-cols-3 gap-2 text-center">${[[all.length,"รายการทั้งหมด"],[nIn,"มีของพร้อมเบิก"],[nOut,"ของหมด"]].map(([n,t])=>`<div class="rounded-2xl bg-white/15 px-4 py-3"><div class="text-2xl font-bold">${n}</div><div class="text-[11px] text-indigo-100">${t}</div></div>`).join("")}</div></div></section>`;
+  if(!S.cats.length)return hero+`<div class="${card}"><div class="empty">${fa("box-open","text-3xl")}<div class="mt-2 font-medium">ยังไม่มีรายการในระบบ</div><div class="mt-1 text-xs">ผู้ดูแลระบบต้องเพิ่มหรือนำเข้าข้อมูลในหลังบ้านก่อน</div><a href="#/admin" class="nav on mt-4">${fa("user-shield")} ไปหลังบ้าน</a></div></div>`;
+  const cc=(id,ic,n,cnt,out)=>`<button class="cc ${tab===id?"on":""}" data-act="cat" data-id="${id}"><span class="text-lg text-indigo-600 dark:text-indigo-300">${ic}</span><span class="max-w-[8rem] truncate text-sm font-semibold">${n}</span><span class="text-xs text-slate-400">${cnt} รายการ${out?` · <span class="text-amber-600">หมด ${out}</span>`:""}</span></button>`;
+  const cats=cc("all",fa("layer-group"),"ทั้งหมด",all.length,nOut)+S.cats.map(c=>cc(c.id,isFa(c.icon)?fa(c.icon):esc(c.icon||"")||fa("box"),esc(c.name),c.items.length,c.items.filter(i=>i.qty>0&&rem(i)<=0).length)).join("");
+  const rows=L.slice(0,300).map(i=>{const r=rem(i),ex=cart.find(x=>x.item===i.id);return`<div class="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-slate-100 px-4 py-3 last:border-0 dark:border-slate-700">
+<div class="min-w-0 flex-1 basis-56"><div class="font-medium">${esc(i.name)}</div><div class="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-slate-400">${tab==="all"?`<span class="rounded-md bg-slate-100 px-1.5 py-0.5 dark:bg-slate-700">${esc(i.cat)}</span>`:""}${i.code?`<span>${esc(i.code)}</span>`:""}${ex?`<span class="font-medium text-indigo-600">${fa("check")} ในใบเบิก ${ex.amt}</span>`:""}</div></div>
+<div class="w-28 text-right"><div class="text-[11px] text-slate-400">คงเหลือ</div><div class="text-lg font-bold leading-tight ${r<=0?"text-red-500":i.qty>0&&r/i.qty<=.1?"text-amber-500":""}">${r} <span class="text-xs font-normal text-slate-400">${esc(i.unit)}</span></div>${bar(r,i.qty)}</div>
+<div class="flex items-center gap-1"><button class="s !px-2.5 !py-2" data-act="dec" data-id="${i.id}" aria-label="ลดจำนวน" ${r<=0?"disabled":""}>${fa("minus")}</button><input id="qty-${i.id}" data-q="${i.id}" type="number" min="1" step="any" value="${qtys[i.id]||1}" class="!w-16 !py-2 text-center" aria-label="จำนวน" ${r<=0?"disabled":""}><button class="s !px-2.5 !py-2" data-act="inc" data-id="${i.id}" aria-label="เพิ่มจำนวน" ${r<=0?"disabled":""}>${fa("plus")}</button><button class="p !py-2" data-act="add" data-id="${i.id}" ${r<=0?"disabled":""}>${fa(r<=0?"ban":"cart-plus")} ${r<=0?"หมด":"เพิ่ม"}</button></div></div>`}).join("");
+  return hero+`<div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]"><div class="min-w-0">
+<div class="mb-4 flex flex-wrap items-center gap-3"><div class="relative min-w-[15rem] flex-1"><i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i><input id="q" class="!rounded-xl !py-3 !pl-11 !text-base" placeholder="ค้นหาชื่อวัสดุ หรือรหัสสินค้า (ทุกหมวด)   กด / เพื่อค้นหา" value="${esc(q)}" aria-label="ค้นหา"></div>
+<div class="seg" role="group" aria-label="กรองสถานะ">${[["all","ทั้งหมด"],["in","มีของ"],["out","หมด / ใกล้หมด"]].map(([k,l])=>`<button class="${flt===k?"on":""}" data-act="flt" data-id="${k}">${l}</button>`).join("")}</div></div>
+<div class="-mx-1 mb-4 flex gap-3 overflow-x-auto px-1 pb-2">${cats}</div>
+<div class="${card}"><div class="flex items-center justify-between border-b border-slate-100 px-4 py-3 text-sm dark:border-slate-700"><b>${L.length} รายการ</b><span class="text-xs text-slate-400">${tab==="all"?"ทุกหมวด":esc(S.cats.find(c=>c.id===tab)?.name||"")}</span></div>
+${rows||`<div class="empty">${fa("magnifying-glass","text-3xl")}<div class="mt-2">ไม่พบรายการที่ค้นหา</div><button class="mt-3" data-act="reset-f">ล้างตัวกรอง</button></div>`}${L.length>300?`<div class="p-3 text-center text-xs text-slate-400">แสดง 300 รายการแรก — พิมพ์ค้นหาเพื่อกรองเพิ่ม</div>`:""}</div></div>${cartPanel()}</div>`}
 const logF=()=>S.log.filter(l=>(!lf.who||l.who===lf.who)&&(!lf.slip||l.slip===lf.slip)&&(!lf.from||l.date>=lf.from)&&(!lf.to||l.date<=lf.to)).sort((a,b)=>b.date.localeCompare(a.date));
 function vLog(manage){const L=logF(),slips=[...new Set(S.log.map(l=>l.slip).filter(Boolean))].reverse();
   return title(fa("clock-rotate-left"),"ประวัติการเบิก",`${S.log.length} รายการทั้งหมด`)+`<div class="lf"><div><label>ผู้เบิก</label><select id="lf-who"><option value="">ทั้งหมด</option>${whoList().map(w=>`<option ${w===lf.who?"selected":""}>${esc(w)}</option>`).join("")}</select></div><div><label>เลขที่ใบเบิก</label><select id="lf-slip"><option value="">ทั้งหมด</option>${slips.map(w=>`<option ${w===lf.slip?"selected":""}>${w}</option>`).join("")}</select></div><div><label>ตั้งแต่วันที่</label><input type="date" id="lf-from" value="${lf.from}"></div><div><label>ถึงวันที่</label><input type="date" id="lf-to" value="${lf.to}"></div><button class="p" data-act="print">${fa("print")} พิมพ์ / PDF (${L.length})</button></div>
-<div class="${card}"><table><tr><th>วันที่</th><th>ใบเบิก</th><th>หมวด</th><th>รายการ</th><th class="n">จำนวน</th><th>ผู้เบิก</th><th>หมายเหตุ</th>${manage?"<th></th>":""}</tr>${L.map(l=>{const f=find(l.item);return`<tr><td>${dmy(l.date)}</td><td>${esc(l.slip||"-")}</td><td>${esc(f?.c.name||"-")}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"-")}</td><td>${esc(l.note)}</td>${manage?`<td class="ac"><button class="s d" data-act="dellog" data-id="${l.id}">${fa("rotate-left")} ยกเลิก</button></td>`:""}</tr>`}).join("")||`<tr><td colspan="8" class="empty">ไม่พบประวัติการเบิก</td></tr>`}</table></div>${manage?`<div class="sum">การยกเลิกรายการเบิกจะคืนของเข้าคงเหลืออัตโนมัติ</div>`:""}`}
+<div class="${card}"><table><tr><th>วันที่</th><th>ใบเบิก</th><th>หมวด</th><th>รายการ</th><th class="n">จำนวน</th><th>ผู้เบิก</th><th>หมายเหตุ</th>${manage?"<th></th>":""}</tr>${L.map(l=>{const f=find(l.item);return`<tr><td>${dmy(l.date)}</td><td>${esc(l.slip||"-")}</td><td>${esc(f?.c.name||"-")}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"-")}</td><td>${esc(l.note)}</td>${manage?`<td class="ac"><button class="s d" data-act="dellog" data-id="${l.id}">${fa("rotate-left")} ยกเลิก</button></td>`:""}</tr>`}).join("")||`<tr><td colspan="8" class="empty">ไม่พบประวัติการเบิก</td></tr>`}</table></div>${manage?`<div class="sum">การยกเลิกรายการเบิกจะคืนของเข้าคงเหลือ และย้ายรายการไปไว้ที่ “ถังขยะ” เพื่อกู้คืนได้</div>`:""}`}
 /* ================= back office ================= */
-function vGate(){const first=!S.admin;return`<div class="grid min-h-screen place-items-center p-4"><div class="w-full max-w-sm ${card} p-8 shadow-xl"><div class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-2xl text-white">${fa("user-shield")}</div>
-<h2 class="mt-4 text-center text-xl font-bold">${first?"ตั้งรหัสผ่านหลังบ้าน":"เข้าสู่ระบบหลังบ้าน"}</h2><p class="mt-1 text-center text-xs text-slate-500">${first?"ยังไม่เคยตั้งรหัส กรุณาตั้งรหัสผ่านอย่างน้อย 4 ตัว":"สำหรับผู้ดูแลระบบเท่านั้น"}</p>
-<label>รหัสผ่าน</label><input id="ap1" type="password" autocomplete="current-password">${first?`<label>ยืนยันรหัสผ่าน</label><input id="ap2" type="password">`:""}
-<button class="p mt-5 w-full" data-act="adm-go">${fa("right-to-bracket")} ${first?"ตั้งรหัสและเข้าสู่ระบบ":"เข้าสู่ระบบ"}</button><a href="#/" class="mt-4 block text-center text-sm text-slate-500 hover:underline">${fa("arrow-left")} กลับหน้าเบิกของ</a></div></div>`}
-const PAGES={dash:["gauge-high","ภาพรวม"],items:["boxes-stacked","หมวดและรายการ"],users:["users","ผู้เบิก"],log:["clock-rotate-left","ประวัติการเบิก"],data:["database","ข้อมูลและสำรอง"],sec:["key","ความปลอดภัย"]};
-function shellBack(page){if(!PAGES[page])page="dash";const V={dash:vDash,items:vItems,users:vUsers,log:()=>vLog(true),data:vData,sec:vSec};
+function vGate(){const first=!S.admin,un=!!S.admin?.uhash||first;return`<div class="grid min-h-screen place-items-center p-4"><div class="w-full max-w-sm ${card} p-8 shadow-xl"><div class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-2xl text-white">${fa("user-shield")}</div>
+<h2 class="mt-4 text-center text-xl font-bold">${first?"ตั้งบัญชีผู้ดูแลระบบ":"เข้าสู่ระบบหลังบ้าน"}</h2><p class="mt-1 text-center text-xs text-slate-500">${first?"ยังไม่เคยตั้งบัญชี กรุณากำหนด Username และ Password (อย่างน้อย 4 ตัว)":"สำหรับผู้ดูแลระบบเท่านั้น"}</p>
+${un?`<label>Username</label><input id="au" autocomplete="username">`:""}<label>${un?"Password":"รหัสผ่านผู้ดูแล"}</label><input id="ap1" type="password" autocomplete="current-password">${first?`<label>ยืนยัน Password</label><input id="ap2" type="password">`:""}
+<button class="p mt-5 w-full !py-2.5" data-act="adm-go">${fa("right-to-bracket")} ${first?"ตั้งบัญชีและเข้าสู่ระบบ":"เข้าสู่ระบบ"}</button><a href="#/" class="mt-4 block text-center text-sm text-slate-500 hover:underline">${fa("arrow-left")} กลับหน้าแรก</a></div></div>`}
+const PAGES={dash:["gauge-high","ภาพรวม"],items:["boxes-stacked","หมวดและรายการ"],users:["users","ผู้เบิก"],log:["clock-rotate-left","ประวัติการเบิก"],report:["chart-column","รายงาน"],trash:["trash-can-arrow-up","ถังขยะ"],data:["database","ข้อมูลและสำรอง"],sec:["key","บัญชีผู้ดูแล"]};
+function shellBack(page){if(!PAGES[page])page="dash";const V={dash:vDash,items:vItems,users:vUsers,log:()=>vLog(true),report:vReport,trash:vTrash,data:vData,sec:vSec};
   return`<div class="min-h-screen md:pl-64"><aside class="bg-slate-900 p-3 text-slate-200 md:fixed md:inset-y-0 md:left-0 md:flex md:w-64 md:flex-col md:p-4">
 <div class="mb-3 flex items-center gap-3 px-1 md:mb-6"><div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white">${fa("user-shield")}</div><div><div class="font-bold leading-tight text-white">หลังบ้าน</div><div class="text-[11px] text-slate-400">ระบบเบิกของติดตั้ง</div></div></div>
-<nav class="flex gap-1 overflow-x-auto md:flex-col">${Object.entries(PAGES).map(([k,[ic,l]])=>`<a href="#/admin/${k}" class="sb ${k===page?"on":""}">${fa(ic,"w-5 text-center")} ${l}</a>`).join("")}</nav>
-<div class="mt-3 flex gap-1 md:mt-auto md:flex-col"><a href="#/" class="sb">${fa("cart-shopping","w-5 text-center")} กลับหน้าเบิกของ</a><button class="sb !border-0 !bg-transparent !shadow-none" data-act="adm-out">${fa("right-from-bracket","w-5 text-center")} ออกจากหลังบ้าน</button></div></aside>
-<div class="min-w-0"><div class="flex items-center gap-3 border-b border-slate-200 bg-white/80 px-5 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/80"><div class="mr-auto font-semibold">${PAGES[page][1]}</div><span id="st" class="${stat.c}">${esc(stat.t)}</span></div>
+<nav class="flex gap-1 overflow-x-auto md:flex-col">${Object.entries(PAGES).map(([k,[ic,l]])=>`<a href="#/admin/${k}" class="sb ${k===page?"on":""}">${fa(ic,"w-5 text-center")} ${l}${k==="trash"&&S.trash.length?`<span class="ml-auto rounded-full bg-white/20 px-2 text-xs">${S.trash.length}</span>`:""}</a>`).join("")}</nav>
+<div class="mt-3 flex gap-1 md:mt-auto md:flex-col"><a href="#/" class="sb">${fa("house","w-5 text-center")} กลับหน้าแรก</a><button class="sb !border-0 !bg-transparent !shadow-none" data-act="adm-out">${fa("right-from-bracket","w-5 text-center")} ออกจากหลังบ้าน</button></div></aside>
+<div class="min-w-0"><div class="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/85 px-5 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/85"><div class="mr-auto font-semibold">${PAGES[page][1]}</div><span id="st" class="hidden sm:inline-block ${stat.c}">${esc(stat.t)}</span>${connMenu()}</div>
 <main class="p-5 md:p-8">${V[page]()}</main></div></div>`}
-function vDash(){const all=S.cats.flatMap(c=>c.items.map(i=>({...i,cat:c.name,r:rem(i)}))),out=all.filter(i=>i.qty>0&&i.r<=0),low=all.filter(i=>i.qty>0&&i.r>0&&i.r/i.qty<=.1),rec=[...S.log].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+function vDash(){const all=allItems().map(i=>({...i,r:rem(i)})),out=all.filter(i=>i.qty>0&&i.r<=0),low=all.filter(i=>i.qty>0&&i.r>0&&i.r/i.qty<=.1),rec=[...S.log].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
   return`<div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">${kpi(fa("list"),"รายการทั้งหมด",all.length,"bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40")}${kpi(fa("triangle-exclamation"),"ของหมด / ใกล้หมด",out.length+" / "+low.length,"bg-amber-100 text-amber-600 dark:bg-amber-900/40")}${kpi(fa("cart-flatbed"),"เบิกวันนี้ (ครั้ง)",S.log.filter(l=>l.date===today()).length,"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40")}${kpi(fa("users"),"ผู้เบิกที่ใช้งาน",S.users.filter(u=>u.active!==false).length,"bg-violet-100 text-violet-600 dark:bg-violet-900/40")}</div>
-${!S.cats.length?`<div class="${card} p-8 text-center"><div class="text-3xl text-slate-400">${fa("file-import")}</div><div class="mt-2 font-semibold">ยังไม่มีข้อมูลรายการ</div><div class="mt-1 text-sm text-slate-500">เริ่มต้นโดยนำเข้าไฟล์ CSV / JSON หรือเพิ่มหมวดด้วยตนเอง</div><div class="mt-4 flex justify-center gap-2"><a href="#/admin/data" class="nav on">${fa("database")} ไปที่ข้อมูลและสำรอง</a><a href="#/admin/items" class="nav">${fa("boxes-stacked")} เพิ่มหมวด</a></div></div>`:""}
+${!S.cats.length?`<div class="${card} mb-4 p-8 text-center"><div class="text-3xl text-slate-400">${fa("file-import")}</div><div class="mt-2 font-semibold">ยังไม่มีข้อมูลรายการ</div><div class="mt-1 text-sm text-slate-500">เริ่มต้นโดยนำเข้าไฟล์ CSV / JSON หรือเพิ่มหมวดด้วยตนเอง</div><div class="mt-4 flex justify-center gap-2"><a href="#/admin/data" class="nav on">${fa("database")} ข้อมูลและสำรอง</a><a href="#/admin/items" class="nav">${fa("boxes-stacked")} เพิ่มหมวด</a></div></div>`:""}
 <div class="grid gap-4 lg:grid-cols-2"><div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">${fa("triangle-exclamation","text-amber-500")} ของหมด / ใกล้หมด</div><table>${[...out,...low].slice(0,8).map(i=>`<tr><td>${esc(i.name)}<div class="text-xs text-slate-400">${esc(i.cat)}</div></td><td class="n"><span class="b ${i.r<=0?"er":"wa"}">${i.r} ${esc(i.unit)}</span></td></tr>`).join("")||`<tr><td class="empty">ไม่มีรายการที่ต้องเติมของ</td></tr>`}</table></div>
 <div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">${fa("clock-rotate-left","text-indigo-500")} เบิกล่าสุด</div><table>${rec.map(l=>{const f=find(l.item);return`<tr><td>${esc(f?.i.name||"(ลบแล้ว)")}<div class="text-xs text-slate-400">${esc(l.who||"-")} · ${dmy(l.date)}</div></td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td></tr>`}).join("")||`<tr><td class="empty">ยังไม่มีการเบิก</td></tr>`}</table></div></div>`}
-function vItems(){const c=S.cats.find(x=>x.id===bcat)||S.cats[0];if(c)bcat=c.id;
+function vItems(){const c=S.cats.find(x=>x.id===bcat)||S.cats[0];if(c)bcat=c.id;const its=c?c.items.map((i,n)=>({...i,n:n+1})).filter(i=>(i.name+i.code).toLowerCase().includes(bq.toLowerCase())):[];
   return`<div class="grid gap-5 lg:grid-cols-[16rem_1fr]"><div class="${card} h-fit p-2"><div class="px-3 py-2 text-xs font-semibold text-slate-400">หมวดหมู่ (${S.cats.length})</div>${S.cats.map(x=>`<button data-act="bcat" data-id="${x.id}" class="mi ${x.id===bcat?"!bg-indigo-50 !text-indigo-700 dark:!bg-indigo-900/40 dark:!text-indigo-200":""}">${cico(x)}<span class="truncate">${esc(x.name)}</span><span class="ml-auto text-xs text-slate-400">${x.items.length}</span></button>`).join("")}<button class="mi mt-1 !text-indigo-600" data-act="addcat">${fa("plus")} เพิ่มหมวดใหม่</button></div>
-<div>${c?`<div class="mb-4 flex flex-wrap items-center gap-2"><div class="mr-auto flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-indigo-100 text-lg text-indigo-600 dark:bg-indigo-900/40">${isFa(c.icon)?fa(c.icon):esc(c.icon||"")||fa("box")}</span><h2 class="text-lg font-bold">${esc(c.name)}</h2></div><button data-act="rencat">${fa("pen")} แก้ไขหมวด</button><button class="d" data-act="delcat">${fa("trash")} ลบหมวด</button><button class="p" data-act="additem">${fa("plus")} เพิ่มรายการ</button></div>
-<div class="${card}"><table><tr><th>#</th><th>ชื่อรายการ</th><th>รหัสสินค้า</th><th>หน่วย</th><th class="n">จำนวนทั้งหมด</th><th class="n">คงเหลือ</th><th></th></tr>${c.items.map((i,n)=>`<tr><td class="text-slate-400">${n+1}</td><td class="font-medium">${esc(i.name)}</td><td>${esc(i.code)}</td><td>${esc(i.unit)}</td><td class="n">${i.qty}</td><td class="n"><span class="b ${rem(i)<0?"er":rem(i)===0?"wa":"ok"}">${rem(i)}</span></td><td class="ac"><button class="s" data-act="edititem" data-id="${i.id}">${fa("pen")} แก้ไข</button> <button class="s d" data-act="delitem" data-id="${i.id}">${fa("trash")}</button></td></tr>`).join("")||`<tr><td colspan="7" class="empty">ยังไม่มีรายการในหมวดนี้</td></tr>`}</table></div>`
+<div class="min-w-0">${c?`<div class="mb-4 flex flex-wrap items-center gap-2"><div class="mr-auto flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-indigo-100 text-lg text-indigo-600 dark:bg-indigo-900/40">${isFa(c.icon)?fa(c.icon):esc(c.icon||"")||fa("box")}</span><h2 class="text-lg font-bold">${esc(c.name)}</h2></div><button data-act="rencat">${fa("pen")} แก้ไขหมวด</button><button class="d" data-act="delcat">${fa("trash")} ลบหมวด</button><button class="p" data-act="additem">${fa("plus")} เพิ่มรายการ</button></div>
+<div class="relative mb-3 max-w-xs"><i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i><input id="bq" class="!pl-9" placeholder="ค้นหาในหมวดนี้" value="${esc(bq)}"></div>
+<div class="${card}"><table><tr><th>#</th><th>ชื่อรายการ</th><th>รหัสสินค้า</th><th>หน่วย</th><th class="n">จำนวนทั้งหมด</th><th class="n">คงเหลือ</th><th></th></tr>${its.map(i=>`<tr><td class="text-slate-400">${i.n}</td><td class="font-medium">${esc(i.name)}</td><td>${esc(i.code)}</td><td>${esc(i.unit)}</td><td class="n">${i.qty}</td><td class="n"><span class="b ${rem(i)<0?"er":rem(i)===0?"wa":"ok"}">${rem(i)}</span></td><td class="ac"><button class="s" data-act="edititem" data-id="${i.id}">${fa("pen")} แก้ไข</button> <button class="s d" data-act="delitem" data-id="${i.id}" aria-label="ลบ">${fa("trash")}</button></td></tr>`).join("")||`<tr><td colspan="7" class="empty">${c.items.length?"ไม่พบรายการที่ค้นหา":"ยังไม่มีรายการในหมวดนี้"}</td></tr>`}</table></div><div class="sum">รายการที่ลบจะถูกย้ายไป “ถังขยะ” และกู้คืนได้</div>`
 :`<div class="${card}"><div class="empty">${fa("folder-open","text-3xl")}<div class="mt-2">ยังไม่มีหมวด — กด “เพิ่มหมวดใหม่” หรือนำเข้าข้อมูลที่เมนู “ข้อมูลและสำรอง”</div></div></div>`}</div></div>`}
-function vUsers(){return`<div class="bar"><button class="p" data-act="adduser">${fa("user-plus")} เพิ่มผู้เบิก</button></div><div class="${card}"><table><tr><th>ชื่อผู้เบิก</th><th>ชื่อผู้ใช้</th><th>สถานะ</th><th class="n">เบิกแล้ว (ครั้ง)</th><th></th></tr>${S.users.map(u=>`<tr><td class="font-medium">${esc(u.name)}</td><td>${esc(u.username)}</td><td><span class="b ${u.active===false?"wa":"ok"}">${u.active===false?"ระงับ":"ใช้งาน"}</span></td><td class="n">${S.log.filter(l=>l.uid===u.id).length}</td><td class="ac"><button class="s" data-act="edituser" data-id="${u.id}">${fa("pen")} แก้ไข</button> <button class="s d" data-act="deluser" data-id="${u.id}">${fa("trash")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="empty">ยังไม่มีผู้เบิก — กด “เพิ่มผู้เบิก”</td></tr>`}</table></div><div class="sum">ผู้เบิกต้องเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านจึงจะเบิกของได้ · การเปลี่ยนชื่อจะอัปเดตประวัติการเบิกเดิมให้ด้วย</div>`}
+function vUsers(){return`<div class="bar"><button class="p" data-act="adduser">${fa("user-plus")} เพิ่มผู้เบิก</button></div><div class="${card}"><table><tr><th>ชื่อผู้เบิก</th><th>ชื่อผู้ใช้</th><th>สถานะ</th><th class="n">เบิกแล้ว (ครั้ง)</th><th></th></tr>${S.users.map(u=>`<tr><td class="font-medium">${esc(u.name)}</td><td>${esc(u.username)}</td><td><span class="b ${u.active===false?"wa":"ok"}">${u.active===false?"ระงับ":"ใช้งาน"}</span></td><td class="n">${S.log.filter(l=>l.uid===u.id).length}</td><td class="ac"><button class="s" data-act="edituser" data-id="${u.id}">${fa("pen")} แก้ไข</button> <button class="s d" data-act="deluser" data-id="${u.id}" aria-label="ลบ">${fa("trash")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="empty">ยังไม่มีผู้เบิก — กด “เพิ่มผู้เบิก”</td></tr>`}</table></div><div class="sum">ผู้เบิกต้องเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านจึงจะเบิกของได้ · การเปลี่ยนชื่อจะอัปเดตประวัติการเบิกเดิมให้ด้วย</div>`}
+function reportData(){const L=S.log.filter(l=>l.date.startsWith(rpm)),bi={},bu={};
+  L.forEach(l=>{const f=find(l.item),o=bi[l.item]||(bi[l.item]={name:f?.i.name||"(ลบแล้ว)",cat:f?.c.name||"-",unit:f?.i.unit||"",amt:0,n:0});o.amt+=l.amt;o.n++;const w=l.who||"-",p=bu[w]||(bu[w]={amt:0,n:0});p.amt+=l.amt;p.n++});
+  return{L,items:Object.values(bi).sort((a,b)=>b.amt-a.amt),users:Object.entries(bu).sort((a,b)=>b[1].n-a[1].n)}}
+const thMonth=()=>new Date(rpm+"-01").toLocaleDateString("th-TH",{month:"long",year:"numeric"});
+function vReport(){const D=reportData();
+  return`<div class="lf"><div><label>เดือน</label><input type="month" id="rp-m" value="${rpm}"></div><button class="p" data-act="rp-print" ${D.L.length?"":"disabled"}>${fa("print")} พิมพ์ / PDF</button><button data-act="rp-csv" ${D.L.length?"":"disabled"}>${fa("file-csv")} ส่งออก CSV</button></div>
+<div class="mb-4 grid grid-cols-3 gap-3">${kpi(fa("receipt"),"จำนวนใบเบิก",new Set(D.L.map(l=>l.slip||l.id)).size,"bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40")}${kpi(fa("list"),"จำนวนรายการ",D.items.length,"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40")}${kpi(fa("users"),"ผู้เบิก",D.users.length,"bg-violet-100 text-violet-600 dark:bg-violet-900/40")}</div>
+<div class="grid gap-4 lg:grid-cols-[2fr_1fr]"><div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">สรุปการเบิกรายการ · ${thMonth()}</div><table><tr><th>รายการ</th><th>หมวด</th><th class="n">จำนวนที่เบิก</th><th class="n">ครั้ง</th></tr>${D.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.cat)}</td><td class="n font-semibold">${i.amt} ${esc(i.unit)}</td><td class="n">${i.n}</td></tr>`).join("")||`<tr><td colspan="4" class="empty">ไม่มีการเบิกในเดือนนี้</td></tr>`}</table></div>
+<div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">แยกตามผู้เบิก</div><table>${D.users.map(([w,o])=>`<tr><td>${esc(w)}</td><td class="n">${o.n} ครั้ง</td></tr>`).join("")||`<tr><td class="empty">-</td></tr>`}</table></div></div>`}
+function vTrash(){const T=[...S.trash].reverse(),K={cat:"หมวด",item:"รายการ",log:"รายการเบิก",user:"ผู้เบิก"},nm=t=>t.kind==="log"?`${esc(find(t.data.item)?.i.name||"(รายการถูกลบ)")} × ${t.data.amt} · ${esc(t.data.who||"-")}`:esc(t.data.name)+(t.kind==="cat"?` (${t.data.items.length} รายการ)`:t.kind==="item"?` <span class="text-xs text-slate-400">จากหมวด ${esc(t.catName||"")}</span>`:"");
+  return`<div class="bar"><button class="d" data-act="tr-empty" ${T.length?"":"disabled"}>${fa("fire")} ล้างถังขยะ</button></div><div class="${card}"><table><tr><th>ประเภท</th><th>รายละเอียด</th><th>ลบเมื่อ</th><th></th></tr>${T.map(t=>`<tr><td><span class="b wa !min-w-0">${K[t.kind]}</span></td><td>${nm(t)}</td><td>${dmy(t.at)}</td><td class="ac"><button class="s p" data-act="tr-restore" data-id="${t.id}">${fa("rotate-left")} กู้คืน</button> <button class="s d" data-act="tr-del" data-id="${t.id}" aria-label="ลบถาวร">${fa("xmark")}</button></td></tr>`).join("")||`<tr><td colspan="4" class="empty">${fa("trash-can","text-3xl")}<div class="mt-2">ถังขยะว่างเปล่า</div></td></tr>`}</table></div><div class="sum">รายการที่ลบหรือยกเลิกจะอยู่ที่นี่ กู้คืนได้จนกว่าจะลบถาวร</div>`}
 function vData(){const c=ghCfg(),mode=src==="gh"?"ออนไลน์ (GitHub)":fh?"ออฟไลน์ · ไฟล์ "+fh.name:"ออฟไลน์ · เบราว์เซอร์นี้",sec=(ic,t,d,b)=>`<div class="${card} p-5"><div class="mb-1 flex items-center gap-2 font-semibold">${fa(ic,"text-indigo-500")} ${t}</div><div class="mb-3 text-xs text-slate-500">${d}</div><div class="flex flex-wrap gap-2">${b}</div></div>`;
-  return`<div class="mb-5 flex flex-wrap items-center gap-3 ${card} p-4"><span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40">${fa(src==="gh"?"cloud":"hard-drive")}</span><div class="mr-auto"><div class="text-xs text-slate-500">แหล่งเก็บข้อมูลปัจจุบัน</div><div class="font-semibold">${mode}</div></div><span id="st" class="${stat.c}">${esc(stat.t)}</span></div>
+  return`<div class="mb-5 flex flex-wrap items-center gap-3 ${card} p-4"><span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40">${fa(src==="gh"?"cloud":"hard-drive")}</span><div class="mr-auto"><div class="text-xs text-slate-500">แหล่งเก็บข้อมูลปัจจุบัน</div><div class="font-semibold">${mode}</div></div><span class="${stat.c==="ok"?"b ok":"b wa"} !min-w-0">${esc(stat.t)}</span></div>
 <div class="grid gap-4 md:grid-cols-2">
-${sec("hard-drive","ระบบออฟไลน์","เก็บข้อมูลในไฟล์ stock.json บนเครื่อง (Chrome / Edge) บันทึกอัตโนมัติทุกครั้งที่มีการเปลี่ยนแปลง",`<button data-act="f-open">${fa("folder-open")} เปิดไฟล์</button><button data-act="f-save">${fa("floppy-disk")} บันทึกเป็น…</button>`)}
-${sec("cloud","ระบบออนไลน์ (GitHub)",`เก็บ ${esc(c.path)} ใน ${esc(c.owner)}/${esc(c.repo)} · token ${c.token?"ตั้งค่าแล้ว":"ยังไม่ได้ตั้ง"}`,`<button data-act="gh-set">${fa("gear")} ตั้งค่า</button><button data-act="gh-rf">${fa("rotate")} รีเฟรช</button><button data-act="bk-gh">${fa("cloud-arrow-up")} สำรองไป repo</button>`)}
-${sec("download","สำรองข้อมูล","ดาวน์โหลดสำเนาข้อมูลเก็บไว้ ใช้ได้ทั้งโหมดออนไลน์และออฟไลน์",`<button class="p" data-act="bk-json">${fa("file-zipper")} ไฟล์สำรองทั้งหมด (.json)</button><button data-act="ex-items">${fa("file-csv")} รายการคงเหลือ (.csv)</button><button data-act="ex-log">${fa("file-csv")} ประวัติการเบิก (.csv)</button>`)}
-${sec("file-import","นำเข้าข้อมูล","JSON = กู้คืนทั้งระบบ (แทนที่ข้อมูลปัจจุบัน) · CSV = เพิ่ม/อัปเดตรายการ โดยจับคู่จากหมวด + ชื่อรายการ หรือรหัสสินค้า",`<button class="p" data-act="im-json">${fa("file-import")} นำเข้า JSON</button><button data-act="im-csv">${fa("file-csv")} นำเข้า CSV</button><button data-act="tpl">${fa("table")} แม่แบบ CSV</button><button data-act="undo" ${localStorage.getItem("stock-undo")?"":"disabled"}>${fa("rotate-left")} ย้อนกลับการนำเข้าล่าสุด</button>`)}</div>
-<div class="sum">หัวคอลัมน์ไฟล์ CSV: <b>หมวด, ชื่อรายการ, รหัสสินค้า, หน่วย, จำนวน</b> (ต้องมีอย่างน้อย “ชื่อรายการ”) · ระบบจะเก็บสำเนาก่อนนำเข้าไว้ให้ย้อนกลับได้ 1 ครั้ง</div>`}
-function vSec(){return`<div class="${card} max-w-lg p-5"><div class="mb-1 flex items-center gap-2 font-semibold">${fa("key","text-indigo-500")} รหัสผ่านหลังบ้าน</div><div class="mb-3 text-xs text-slate-500">รหัสเก็บแบบเข้ารหัสทางเดียว (SHA-256 + salt) ในไฟล์ข้อมูล · ออกจากหลังบ้านอัตโนมัติเมื่อไม่ใช้งาน 10 นาที</div><button class="p" data-act="pwdlg">${fa("key")} เปลี่ยนรหัสผ่านหลังบ้าน</button></div>
-<div class="sum max-w-lg">หมายเหตุ: ระบบนี้ทำงานในเบราว์เซอร์ทั้งหมด รหัสผ่านป้องกันการใช้งานผิดพลาด แต่ไม่ใช่ความปลอดภัยระดับเซิร์ฟเวอร์ — คนที่เข้าถึงไฟล์ข้อมูลหรือ GitHub token ได้ยังแก้ข้อมูลโดยตรงได้</div>`}
+${sec("hard-drive","ออฟไลน์ · ไฟล์ในเครื่อง","เก็บข้อมูลในไฟล์ .json บนเครื่อง (Chrome / Edge) บันทึกอัตโนมัติทุกครั้งที่มีการเปลี่ยนแปลง",`<button data-act="f-open">${fa("folder-open")} เปิดไฟล์</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ใหม่</button><button data-act="f-save">${fa("floppy-disk")} บันทึกเป็น…</button>`)}
+${sec("cloud","ออนไลน์ · GitHub",`${esc(c.owner)}/${esc(c.repo)} · ${esc(c.path)} · token ${c.token?"ตั้งค่าแล้ว":"ยังไม่ได้ตั้ง"}`,`<button data-act="gh-set">${fa("gear")} ตั้งค่า / เชื่อมต่อ</button><button data-act="gh-rf">${fa("rotate")} ซิงก์ตอนนี้</button><button data-act="bk-gh">${fa("cloud-arrow-up")} สำรองไป repo</button>`)}
+${sec("download","สำรองและส่งออก","ดาวน์โหลดสำเนาข้อมูลเก็บไว้ ใช้ได้ทั้งโหมดออนไลน์และออฟไลน์",`<button class="p" data-act="bk-json">${fa("file-zipper")} สำรองข้อมูล (.json)</button><button data-act="ex-items">${fa("file-csv")} รายการคงเหลือ (.csv)</button><button data-act="ex-log">${fa("file-csv")} ประวัติการเบิก (.csv)</button>`)}
+${sec("file-import","กู้คืนและนำเข้า","กู้คืน = แทนที่ข้อมูลทั้งหมดด้วยไฟล์สำรอง · นำเข้า = เพิ่มเข้าไป เลือกได้ว่าจะข้ามหรืออัปเดตรายการซ้ำ ก่อนทำรายการระบบสำรองข้อมูลเดิมให้อัตโนมัติ",`<button class="p" data-act="im-restore">${fa("clock-rotate-left")} กู้คืนจากไฟล์สำรอง</button><button data-act="im-any">${fa("file-import")} นำเข้า (.json / .csv)</button><button data-act="tpl">${fa("table")} แม่แบบ CSV</button><button data-act="undo" ${localStorage.getItem("stock-undo")?"":"disabled"}>${fa("rotate-left")} ย้อนกลับล่าสุด</button>`)}</div>
+<div class="sum">หัวคอลัมน์ CSV: <b>หมวด, ชื่อรายการ, รหัสสินค้า, หน่วย, จำนวน</b> (ต้องมีอย่างน้อย “ชื่อรายการ”) · ไฟล์ที่ส่งออกจากระบบนำกลับเข้ามาได้</div>`}
+function vSec(){const a=S.admin;return`<div class="${card} max-w-lg p-5"><div class="mb-1 flex items-center gap-2 font-semibold">${fa("user-shield","text-indigo-500")} บัญชีผู้ดูแลระบบ</div><div class="mb-3 text-xs text-slate-500">${a?.uhash?"ใช้ Username + Password":"ปัจจุบันใช้เฉพาะรหัสผ่าน — ตั้ง Username เพิ่มได้"} · เก็บแบบเข้ารหัสทางเดียว (PBKDF2 / SHA-256) ดูย้อนหลังไม่ได้ · ออกจากหลังบ้านอัตโนมัติเมื่อไม่ใช้งาน 10 นาที</div><button class="p" data-act="acct">${fa("key")} เปลี่ยน Username / Password</button></div>
+<div class="sum max-w-lg">หมายเหตุ: ระบบนี้ทำงานในเบราว์เซอร์ทั้งหมด รหัสผ่านป้องกันการใช้งานผิดพลาด แต่ไม่ใช่ความปลอดภัยระดับเซิร์ฟเวอร์ — คนที่เข้าถึงไฟล์ข้อมูลหรือ GitHub token ได้ยังแก้ข้อมูลโดยตรงได้ ถ้าลืมรหัสให้ลบบล็อก "admin" ในไฟล์ข้อมูลแล้วตั้งใหม่</div>`}
 /* ================= render ================= */
+let lastRoute="";
 function render(){
-  const app=$("#app");if(!loaded){app.innerHTML=vWelcome();cartBar();return}
-  const r=R();
+  const app=$("#app"),y=window.scrollY;
+  if(!loaded){app.innerHTML=vWelcome();cartBar();return}
+  const r=R(),key=r.area+r.page;
   if(r.area==="back"){app.innerHTML=admin?shellBack(r.page):vGate();document.title="หลังบ้าน · ระบบเบิกของ"}
   else{if(!["stock","log"].includes(r.page)){location.hash="#/";return}
-    app.innerHTML=hdr(r.page)+`<main class="mx-auto max-w-6xl px-4 py-6 pb-28">${r.page==="log"?vLog(false):vStock()}</main>`;document.title="ระบบเบิกของติดตั้ง"}
-  cartBar()}
-function cartBar(){const b=$("#cartbar");b.style.display=cart.length&&loaded&&R().area==="front"?"flex":"none";b.innerHTML=`<span>${fa("receipt")} ใบเบิก: <b>${cart.length}</b> รายการ</span><button data-act="cart">ดูสรุป / ยืนยันเบิก</button>`}
+    app.innerHTML=hdr(r.page)+`<main class="mx-auto max-w-6xl px-4 py-6 pb-28">${r.page==="log"?vLog(false):vHome()}</main>`;document.title="ระบบเบิกของติดตั้ง"}
+  window.scrollTo(0,key===lastRoute?y:0);lastRoute=key;cartBar()}
+function cartBar(){const r=R(),b=$("#cartbar"),panel=r.area==="front"&&r.page==="stock"&&window.innerWidth>=1024;
+  b.style.display=cart.length&&loaded&&r.area==="front"&&!panel?"flex":"none";b.innerHTML=`<span>${fa("receipt")} ใบเบิก: <b>${cart.length}</b> รายการ</span><button data-act="cart">ดูสรุป / ยืนยันเบิก</button>`}
 /* ================= cart / withdraw ================= */
 function openCart(){
-  cart=cart.filter(x=>find(x.item));cartBar();if(!cart.length)return $("#dlg").open&&$("#dlg").close();
-  ci.who=me()?.name||"";ci.date||=today();ci.site??=localStorage.getItem("lastsite")||"";ci.note??="";
-  const rows=cart.map((x,n)=>{const f=find(x.item);return`<tr><td>${n+1}</td><td>${esc(f.i.name)}<div class="hint">${esc(f.c.name)} · คงเหลือ ${rem(f.i)} ${esc(f.i.unit)}</div></td><td style="white-space:nowrap"><input type="number" min="0" step="any" value="${x.amt}" data-ci="${n}" style="width:80px"> ${esc(f.i.unit)}</td><td><button type="button" class="s d" data-rm="${n}">${fa("xmark")}</button></td></tr>`}).join("");
-  $("#dlg").style.width="min(640px,94vw)";
-  $("#frm").innerHTML=`<h3 class="mb-1 text-lg font-bold">${fa("receipt","text-indigo-500")} ใบเบิก</h3><div class="row"><div><label>ชื่อผู้เบิก</label><input id="c1" value="${esc(ci.who)}" readonly class="opacity-70"></div><div><label>วันที่</label><input id="c2" type="date" value="${ci.date}"></div></div>
-  <div class="row"><div><label>โครงการ / สถานที่</label><input id="c3" value="${esc(ci.site)}"></div><div><label>หมายเหตุ</label><input id="c4" value="${esc(ci.note)}"></div></div>
-  <div class="${card} mt-4 max-h-[38vh]"><table><tr><th>#</th><th>รายการ</th><th>จำนวนเบิก</th><th></th></tr>${rows}</table></div>
-  <div class="sum"><b>สรุป: รวม ${cart.length} รายการ</b> · ช่องที่เบิกเกินคงเหลือจะมีคำเตือนตอนยืนยัน</div>
-  <div class="act flex-wrap"><button type="button" id="cc">ปิด</button><button type="button" class="d" id="cclr">ล้างใบเบิก</button><button type="button" class="p" id="cok">${fa("check")} ยืนยันเบิก</button><button type="button" class="p" id="cpr">${fa("print")} ยืนยัน + พิมพ์ / PDF</button></div>`;
-  if(!$("#dlg").open)$("#dlg").showModal();
-  $("#cc").onclick=()=>$("#dlg").close();$("#cclr").onclick=()=>{if(confirm("ล้างรายการทั้งหมดในใบเบิก?")){cart=[];cartBar();$("#dlg").close()}};
-  $("#cok").onclick=()=>commit(false);$("#cpr").onclick=()=>commit(true)}
+  cart=cart.filter(x=>find(x.item));cartBar();if(!cart.length){if($("#dlg").open)$("#dlg").close();return}
+  $("#dlg").style.width="min(560px,94vw)";
+  $("#frm").innerHTML=`<div class="mb-1 flex items-center"><h3 class="text-lg font-bold">${fa("receipt","text-indigo-500")} ใบเบิกของฉัน</h3><button type="button" class="s ml-auto" id="cc">ปิด</button></div>${cartForm()}`;
+  if(!$("#dlg").open)$("#dlg").showModal();$("#cc").onclick=()=>$("#dlg").close()}
+function refreshCart(){cartBar();render();if($("#dlg").open)openCart()}
 function commit(pr){
   if(!me())return toast("กรุณาเข้าสู่ระบบก่อน","er");
+  if(!cart.length)return;
   if(cart.some(x=>!(x.amt>0)))return toast("มีรายการที่จำนวนเป็น 0 กรุณาแก้ไขหรือลบออก","er");
   const over=cart.filter(x=>x.amt>rem(find(x.item).i));
   if(over.length&&!confirm(`มี ${over.length} รายการที่เบิกเกินคงเหลือ ยอดคงเหลือจะติดลบ ต้องการดำเนินการต่อ?`))return;
-  const slip="W"+String(S.seq=(S.seq||0)+1).padStart(4,"0"),who=me().name,site=ci.site.trim(),dt=ci.date||today();
-  const rows=cart.map(x=>({id:uid(),item:x.item,amt:x.amt,date:dt,who,uid:me().id,note:ci.note.trim(),site,slip}));
-  S.log.push(...rows);localStorage.setItem("lastsite",site);cart=[];ci.note="";$("#dlg").close();change();toast("บันทึกใบเบิก "+slip+" เรียบร้อย");
+  const slip="W"+String(S.seq=(S.seq||0)+1).padStart(4,"0"),who=me().name,site=(ci.site||"").trim(),dt=ci.date||today();
+  const rows=cart.map(x=>({id:uid(),item:x.item,amt:x.amt,date:dt,who,uid:me().id,note:(ci.note||"").trim(),site,slip}));
+  S.log.push(...rows);localStorage.setItem("lastsite",site);cart=[];ci.note="";if($("#dlg").open)$("#dlg").close();change();cartBar();toast("บันทึกใบเบิก "+slip+" เรียบร้อย");
   if(pr)printSheet(who,site,rows,slip,dt)}
 function printSheet(who,site,rows,no,dt){
   const L=rows||logF().slice().reverse();
   $("#pr").innerHTML=`<h2>ใบเบิกวัสดุอุปกรณ์</h2><div class="m"><span>ผู้เบิก: <b>${esc(who||"-")}</b>${site?`<br>โครงการ/สถานที่: ${esc(site)}`:""}</span><span>${no?`เลขที่: <b>${esc(no)}</b><br>`:""}${dt?`วันที่เบิก: ${dmy(dt)}`:`วันที่พิมพ์: ${dmy(today())}`}${!rows&&(lf.from||lf.to)?`<br>ช่วงวันที่: ${lf.from?dmy(lf.from):"…"} - ${lf.to?dmy(lf.to):"…"}`:""}</span></div>
   <table><tr><th>ลำดับ</th><th>วันที่</th><th>รายการ</th><th>รหัส</th><th class="n">จำนวน</th><th>ผู้เบิก</th><th>หมายเหตุ</th></tr>${L.map((l,n)=>{const f=find(l.item);return`<tr><td>${n+1}</td><td>${dmy(l.date)}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td>${esc(f?.i.code||"")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"")}</td><td>${esc(l.note)}</td></tr>`}).join("")}<tr><td colspan="7" style="text-align:right"><b>สรุป: รวม ${L.length} รายการ</b></td></tr></table>
   <div class="sg"><div><i>(${esc(who||"............................")})<br>ผู้เบิก</i></div><div><i>(............................)<br>ผู้จ่ายของ</i></div><div><i>(............................)<br>ผู้อนุมัติ</i></div></div>`;
-  const old=document.title;document.title=(no||"ใบเบิก")+(who?"_"+who:"");window.onafterprint=()=>{document.title=old};setTimeout(()=>window.print(),100)}
+  doPrint((no||"ใบเบิก")+(who?"_"+who:""))}
+function doPrint(t){const old=document.title;document.title=t;window.onafterprint=()=>{document.title=old};setTimeout(()=>window.print(),100)}
+function printReport(){const D=reportData();
+  $("#pr").innerHTML=`<h2>รายงานการเบิกวัสดุอุปกรณ์ ประจำเดือน${thMonth()}</h2><div class="m"><span>จำนวนใบเบิก: <b>${new Set(D.L.map(l=>l.slip||l.id)).size}</b> · ผู้เบิก ${D.users.length} คน</span><span>วันที่พิมพ์: ${dmy(today())}</span></div>
+  <table><tr><th>ลำดับ</th><th>รายการ</th><th>หมวด</th><th class="n">จำนวนที่เบิก</th><th class="n">ครั้ง</th></tr>${D.items.map((i,n)=>`<tr><td>${n+1}</td><td>${esc(i.name)}</td><td>${esc(i.cat)}</td><td class="n">${i.amt} ${esc(i.unit)}</td><td class="n">${i.n}</td></tr>`).join("")}<tr><td colspan="5" style="text-align:right"><b>สรุป: รวม ${D.items.length} รายการ</b></td></tr></table>
+  <div class="sg"><div><i>(............................)<br>ผู้จัดทำรายงาน</i></div><div><i>(............................)<br>ผู้อนุมัติ</i></div></div>`;doPrint("รายงานการเบิก_"+rpm)}
 /* ================= back-office dialogs ================= */
 const iconPicker=cur=>`<label>ไอคอนหมวด (Font Awesome)</label><div class="flex items-center gap-3"><span id="icp" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-indigo-100 text-xl text-indigo-600 dark:bg-indigo-900/40">${isFa(cur)?fa(cur):esc(cur)}</span><input id="f2" value="${esc(cur)}" placeholder="ชื่อไอคอน เช่น bolt"></div><div class="mt-2 grid grid-cols-8 gap-1.5">${ICONS.map(x=>`<button type="button" data-ic="${x}" class="!px-0 !py-2 ${x===cur?"ring-2 ring-indigo-500":""}">${fa(x)}</button>`).join("")}</div>`;
 function catDlg(c){const n=!c;ask(n?"เพิ่มหมวดใหม่":"แก้ไขหมวด",`<label>ชื่อหมวด</label><input id="f1" value="${esc(c?.name||"")}">`+iconPicker(c?.icon||"box"),()=>{const name=v("f1").trim();if(!name)return false;const ic=v("f2").trim()||"box";
@@ -289,62 +347,93 @@ function userDlg(u){const n=!u;u=u||{name:"",username:"",active:true};
     if(pw){u.salt=uid()+uid();u.hash=await hashPw(pw,u.salt)}S.log.forEach(l=>{if(l.uid===u.id)l.who=name});$("#dlg").close();change()})();return false})}
 /* ================= import / export ================= */
 const snapshot=()=>{try{localStorage.setItem("stock-undo",JSON.stringify(S))}catch(e){}};
+const toTrash=(kind,data,x={})=>S.trash.push({id:uid(),kind,at:today(),data,...x});
 function ensureLoaded(){if(!loaded){S=norm({cats:[]});loaded=true;src=ghMissing?"gh":null;fh=null;setStatus("ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์","wa")}}
-function importItemsCsv(txt){
+function importItemsCsv(txt,upd){
   const rows=csvParse(txt);if(rows.length<2)throw Error("ไฟล์ว่างหรือไม่มีแถวข้อมูล");
   const H=rows[0].map(h=>h.trim().toLowerCase()),col=(...n)=>H.findIndex(h=>n.includes(h));
   const X={cat:col("หมวด","หมวดหมู่","category","cat"),name:col("ชื่อรายการ","รายการ","name","item"),code:col("รหัสสินค้า","รหัส","code","sku"),unit:col("หน่วย","unit"),qty:col("จำนวน","จำนวนทั้งหมด","qty","quantity")};
   if(X.name<0)throw Error("ไม่พบคอลัมน์ “ชื่อรายการ” (หัวคอลัมน์: หมวด, ชื่อรายการ, รหัสสินค้า, หน่วย, จำนวน)");
-  ensureLoaded();snapshot();let add=0,upd=0;
+  ensureLoaded();snapshot();let add=0,up=0,skip=0;
   rows.slice(1).forEach(r=>{const g=k=>X[k]>=0?(r[X[k]]||"").trim():"",name=g("name");if(!name)return;
     const cn=g("cat")||"ทั่วไป";let c=S.cats.find(x=>x.name===cn);if(!c){c={id:uid(),name:cn,icon:"box",items:[]};S.cats.push(c)}
     const code=g("code"),it=c.items.find(x=>x.name===name||(code&&x.code===code)),qty=parseFloat(g("qty").replace(/,/g,""));
-    if(it){if(X.code>=0)it.code=code;if(X.unit>=0)it.unit=g("unit");if(!isNaN(qty))it.qty=qty;upd++}
+    if(it){if(!upd){skip++;return}if(X.code>=0)it.code=code;if(X.unit>=0)it.unit=g("unit");if(!isNaN(qty))it.qty=qty;up++}
     else{c.items.push({id:uid(),name,code,unit:g("unit"),qty:isNaN(qty)?0:qty});add++}});
-  return{add,upd}}
+  return{add,up,skip}}
+function mergeJson(txt,upd){
+  const d=norm(JSON.parse(txt));ensureLoaded();snapshot();let add=0,up=0,skip=0;const map={};
+  d.cats.forEach(dc=>{const c=S.cats.find(x=>x.id===dc.id||x.name===dc.name);if(!c){S.cats.push(dc);add+=dc.items.length;return}
+    dc.items.forEach(di=>{const it=c.items.find(x=>x.id===di.id||x.name===di.name||(di.code&&x.code===di.code));
+      if(!it){c.items.push(di);add++}else{map[di.id]=it.id;if(upd){Object.assign(it,{code:di.code,unit:di.unit,qty:di.qty});up++}else skip++}})});
+  d.users.forEach(u=>{if(!S.users.some(x=>x.id===u.id||x.username===u.username))S.users.push(u)});
+  const ids=new Set(S.log.map(l=>l.id));d.log.forEach(l=>{if(!ids.has(l.id)){l.item=map[l.item]||l.item;S.log.push(l)}});S.seq=Math.max(S.seq||0,d.seq||0);
+  if(!S.admin&&d.admin)S.admin=d.admin;return{add,up,skip}}
+async function newFile(){
+  const prev={S,loaded,src,fh};if(loaded&&!confirm("สร้างไฟล์ข้อมูลใหม่ (ว่าง)?\nข้อมูลที่เปิดอยู่ในหน้านี้จะถูกแทนที่ (บัญชีผู้ดูแลยังคงอยู่) — ควรสำรองข้อมูลก่อน"))return;
+  S=norm({cats:[],admin:S.admin});loaded=true;fh=null;tab="all";bcat=undefined;
+  try{if(!window.showSaveFilePicker){dl("stock.json",JSON.stringify(S,null,1),"application/json");src=null;render();toast("ดาวน์โหลดไฟล์ข้อมูลใหม่แล้ว — ใช้ “เปิดไฟล์ข้อมูล” เพื่อเชื่อมต่อ");return}
+    fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);src="file";await persist();render();toast("สร้างไฟล์ข้อมูลใหม่แล้ว")}
+  catch(e){({S,loaded,src,fh}=prev);render();if(e.name!=="AbortError")toast("สร้างไฟล์ไม่สำเร็จ: "+e.message,"er")}}
 /* ================= actions ================= */
-const adminAuth=async p=>!!S.admin&&await hashPw(p,S.admin.salt)===S.admin.hash;
-const ADM=new Set(["addcat","rencat","delcat","additem","edititem","delitem","adduser","edituser","deluser","dellog","bk-json","bk-gh","ex-items","ex-log","tpl","pwdlg","undo","f-save","gh-rf"]);
-const NEEDADM=new Set(["im-json","im-csv","f-open","gh-set"]);
+const ADM=new Set(["addcat","rencat","delcat","additem","edititem","delitem","adduser","edituser","deluser","dellog","bk-json","bk-gh","ex-items","ex-log","tpl","acct","undo","f-save","f-new","im-restore","im-any","tr-restore","tr-del","tr-empty","rp-print","rp-csv"]);
+const BOOT=new Set(["f-new","im-restore","im-any"]);
 const A={
-  cat:id=>{tab=id;q="";render()},bcat:id=>{bcat=id;render()},
+  cat:id=>{tab=id;q="";render()},bcat:id=>{bcat=id;bq="";render()},flt:id=>{flt=id;render()},"reset-f":()=>{q="";flt="all";tab="all";render()},
   login:()=>loginDlg(),logout:()=>{if(cart.length&&!confirm("ใบเบิกที่ยังไม่ยืนยันจะถูกล้าง ออกจากระบบหรือไม่?"))return;logout()},
-  refresh:()=>online()?ghLoad(true).then(()=>toast("รีเฟรชแล้ว")).catch(e=>toast(e.message,"er")):toast("โหมดออฟไลน์ — ไม่มีข้อมูลออนไลน์ให้รีเฟรช","er"),
-  wd:id=>{if(!me())return loginDlg();const{i}=find(id),ex=cart.find(x=>x.item===id);
-    ask("เพิ่มลงใบเบิก",`<div class="font-semibold">${esc(i.name)}</div><div class="hint">คงเหลือ ${rem(i)} ${esc(i.unit)}${ex?` · อยู่ในใบเบิกแล้ว ${ex.amt}`:""}</div><label>จำนวนที่เบิก</label><input id="f1" type="number" min="0" step="any" value="${ex?ex.amt:""}">`,()=>{const n=+v("f1");if(!(n>0))return false;if(ex)ex.amt=n;else cart.push({item:id,amt:n});cartBar()})},
-  cart:()=>me()?openCart():loginDlg(),
+  inc:id=>{const e=$("#qty-"+id);if(e){e.value=(+e.value||0)+1;qtys[id]=+e.value}},dec:id=>{const e=$("#qty-"+id);if(e){e.value=Math.max(1,(+e.value||1)-1);qtys[id]=+e.value}},
+  add:id=>{if(!me())return loginDlg();const f=find(id),r=rem(f.i),n=+($("#qty-"+id)?.value)||0;if(!(n>0))return toast("กรุณาระบุจำนวน","er");
+    const ex=cart.find(x=>x.item===id),tot=(ex?ex.amt:0)+n;if(tot>r)return toast(`เบิกได้สูงสุด ${r} ${f.i.unit} (อยู่ในใบเบิกแล้ว ${ex?ex.amt:0})`,"er");
+    if(ex)ex.amt=tot;else cart.push({item:id,amt:n});qtys[id]=1;toast(`เพิ่ม “${f.i.name}” × ${n} ลงใบเบิกแล้ว`);cartBar();render()},
+  rm:id=>{cart.splice(+id,1);refreshCart()},"cart-clear":()=>{if(confirm("ล้างรายการทั้งหมดในใบเบิก?")){cart=[];if($("#dlg").open)$("#dlg").close();cartBar();render()}},
+  cart:()=>me()?openCart():loginDlg(),commit:()=>commit(false),"commit-pr":()=>commit(true),
   print:()=>{if(!logF().length)return toast("ไม่มีรายการเบิกให้พิมพ์","er");
-    ask("พิมพ์ใบเบิก / บันทึก PDF",`<label>ชื่อผู้เบิก (แสดงบนใบเบิกและช่องลงชื่อ)</label><input id="f1" list="whos" value="${esc(lf.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist><label>โครงการ / สถานที่ (ถ้ามี)</label><input id="f2" value="${esc(localStorage.getItem("lastsite")||"")}"><div class="hint">พิมพ์ตามรายการที่กรองอยู่ · ต้องการไฟล์ PDF ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” ในหน้าต่างพิมพ์</div>`,()=>{if(!v("f1").trim())return toast("กรุณาระบุชื่อผู้เบิก","er")||false;localStorage.setItem("lastsite",v("f2").trim());const w=v("f1").trim(),st=v("f2").trim();setTimeout(()=>printSheet(w,st,null,lf.slip),50)})},
-  "adm-go":async()=>{const p=$("#ap1").value;if(locked())return;
-    if(!S.admin){if(p.length<4)return toast("รหัสอย่างน้อย 4 ตัว","er");if(p!==$("#ap2").value)return toast("รหัสยืนยันไม่ตรงกัน","er");const salt=uid()+uid();S.admin={salt,hash:await hashPw(p,salt)};persist()}
-    else if(!await adminAuth(p))return failed();
+    ask("พิมพ์ใบเบิก / บันทึก PDF",`<label>ชื่อผู้เบิก (แสดงบนใบเบิกและช่องลงชื่อ)</label><input id="f1" list="whos" value="${esc(lf.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist><label>โครงการ / สถานที่ (ถ้ามี)</label><input id="f2" value="${esc(localStorage.getItem("lastsite")||"")}"><div class="hint">พิมพ์ตามรายการที่กรองอยู่ · ต้องการไฟล์ PDF ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” ในหน้าต่างพิมพ์</div>`,()=>{if(!v("f1").trim()){toast("กรุณาระบุชื่อผู้เบิก","er");return false}localStorage.setItem("lastsite",v("f2").trim());const w=v("f1").trim(),st=v("f2").trim();setTimeout(()=>printSheet(w,st,null,lf.slip),50)})},
+  "adm-go":async()=>{if(locked())return;const p=$("#ap1").value,un=($("#au")?.value||"").trim().toLowerCase();
+    if(!S.admin){if(!un)return toast("กรุณากรอก Username","er");if(p.length<4)return toast("รหัสผ่านอย่างน้อย 4 ตัว","er");if(p!==$("#ap2").value)return toast("รหัสยืนยันไม่ตรงกัน","er");
+      const us=uid()+uid(),ps=uid()+uid();S.admin={usalt:us,uhash:await hashPw(un,us),salt:ps,hash:await hashPw(p,ps)};persist()}
+    else{if(S.admin.uhash&&!await chk(un,S.admin.usalt,S.admin.uhash))return failed();if(!await chk(p,S.admin.salt,S.admin.hash))return failed()}
     fails=0;admin=true;bumpA();render()},
   "adm-out":()=>{admin=false;location.hash="#/";render()},
-  pwdlg:()=>ask("เปลี่ยนรหัสผ่านหลังบ้าน",'<label>รหัสเดิม</label><input id="f0" type="password"><label>รหัสใหม่ (อย่างน้อย 4 ตัว)</label><input id="f1" type="password"><label>ยืนยันรหัสใหม่</label><input id="f2" type="password">',()=>{(async()=>{
-    if(!await adminAuth(v("f0")))return toast("รหัสเดิมไม่ถูกต้อง","er");if(v("f1").length<4)return toast("รหัสสั้นเกินไป","er");if(v("f1")!==v("f2"))return toast("รหัสยืนยันไม่ตรงกัน","er");
-    const salt=uid()+uid();S.admin={salt,hash:await hashPw(v("f1"),salt)};$("#dlg").close();change();toast("เปลี่ยนรหัสผ่านแล้ว")})();return false}),
+  acct:()=>ask("เปลี่ยน Username / Password",`<label>รหัสผ่านปัจจุบัน</label><input id="f0" type="password"><label>Username ใหม่ (เว้นว่าง = ไม่เปลี่ยน)</label><input id="f1" autocomplete="off"><label>Password ใหม่ (เว้นว่าง = ไม่เปลี่ยน)</label><input id="f2" type="password"><label>ยืนยัน Password ใหม่</label><input id="f3" type="password"><div class="hint">Username และ Password ถูกเข้ารหัสก่อนเก็บ (PBKDF2 / SHA-256) ดูย้อนหลังไม่ได้</div>`,()=>{(async()=>{
+    if(!await chk(v("f0"),S.admin.salt,S.admin.hash))return toast("รหัสผ่านปัจจุบันไม่ถูกต้อง","er");const un=v("f1").trim().toLowerCase(),pw=v("f2");
+    if(!un&&!pw)return toast("ยังไม่ได้กรอกค่าใหม่","er");if(pw&&pw.length<4)return toast("รหัสผ่านอย่างน้อย 4 ตัว","er");if(pw&&pw!==v("f3"))return toast("รหัสยืนยันไม่ตรงกัน","er");
+    if(un){S.admin.usalt=uid()+uid();S.admin.uhash=await hashPw(un,S.admin.usalt)}if(pw){S.admin.salt=uid()+uid();S.admin.hash=await hashPw(pw,S.admin.salt)}
+    $("#dlg").close();change();toast("บันทึกบัญชีผู้ดูแลแล้ว")})();return false}),
   addcat:()=>catDlg(),rencat:()=>catDlg(S.cats.find(c=>c.id===bcat)),
-  delcat:()=>{const c=S.cats.find(x=>x.id===bcat);if(c&&confirm(`ลบหมวด “${c.name}” พร้อมรายการและประวัติการเบิกของรายการเหล่านี้?`)){const ids=c.items.map(i=>i.id);S.log=S.log.filter(l=>!ids.includes(l.item));S.cats=S.cats.filter(x=>x!==c);bcat=S.cats[0]?.id;tab=S.cats[0]?.id;change()}},
+  delcat:()=>{const c=S.cats.find(x=>x.id===bcat);if(c&&confirm(`ลบหมวด “${c.name}” พร้อมรายการทั้งหมด?\n(ย้ายไปถังขยะ กู้คืนได้)`)){const ids=c.items.map(i=>i.id);toTrash("cat",c,{logs:S.log.filter(l=>ids.includes(l.item))});S.log=S.log.filter(l=>!ids.includes(l.item));S.cats=S.cats.filter(x=>x!==c);bcat=S.cats[0]?.id;change();toast("ย้ายหมวดไปถังขยะแล้ว")}},
   additem:()=>itemDlg(S.cats.find(c=>c.id===bcat)),edititem:id=>{const f=find(id);itemDlg(f.c,f.i)},
-  delitem:id=>{const{c,i}=find(id);if(confirm(`ลบ “${i.name}” และประวัติการเบิกของรายการนี้?`)){c.items=c.items.filter(x=>x!==i);S.log=S.log.filter(l=>l.item!==id);change()}},
+  delitem:id=>{const{c,i}=find(id);if(confirm(`ลบ “${i.name}” ?\n(ย้ายไปถังขยะ กู้คืนได้)`)){toTrash("item",i,{catId:c.id,catName:c.name,logs:S.log.filter(l=>l.item===id)});c.items=c.items.filter(x=>x!==i);S.log=S.log.filter(l=>l.item!==id);change();toast("ย้ายรายการไปถังขยะแล้ว")}},
   adduser:()=>userDlg(),edituser:id=>userDlg(S.users.find(x=>x.id===id)),
-  deluser:id=>{const u=S.users.find(x=>x.id===id);if(confirm(`ลบผู้เบิก “${u.name}”? (ประวัติการเบิกเดิมยังอยู่)`)){S.users=S.users.filter(x=>x!==u);if(user===u.id)user=null;change()}},
-  dellog:id=>{if(confirm("ยกเลิกรายการเบิกนี้?")){S.log=S.log.filter(l=>l.id!==id);change()}},
-  "f-open":openFile,"f-save":saveAs,"gh-set":ghDlg,
-  "gh-rf":()=>ghLoad(true).then(()=>toast("รีเฟรชแล้ว")).catch(e=>toast(e.message,"er")),
+  deluser:id=>{const u=S.users.find(x=>x.id===id);if(confirm(`ลบผู้เบิก “${u.name}”? (ประวัติการเบิกเดิมยังอยู่)`)){toTrash("user",u);S.users=S.users.filter(x=>x!==u);if(user===u.id)user=null;change()}},
+  dellog:id=>{const l=S.log.find(x=>x.id===id);if(l&&confirm("ยกเลิกรายการเบิกนี้? ของจะถูกคืนเข้าคงเหลือ")){toTrash("log",l);S.log=S.log.filter(x=>x!==l);change()}},
+  "tr-restore":id=>{const t=S.trash.find(x=>x.id===id);if(!t)return;
+    if(t.kind==="cat"){if(S.cats.some(c=>c.id===t.data.id||c.name===t.data.name))return toast("มีหมวดชื่อ/รหัสเดียวกันอยู่แล้ว","er");S.cats.push(t.data);S.log.push(...(t.logs||[]))}
+    else if(t.kind==="item"){let c=S.cats.find(x=>x.id===t.catId)||S.cats.find(x=>x.name===t.catName);if(!c){c={id:t.catId||uid(),name:t.catName||"กู้คืน",icon:"box",items:[]};S.cats.push(c)}c.items.push(t.data);S.log.push(...(t.logs||[]))}
+    else if(t.kind==="log"){if(!find(t.data.item))return toast("ไม่พบรายการสินค้าของใบเบิกนี้ — กู้คืนรายการสินค้าก่อน","er");S.log.push(t.data)}
+    else if(t.kind==="user"){if(S.users.some(u=>u.username===t.data.username))return toast("ชื่อผู้ใช้นี้ถูกใช้แล้ว","er");S.users.push(t.data)}
+    S.trash=S.trash.filter(x=>x!==t);change();toast("กู้คืนเรียบร้อย")},
+  "tr-del":id=>{if(confirm("ลบถาวร? กู้คืนไม่ได้อีก")){S.trash=S.trash.filter(x=>x.id!==id);change()}},
+  "tr-empty":()=>{if(confirm(`ล้างถังขยะ ${S.trash.length} รายการ? กู้คืนไม่ได้อีก`)){S.trash=[];change()}},
+  "rp-print":printReport,
+  "rp-csv":()=>{const D=reportData(),r=[["หมวด","รายการ","หน่วย","จำนวนที่เบิก","จำนวนครั้ง"]];D.items.forEach(i=>r.push([i.cat,i.name,i.unit,i.amt,i.n]));dl(`report-${rpm}.csv`,csvOut(r),"text/csv")},
+  "f-open":openFile,"f-save":saveAs,"f-new":newFile,"gh-set":ghDlg,
+  "gh-off":()=>{localStorage.removeItem("gh-cfg");localStorage.setItem("gh-off","1");ghSha=null;if(src==="gh"){src=null;fh=null}if($("#dlg").open)$("#dlg").close();setStatus("ออฟไลน์ · ยกเลิกการเชื่อมต่อออนไลน์แล้ว (ข้อมูลในหน้านี้ยังอยู่)","wa");render();toast("ยกเลิกการเชื่อมต่อ GitHub แล้ว")},
+  "gh-rf":()=>online()?ghLoad(true).then(()=>toast("ซิงก์ข้อมูลแล้ว")).catch(e=>toast(e.message,"er")):toast("ยังไม่ได้เชื่อมต่อออนไลน์ — เลือก “ตั้งค่า / เชื่อมต่อ GitHub”","er"),
   "bk-gh":()=>ghBackup().catch(e=>toast("สำรองไม่สำเร็จ: "+e.message,"er")),
   "bk-json":()=>{dl(`stock-backup-${stamp()}.json`,JSON.stringify(S,null,1),"application/json");toast("ดาวน์โหลดไฟล์สำรองแล้ว")},
   "ex-items":()=>{const r=[["หมวด","ชื่อรายการ","รหัสสินค้า","หน่วย","จำนวน","เบิกใช้แล้ว","คงเหลือ"]];S.cats.forEach(c=>c.items.forEach(i=>r.push([c.name,i.name,i.code,i.unit,i.qty,used(i.id),rem(i)])));dl(`stock-items-${stamp()}.csv`,csvOut(r),"text/csv")},
   "ex-log":()=>{const r=[["เลขที่ใบเบิก","วันที่","หมวด","ชื่อรายการ","รหัสสินค้า","จำนวนเบิก","หน่วย","ผู้เบิก","โครงการ/สถานที่","หมายเหตุ"]];[...S.log].sort((a,b)=>a.date.localeCompare(b.date)).forEach(l=>{const f=find(l.item);r.push([l.slip||"",l.date,f?.c.name||"",f?.i.name||"(ลบแล้ว)",f?.i.code||"",l.amt,f?.i.unit||"",l.who||"",l.site||"",l.note||""])});dl(`stock-log-${stamp()}.csv`,csvOut(r),"text/csv")},
   tpl:()=>dl("แม่แบบนำเข้ารายการ.csv",csvOut([["หมวด","ชื่อรายการ","รหัสสินค้า","หน่วย","จำนวน"]]),"text/csv"),
-  "im-json":async()=>{const f=await pick(".json,application/json");if(!f)return;
+  "im-restore":async()=>{const f=await pick(".json,application/json");if(!f)return;
     try{const txt=await f.text(),d=norm(JSON.parse(txt));
-      if(loaded){if(!confirm(`นำเข้าไฟล์ ${f.name}\n${d.cats.length} หมวด · ${d.cats.reduce((a,c)=>a+c.items.length,0)} รายการ · ${d.log.length} ประวัติ\n\nข้อมูลปัจจุบันจะถูกแทนที่ (ย้อนกลับได้ 1 ครั้ง) ต้องการดำเนินการต่อ?`))return;
-        snapshot();if(!d.admin&&S.admin)d.admin=S.admin;S=d;tab=S.cats[0]?.id;bcat=tab;cart=[];if(!S.users.some(u=>u.id===user))user=null;change()}
-      else{await useData(txt,null,ghMissing?"gh":null);persist()}toast("นำเข้า JSON เรียบร้อย")}catch(e){toast("นำเข้าไม่สำเร็จ: "+e.message,"er")}},
-  "im-csv":async()=>{const f=await pick(".csv,text/csv");if(!f)return;
-    try{const r=importItemsCsv(await f.text());tab=tab||S.cats[0]?.id;bcat=bcat||S.cats[0]?.id;change();toast(`นำเข้า CSV แล้ว: เพิ่มใหม่ ${r.add} · อัปเดต ${r.upd} รายการ`)}catch(e){toast("นำเข้าไม่สำเร็จ: "+e.message,"er")}},
-  undo:()=>{const t=localStorage.getItem("stock-undo");if(!t)return;if(!confirm("ย้อนกลับไปก่อนการนำเข้าครั้งล่าสุด?"))return;S=norm(JSON.parse(t));localStorage.removeItem("stock-undo");tab=S.cats[0]?.id;bcat=tab;change();toast("ย้อนกลับแล้ว")},
+      if(loaded){if(!confirm(`กู้คืนจากไฟล์ ${f.name}\n${d.cats.length} หมวด · ${d.cats.reduce((a,c)=>a+c.items.length,0)} รายการ · ${d.log.length} ประวัติ\n\nข้อมูลปัจจุบันจะถูกแทนที่ (ระบบสำรองข้อมูลเดิมไว้ให้ย้อนกลับได้ 1 ครั้ง) ต้องการดำเนินการต่อ?`))return;
+        snapshot();if(!d.admin&&S.admin)d.admin=S.admin;S=d;tab="all";bcat=S.cats[0]?.id;cart=[];if(!S.users.some(u=>u.id===user))user=null;change()}
+      else{await useData(txt,null,ghMissing?"gh":null);persist()}toast("กู้คืนข้อมูลเรียบร้อย")}catch(e){toast("กู้คืนไม่สำเร็จ: "+e.message,"er")}},
+  "im-any":async()=>{const f=await pick(".json,.csv,application/json,text/csv");if(!f)return;const txt=await f.text(),csv=/\.csv$/i.test(f.name)||!txt.trim().startsWith("{");
+    ask("นำเข้าข้อมูลจาก "+esc(f.name),`<label>เมื่อพบรายการซ้ำ</label><select id="f1"><option value="skip">ข้าม (ไม่แก้ข้อมูลเดิม)</option><option value="upd">อัปเดตด้วยข้อมูลจากไฟล์</option></select><div class="hint">นำเข้าแบบเพิ่มเข้าไป ไม่ลบข้อมูลเดิม · ระบบสำรองข้อมูลเดิมไว้ให้ย้อนกลับได้</div>`,
+    ()=>{try{const r=(csv?importItemsCsv:mergeJson)(txt,v("f1")==="upd");tab=tab||"all";bcat=bcat||S.cats[0]?.id;change();toast(`นำเข้าแล้ว: เพิ่มใหม่ ${r.add} · อัปเดต ${r.up} · ข้าม ${r.skip} รายการ`)}catch(e){toast("นำเข้าไม่สำเร็จ: "+e.message,"er");return false}})},
+  undo:()=>{const t=localStorage.getItem("stock-undo");if(!t)return;if(!confirm("ย้อนกลับไปก่อนการนำเข้า/กู้คืนครั้งล่าสุด?"))return;S=norm(JSON.parse(t));localStorage.removeItem("stock-undo");tab="all";bcat=S.cats[0]?.id;change();toast("ย้อนกลับแล้ว")},
   reconnect:async()=>{try{if(await lastH.requestPermission({mode:"readwrite"})!=="granted")return;await useData(await(await lastH.getFile()).text(),lastH)}catch(e){toast("เชื่อมต่อไม่สำเร็จ: "+e.message,"er")}},
   usebackup:()=>useData(localStorage.getItem("stock-v1"),null,ghMissing?"gh":null).catch(e=>toast(e.message,"er")),
   blank:()=>useData('{"cats":[]}',null,ghMissing?"gh":null).then(persist)
@@ -354,17 +443,19 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("[data-m]");document.querySelectorAll(".menu").forEach(m=>{if(!t||m.id!=="m-"+t.dataset.m)m.classList.remove("open")});if(t)$("#m-"+t.dataset.m).classList.toggle("open");
   bumpU();if(admin)bumpA();
   const b=e.target.closest("[data-act]");if(!b||b.disabled)return;const a=b.dataset.act;
-  if(ADM.has(a)&&!admin)return;if(NEEDADM.has(a)&&loaded&&!admin)return;
+  if(ADM.has(a)&&!admin&&!(BOOT.has(a)&&!loaded))return toast("ฟังก์ชันนี้ใช้ได้เฉพาะผู้ดูแลระบบ — กรุณาเข้าสู่ระบบหลังบ้านก่อน","er");
   A[a]?.(b.dataset.id)});
-document.addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;const p=e.target.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)}});
-document.addEventListener("change",e=>{const id=e.target.id||"";if(id.startsWith("lf-")){lf[id.slice(3)]=e.target.value;render()}});
-document.addEventListener("keydown",e=>{if(e.key!=="Enter")return;if(["ap1","ap2"].includes(e.target.id))A["adm-go"]()});
-$("#frm").onkeydown=e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();$("#ok")?.click()}};
-$("#frm").onclick=e=>{const ic=e.target.closest("[data-ic]");if(ic){$("#f2").value=ic.dataset.ic;$("#icp").innerHTML=fa(ic.dataset.ic);document.querySelectorAll("[data-ic]").forEach(b=>b.classList.toggle("ring-2",b===ic));return}
-  const r=e.target.closest("[data-rm]");if(r){cart.splice(+r.dataset.rm,1);openCart()}};
-$("#frm").oninput=e=>{const t=e.target,k={c1:"who",c2:"date",c3:"site",c4:"note"}[t.id];if(k)ci[k]=t.value;if(t.dataset.ci!=null)cart[+t.dataset.ci].amt=+t.value||0;
-  if(t.id==="f2"&&$("#icp"))$("#icp").innerHTML=isFa(t.value.trim())?fa(t.value.trim()):esc(t.value)};
-window.addEventListener("hashchange",render);
+document.addEventListener("input",e=>{const t=e.target;
+  if(t.id==="q"||t.id==="bq"){const p=t.selectionStart,id=t.id;if(id==="q")q=t.value;else bq=t.value;render();const n=$("#"+id);n.focus();n.setSelectionRange(p,p);return}
+  if(t.dataset.q)qtys[t.dataset.q]=+t.value||1;if(t.dataset.f)ci[t.dataset.f]=t.value;if(t.dataset.ci!=null&&cart[+t.dataset.ci])cart[+t.dataset.ci].amt=+t.value||0;
+  if(t.id==="f2"&&$("#icp"))$("#icp").innerHTML=isFa(t.value.trim())?fa(t.value.trim()):esc(t.value)});
+document.addEventListener("change",e=>{const id=e.target.id||"";if(id.startsWith("lf-")){lf[id.slice(3)]=e.target.value;render()}if(id==="rp-m"&&e.target.value){rpm=e.target.value;render()}});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&["ap1","ap2","au"].includes(e.target.id))A["adm-go"]();
+  if(e.key==="/"&&!["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName)&&$("#q")){e.preventDefault();$("#q").focus()}});
+$("#frm").onkeydown=e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"&&$("#ok")){e.preventDefault();$("#ok").click()}};
+$("#frm").onclick=e=>{const ic=e.target.closest("[data-ic]");if(ic){$("#f2").value=ic.dataset.ic;$("#icp").innerHTML=fa(ic.dataset.ic);document.querySelectorAll("[data-ic]").forEach(b=>b.classList.toggle("ring-2",b===ic))}};
+window.addEventListener("hashchange",render);window.addEventListener("resize",cartBar);
 setInterval(ghTick,60000);document.addEventListener("visibilitychange",ghTick);
 window.onbeforeunload=e=>{if(loaded&&!src&&!fh){e.preventDefault();e.returnValue=""}};
 async function init(){
