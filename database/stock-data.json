@@ -26,7 +26,16 @@
   }
  ],
  "log": [],
- "users": [],
+ "users": [
+  {
+   "name": "PHACHARA",
+   "username": "phachara",
+   "active": true,
+   "id": "g2d8s36o",
+   "salt": "qjvyj1tizcspaja0",
+   "hash": "df0d8b2c58def24d11513c3f6f1bf2a0d7cf1bd3b8cfc8af10095a35ef17e70b"
+  }
+ ],
  "seq": 0,
  "admin": {
   "salt": "k3arxzpwbvaz7xl5",
