@@ -6,176 +6,181 @@
 <title>ระบบบันทึกงานซ่อม</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<style>
-:root{--bg:#eef1f8;--card:#fff;--tx:#1e2433;--mu:#76809a;--bd:#e3e8f2;--pr:#4f5bd5;--pr2:#2f8cf0;--dg:#e5484d;--ok:#12a87a;--soft:#f6f8fd;--sh:0 4px 18px rgba(40,55,110,.08)}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1320;--card:#181d2e;--tx:#e8ebf5;--mu:#8f99b5;--bd:#2a3250;--pr:#7c88ff;--pr2:#4aa3ff;--dg:#ff7075;--ok:#3ddbab;--soft:#1e2438;--sh:0 4px 18px rgba(0,0,0,.35)}}
-*{box-sizing:border-box}
-body{margin:0;font-family:'Sarabun',Tahoma,sans-serif;background:var(--bg);color:var(--tx);font-size:15px}
-header{background:linear-gradient(120deg,#3b3fc4,#2f8cf0);color:#fff;padding:18px 24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-header h1{font-size:22px;margin:0;flex:1;font-weight:700;letter-spacing:.2px}
-header h1 small{display:block;font-size:13px;font-weight:400;opacity:.85;margin-top:2px}
-.st{font-size:13px;background:#ffffff26;padding:5px 12px;border-radius:99px}
-button{font:inherit;font-weight:500;padding:8px 16px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;cursor:pointer;transition:.15s}
-button:hover{transform:translateY(-1px);box-shadow:var(--sh)}
-header button{background:#ffffff22;color:#fff;border-color:#ffffff40}
-button.p{background:linear-gradient(120deg,var(--pr),var(--pr2));border:0;color:#fff}
-button.d{color:var(--dg)}button.s{padding:4px 10px;font-size:13px;border-radius:8px}
-input,select,textarea{font:inherit;padding:9px 12px;border:1.5px solid var(--bd);border-radius:10px;background:var(--soft);color:var(--tx);width:100%;outline:0;transition:.15s}
-input:focus,textarea:focus{border-color:var(--pr);background:var(--card)}
-main{padding:20px 24px;max-width:1600px;margin:auto}
-.tabs{display:inline-flex;background:var(--card);padding:5px;border-radius:14px;box-shadow:var(--sh);margin-bottom:16px;gap:4px}
-.tabs button{border:0;background:none}.tabs button.on{background:linear-gradient(120deg,var(--pr),var(--pr2));color:#fff}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.chip{border-radius:99px;padding:6px 15px;font-size:14px}
-.chip b{background:var(--soft);color:var(--pr);border-radius:99px;padding:0 8px;margin-left:6px;font-size:12px}
-.chip.on{background:var(--pr);color:#fff;border-color:var(--pr)}.chip.on b{background:#ffffff33;color:#fff}
-.bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}.bar input{max-width:340px}.bar .sp{flex:1}
-.wrap{overflow-x:auto;background:var(--card);border-radius:16px;box-shadow:var(--sh)}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{padding:11px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--bd)}
-th{background:var(--soft);color:var(--mu);font-size:12.5px;font-weight:600;white-space:nowrap;text-transform:uppercase}
-tbody tr:hover{background:var(--soft)}
-.no{display:inline-block;min-width:30px;text-align:center;background:var(--soft);color:var(--pr);font-weight:700;border-radius:8px;padding:2px 6px}
-.tag{background:var(--soft);border-radius:6px;padding:2px 8px;font-size:13px;white-space:nowrap}
-.pt{font-size:13px;margin-bottom:3px;white-space:nowrap}.pt s{color:var(--mu)}.pt i{font-style:normal;color:var(--ok);font-weight:600}
-.n{text-align:right;white-space:nowrap;font-weight:600}
-.card{background:var(--card);border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:var(--sh)}
-.card h3{margin:0 0 12px;font-size:17px}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-label{font-size:13px;color:var(--mu);display:block;margin-bottom:4px;font-weight:500}
-dialog{border:0;border-radius:18px;background:var(--card);color:var(--tx);width:min(880px,96vw);padding:22px;max-height:92vh;overflow:auto;box-shadow:0 20px 60px #0006}
-dialog::backdrop{background:#0b1030a8;backdrop-filter:blur(3px)}
-.pr{display:grid;grid-template-columns:2fr 1fr 2fr 1fr auto;gap:8px;margin-bottom:8px}
-.full{grid-column:1/-1}
-.hint{background:var(--soft);border:1px dashed var(--bd);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.9}.hrow{display:flex;justify-content:space-between;gap:8px;align-items:center;border-top:1px solid var(--bd);padding:3px 0}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
-.stat{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--sh);display:flex;gap:12px;align-items:center}
-.stat .ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-size:21px;background:var(--soft)}
-.stat b{font-size:24px;display:block;line-height:1.1}.stat span{font-size:12.5px;color:var(--mu)}
-.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pr),var(--pr2));color:#fff;display:inline-grid;place-items:center;font-weight:700;flex:none}
-.cname{display:flex;gap:10px;align-items:center}.line{color:#06c755;font-weight:600}.sub{font-size:12px;color:var(--mu);margin-top:2px}
-a{color:var(--pr);text-decoration:none}
-tbody tr:nth-child(even){background:color-mix(in srgb,var(--soft) 55%,transparent)}
-th{position:sticky;top:0;z-index:1}.wrap{max-height:72vh;overflow:auto}
-body{background:radial-gradient(1100px 380px at 85% -80px,#4f5bd522,transparent),var(--bg)}
-dialog[open]{animation:pop .18s ease}@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}}
-.empty{padding:50px;text-align:center;color:var(--mu)}
-#warn{color:var(--dg)}
-@media(max-width:600px){.pr{grid-template-columns:1fr 1fr}main{padding:14px}}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:['Sarabun','Tahoma','sans-serif']}}}}</script>
+<style type="text/tailwindcss">
+@layer base{
+ input,select,textarea{@apply w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-900}
+ label{@apply mb-1 block text-xs font-medium text-slate-500 dark:text-slate-400}
+ button{@apply rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium transition hover:-translate-y-px hover:shadow-md dark:border-slate-700 dark:bg-slate-800}
+ table{@apply w-full text-sm}
+ th,td{@apply border-b border-slate-100 px-3 py-3 text-left align-top dark:border-slate-800}
+ th{@apply sticky top-0 z-10 whitespace-nowrap bg-slate-50 text-xs font-semibold uppercase text-slate-500 dark:bg-slate-800 dark:text-slate-400}
+ tbody tr{@apply hover:bg-indigo-50/50 dark:hover:bg-slate-800/60}
+ a{@apply text-indigo-600 dark:text-indigo-300}
+ dialog{@apply max-h-[92vh] w-[min(880px,96vw)] overflow-auto rounded-2xl bg-white p-6 text-slate-800 shadow-2xl backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm dark:bg-slate-900 dark:text-slate-100}
+}
+@layer components{
+ .p{@apply border-transparent bg-gradient-to-r from-indigo-600 to-sky-500 text-white}
+ .d{@apply text-red-600 dark:text-red-400}
+ .s{@apply rounded-lg px-2.5 py-1 text-xs}
+ .hb{@apply border-white/25 bg-white/15 text-white hover:bg-white/25}
+ .tabs{@apply mb-4 inline-flex gap-1 rounded-2xl bg-white p-1.5 shadow-sm dark:bg-slate-900}
+ .tabs button{@apply border-transparent bg-transparent shadow-none dark:bg-transparent}
+ .tabs button.on{@apply bg-gradient-to-r from-indigo-600 to-sky-500 text-white dark:bg-transparent}
+ .chips{@apply mb-4 flex flex-wrap gap-2}
+ .chip{@apply rounded-full px-4 py-1.5 text-sm}
+ .chip b{@apply ml-1.5 rounded-full bg-slate-100 px-2 text-xs text-indigo-600 dark:bg-slate-700 dark:text-indigo-300}
+ .chip.on{@apply border-indigo-600 bg-indigo-600 text-white dark:bg-indigo-600}
+ .chip.on b{@apply bg-white/25 text-white dark:bg-white/25 dark:text-white}
+ .bar{@apply mb-4 flex flex-wrap items-center gap-2}
+ .wrap{@apply max-h-[72vh] overflow-auto rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 dark:bg-slate-900 dark:ring-slate-800}
+ .card{@apply mb-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 dark:bg-slate-900 dark:ring-slate-800}
+ .card h3{@apply mb-3 text-base font-semibold}
+ .g{@apply grid grid-cols-[repeat(auto-fit,minmax(210px,1fr))] gap-3}
+ .full{@apply col-span-full}
+ .pr{@apply mb-2 grid grid-cols-2 gap-2 sm:grid-cols-[2fr_1fr_2fr_1fr_auto]}
+ .no{@apply inline-block min-w-[30px] rounded-lg bg-indigo-50 px-1.5 py-0.5 text-center font-bold text-indigo-600 dark:bg-slate-800 dark:text-indigo-300}
+ .tag{@apply whitespace-nowrap rounded-md bg-slate-100 px-2 py-0.5 text-[13px] dark:bg-slate-800}
+ .pt{@apply mb-0.5 whitespace-nowrap text-[13px]}
+ .pt s{@apply text-slate-400}
+ .pt i{@apply font-semibold not-italic text-emerald-600 dark:text-emerald-400}
+ .n{@apply whitespace-nowrap text-right font-semibold}
+ .hint{@apply rounded-xl border border-dashed border-slate-300 bg-slate-50 p-3 text-[13px] leading-8 dark:border-slate-700 dark:bg-slate-800}
+ .hrow{@apply flex items-center justify-between gap-2 border-t border-slate-200 py-0.5 dark:border-slate-700}
+ .stat{@apply flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 dark:bg-slate-900 dark:ring-slate-800}
+ .stat .ic{@apply grid h-11 w-11 place-items-center rounded-xl bg-indigo-50 text-xl dark:bg-slate-800}
+ .stat b{@apply block text-2xl leading-none}
+ .stat span{@apply text-xs text-slate-500}
+ .av{@apply inline-grid h-9 w-9 flex-none place-items-center rounded-full bg-gradient-to-br from-indigo-600 to-sky-500 font-bold text-white}
+ .cname{@apply flex items-center gap-2.5}
+ .line{@apply font-semibold text-green-600}
+ .sub{@apply mt-0.5 text-xs text-slate-500}
+ .empty{@apply p-12 text-center text-slate-400}
+}
 </style>
 </head>
-<body>
-<header>
-  <h1>🔧 ระบบบันทึกงานซ่อม<small>แยกบันทึกรายเดือนอัตโนมัติ · ใช้งานพร้อมกันได้หลายเครื่อง</small></h1>
-  <span class="st" id="st">ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล</span>
-  <button id="bRe" style="display:none"></button>
-  <button id="bOpen">📂 เปิดไฟล์ข้อมูล .json</button>
-  <button id="bNew">➕ สร้างไฟล์ใหม่</button>
-  <button id="bGh">☁ เชื่อมต่อ GitHub</button>
+<body class="min-h-screen bg-slate-100 text-[15px] text-slate-800 dark:bg-slate-950 dark:text-slate-100">
+<header class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-sky-500 text-white shadow-lg">
+ <div class="mx-auto flex max-w-[1600px] flex-wrap items-center gap-3 px-4 py-5 sm:px-6">
+  <div class="flex min-w-[240px] flex-1 items-center gap-3">
+   <div class="grid h-11 w-11 place-items-center rounded-2xl bg-white/20 text-2xl">🔧</div>
+   <div><h1 class="text-xl font-bold leading-tight">ระบบบันทึกงานซ่อม</h1><p class="text-xs opacity-80">แยกบันทึกรายเดือนอัตโนมัติ · ใช้งานพร้อมกันได้หลายเครื่อง</p></div>
+  </div>
+  <span id="st" class="rounded-full bg-white/20 px-3 py-1 text-xs">ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล</span>
+  <button id="bRe" class="hb" style="display:none"></button>
+  <button id="bOpen" class="hb">📂 เปิดไฟล์ .json</button>
+  <button id="bNew" class="hb">➕ สร้างไฟล์ใหม่</button>
+  <button id="bGh" class="hb">☁ GitHub</button>
+ </div>
 </header>
-<main>
-  <div id="warn" class="card" style="display:none">เบราว์เซอร์นี้ไม่รองรับการอ่าน/เขียนไฟล์โดยตรง กรุณาใช้ Google Chrome หรือ Microsoft Edge</div>
-  <div class="tabs"><button class="on" data-t="a">📋 บันทึกซ่อม</button><button data-t="c">👥 ฐานข้อมูลลูกค้า</button><button data-t="b">⚙️ ระบบหลังบ้าน</button></div>
+<main class="mx-auto max-w-[1600px] px-4 py-5 sm:px-6">
+ <div id="warn" class="card text-red-600" style="display:none"></div>
+ <div class="tabs"><button class="on" data-t="a">📋 บันทึกซ่อม</button><button data-t="c">👥 ลูกค้า</button><button data-t="b">⚙️ หลังบ้าน</button></div>
 
-  <section id="ta">
-    <div class="stats" id="stats"></div>
-    <div class="chips" id="chips"></div>
-    <div class="bar">
-      <input id="q" placeholder="🔍 ค้นหา ลูกค้า / SV / S/N / อาการ ...">
-      <span class="sp"></span>
-      <button id="bImp">📥 นำเข้า Excel</button>
-      <button id="bExp">📤 ส่งออก Excel</button>
-      <button class="p" id="bAdd">+ เพิ่มรายการซ่อม</button>
-      <input type="file" id="fileX" accept=".xlsx,.xls,.csv,.json" style="display:none">
-    </div>
-    <div class="wrap" id="list"></div>
-  </section>
+ <section id="ta">
+  <div class="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4" id="stats"></div>
+  <div class="chips" id="chips"></div>
+  <div class="bar">
+   <input id="q" class="max-w-sm" placeholder="🔍 ค้นหา ลูกค้า / SV / S/N / อาการ ...">
+   <span class="flex-1"></span>
+   <button id="bImp">📥 นำเข้า Excel</button><button id="bExp">📤 ส่งออก Excel</button><button class="p" id="bAdd">+ เพิ่มรายการซ่อม</button>
+   <input type="file" id="fileX" accept=".xlsx,.xls,.csv,.json" style="display:none">
+  </div>
+  <div class="wrap" id="list"></div>
+ </section>
 
-  <section id="tc" style="display:none">
-    <div class="bar">
-      <input id="cq" placeholder="🔍 ค้นหา ชื่อ / เบอร์ / LINE ...">
-      <span class="sp"></span>
-      <button id="bCusSync">🔄 ดึงรายชื่อจากประวัติงานซ่อม</button>
-      <button class="p" id="bCusAdd">+ เพิ่มลูกค้า</button>
-    </div>
-    <div class="wrap" id="cusList"></div>
-  </section>
+ <section id="tc" style="display:none">
+  <div class="bar">
+   <input id="cq" class="max-w-sm" placeholder="🔍 ค้นหา ชื่อ / เบอร์ / LINE ...">
+   <span class="flex-1"></span>
+   <button id="bCusSync">🔄 ดึงรายชื่อจากประวัติงานซ่อม</button><button class="p" id="bCusAdd">+ เพิ่มลูกค้า</button>
+  </div>
+  <div class="wrap" id="cusList"></div>
+ </section>
 
-  <section id="tb" style="display:none">
-    <div id="lock" class="card" style="max-width:380px">
-      <h3>🔒 เข้าสู่ระบบหลังบ้าน</h3>
-      <label>รหัสผ่านผู้ดูแล</label><input type="password" id="pin"><br><br><button class="p" id="bLogin">เข้าสู่ระบบ</button>
+ <section id="tb" style="display:none">
+  <div id="lock" class="card max-w-sm">
+   <h3>🔒 เข้าสู่ระบบหลังบ้าน</h3>
+   <label>รหัสผ่านผู้ดูแล</label><input type="password" id="pin" class="mb-4"><button class="p" id="bLogin">เข้าสู่ระบบ</button>
+  </div>
+  <div id="admin" style="display:none">
+   <div class="card">
+    <h3>👷 จัดการช่างผู้ซ่อม</h3>
+    <div class="grid items-end gap-3 sm:grid-cols-[1fr_1fr_auto]">
+     <div><label>ชื่อช่าง</label><input id="tName" placeholder="เช่น ช่างเอ"></div>
+     <div><label>เบอร์โทร</label><input id="tPhone" inputmode="tel"></div>
+     <div class="flex gap-2"><button id="tCancel" style="display:none">ยกเลิก</button><button id="tSave" class="p">+ เพิ่มช่าง</button></div>
     </div>
-    <div id="admin" style="display:none">
-      <div class="card"><h3>ตั้งค่า</h3>
-        <div class="g">
-          <div><label>รายชื่อช่าง (บรรทัดละ 1 คน)</label><textarea id="sTech" rows="5"></textarea></div>
-          <div><label>ประเภทเครื่อง (บรรทัดละ 1 รายการ)</label><textarea id="sType" rows="5"></textarea></div>
-          <div><label>เปลี่ยนรหัสผ่านผู้ดูแล</label><input id="sPin"></div>
-        </div><br>
-        <button class="p" id="bSet">บันทึกการตั้งค่า</button>
-        <button id="bTpl">⬇ แม่แบบ Excel สำหรับนำเข้า</button>
-        <button id="bBak">⬇ สำรองข้อมูล .json</button>
-      </div>
-      <div class="card"><h3>📥 ข้อมูลที่นำเข้าจาก Excel</h3><div class="wrap" id="impList"></div><br>
-        <button class="d" id="bImpAll">🗑 ลบข้อมูลที่นำเข้าทั้งหมด</button></div>
-      <div class="card"><h3>จัดการรายการ (เดือนที่เลือก)</h3><div class="wrap" id="allList"></div></div>
-      <div class="card"><h3>🗑 รายการที่ลบ (กู้คืนได้)</h3><div class="wrap" id="delList"></div></div>
+    <div class="wrap mt-4" id="techList"></div>
+   </div>
+   <div class="grid gap-4 lg:grid-cols-2">
+    <div class="card">
+     <h3>⚙️ ตั้งค่า</h3>
+     <div class="g" style="grid-template-columns:1fr">
+      <div><label>ประเภทเครื่อง (บรรทัดละ 1 รายการ)</label><textarea id="sType" rows="5"></textarea></div>
+      <div><label>เปลี่ยนรหัสผ่านผู้ดูแล</label><input id="sPin"></div>
+     </div>
+     <div class="mt-4 flex flex-wrap gap-2"><button class="p" id="bSet">บันทึกการตั้งค่า</button><button id="bTpl">⬇ แม่แบบ Excel</button><button id="bBak">⬇ สำรองข้อมูล .json</button></div>
     </div>
-  </section>
+    <div class="card">
+     <h3>📥 ข้อมูลที่นำเข้าจาก Excel</h3>
+     <div class="wrap" id="impList"></div>
+     <button class="d mt-4" id="bImpAll">🗑 ลบข้อมูลที่นำเข้าทั้งหมด</button>
+    </div>
+   </div>
+   <div class="card"><h3>จัดการรายการ (เดือนที่เลือก)</h3><div class="wrap" id="allList"></div></div>
+   <div class="card"><h3>🗑 รายการที่ลบ (กู้คืนได้)</h3><div class="wrap" id="delList"></div></div>
+  </div>
+ </section>
 </main>
 
 <dialog id="dlg">
-  <h3 id="dT" style="margin-top:0;font-size:19px">เพิ่มรายการซ่อม</h3>
-  <div class="g">
-    <div><label>ว/ด/ป</label><input type="date" id="fDate"></div>
-    <div><label>ชื่อลูกค้า</label><input id="fCus" autocomplete="off"></div>
-    <div class="full" id="cusHint" style="display:none"></div>
-    <div><label>เบอร์โทรลูกค้า</label><input id="fPhone" inputmode="tel"></div>
-    <div><label>LINE ID</label><input id="fLine"></div>
-    <div><label>เลขที่ SV.</label><input id="fSv"></div>
-    <div><label>ประเภทเครื่อง</label><input id="fType" list="dlType"></div>
-    <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
-    <div><label>ชื่อช่าง</label><input id="fTech" list="dlTech"></div>
-    <div class="full"><label>อาการที่ส่งซ่อม</label><textarea id="fSym" rows="2"></textarea></div>
-    <div class="full"><label>รายการซ่อม</label><textarea id="fWork" rows="2"></textarea></div>
-  </div>
-  <h4 style="margin:16px 0 8px">รายการอะไหล่</h4>
-  <div class="pr" style="color:var(--mu);font-size:13px"><span>อะไหล่เก่า</span><span>ราคา</span><span>อะไหล่ใหม่</span><span>ราคา</span><span style="width:38px"></span></div>
-  <div id="parts"></div>
-  <button id="bPart" class="s">+ เพิ่มอะไหล่</button>
-  <div class="g" style="margin-top:14px">
-    <div><label>ค่าแรง (บาท)</label><input type="number" id="fLab" min="0" step="any"></div>
-    <div class="full"><label>Remark</label><textarea id="fRem" rows="2"></textarea></div>
-  </div>
-  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-    <button id="bCancel">ยกเลิก</button><button class="p" id="bSave">บันทึก</button>
-  </div>
+ <h3 id="dT" class="mb-4 text-xl font-bold">เพิ่มรายการซ่อม</h3>
+ <div class="g">
+  <div><label>ว/ด/ป</label><input type="date" id="fDate"></div>
+  <div><label>ชื่อลูกค้า</label><input id="fCus" autocomplete="off"></div>
+  <div class="full" id="cusHint" style="display:none"></div>
+  <div><label>เบอร์โทรลูกค้า</label><input id="fPhone" inputmode="tel"></div>
+  <div><label>LINE ID</label><input id="fLine"></div>
+  <div><label>เลขที่ SV.</label><input id="fSv"></div>
+  <div><label>ประเภทเครื่อง</label><input id="fType" list="dlType"></div>
+  <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
+  <div><label>ช่างผู้ซ่อม</label><select id="fTech"></select></div>
+  <div class="full"><label>อาการที่ส่งซ่อม</label><textarea id="fSym" rows="2"></textarea></div>
+  <div class="full"><label>รายการซ่อม</label><textarea id="fWork" rows="2"></textarea></div>
+ </div>
+ <h4 class="mb-2 mt-5 font-semibold">รายการอะไหล่</h4>
+ <div class="pr text-xs text-slate-500"><span>อะไหล่เก่า</span><span>ราคา</span><span>อะไหล่ใหม่</span><span>ราคา</span><span class="w-10"></span></div>
+ <div id="parts"></div>
+ <button id="bPart" class="s">+ เพิ่มอะไหล่</button>
+ <div class="g mt-4">
+  <div><label>ค่าแรง (บาท)</label><input type="number" id="fLab" min="0" step="any"></div>
+  <div class="full"><label>Remark</label><textarea id="fRem" rows="2"></textarea></div>
+ </div>
+ <div class="mt-5 flex justify-end gap-2"><button id="bCancel">ยกเลิก</button><button class="p" id="bSave">บันทึก</button></div>
 </dialog>
-<dialog id="gdlg" style="width:min(560px,96vw)">
-  <h3 style="margin-top:0;font-size:19px">☁ เชื่อมต่อ GitHub (อ่าน/เขียนอัตโนมัติ)</h3>
-  <div class="g">
-    <div><label>เจ้าของ (owner)</label><input id="gOwner"></div>
-    <div><label>ชื่อ repo</label><input id="gRepo"></div>
-    <div><label>branch (เว้นว่าง = ค่าเริ่มต้น)</label><input id="gBr" placeholder="main"></div>
-    <div><label>พาธไฟล์ข้อมูลใน repo</label><input id="gPath"></div>
-    <div class="full"><label>Personal Access Token (สิทธิ์ Contents: Read and write)</label><input type="password" id="gTok" placeholder="github_pat_..."></div>
-  </div>
-  <p style="font-size:13px;color:var(--mu);line-height:1.6">สร้าง token ที่ GitHub → Settings → Developer settings → Fine-grained tokens เลือกเฉพาะ repo นี้ และให้สิทธิ์ Contents = Read and write. Token จะถูกเก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น (ต้องใส่ทุกเครื่องที่ใช้งาน)<br>⚠ ถ้า repo เป็น public ทุกคนจะอ่านไฟล์ข้อมูล (รวมรหัสหลังบ้าน) ได้ แนะนำให้ใช้ repo แบบ private</p>
-  <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
-    <button class="d" id="gOff">ยกเลิกการเชื่อมต่อ</button><button id="gCancel">ปิด</button><button id="gNew">➕ สร้างไฟล์ข้อมูลใหม่ใน GitHub</button><button class="p" id="gGo">เชื่อมต่อไฟล์ที่มีอยู่</button>
-  </div>
+<dialog id="gdlg" style="width:min(440px,96vw)">
+ <h3 class="mb-4 text-lg font-semibold">☁ ตั้งค่าออนไลน์ (GitHub)</h3>
+ <div class="grid gap-3.5">
+  <div><label>เจ้าของ (owner)</label><input id="gOwner"></div>
+  <div><label>ชื่อ repository</label><input id="gRepo"></div>
+  <div><label>ไฟล์ข้อมูล</label><input id="gPath"></div>
+  <div><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input type="password" id="gTok" placeholder="github_pat_...">
+   <p class="mt-1.5 text-xs leading-relaxed text-slate-400">ใช้ Fine-grained token สิทธิ์ Contents: Read and write เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br>⚠ repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</p></div>
+ </div>
+ <div class="mt-5 flex items-center justify-end gap-2"><button class="d mr-auto" id="gOff" style="display:none">ยกเลิกการเชื่อมต่อ</button><button id="gCancel">ยกเลิก</button><button class="p" id="gGo">ตกลง</button></div>
 </dialog>
 <dialog id="cdlg" style="width:min(520px,96vw)">
-  <h3 id="cT" style="margin-top:0;font-size:19px">เพิ่มลูกค้าใหม่</h3>
-  <div class="g" style="grid-template-columns:1fr">
-    <div><label>ชื่อลูกค้า</label><input id="cName"></div>
-    <div><label>เบอร์โทร</label><input id="cPhone" inputmode="tel"></div>
-    <div><label>LINE ID</label><input id="cLine"></div>
-  </div>
-  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button id="cCancel">ยกเลิก</button><button class="p" id="cSave">บันทึก</button></div>
+ <h3 id="cT" class="mb-4 text-xl font-bold">เพิ่มลูกค้าใหม่</h3>
+ <div class="grid gap-3">
+  <div><label>ชื่อลูกค้า</label><input id="cName"></div>
+  <div><label>เบอร์โทร</label><input id="cPhone" inputmode="tel"></div>
+  <div><label>LINE ID</label><input id="cLine"></div>
+ </div>
+ <div class="mt-5 flex justify-end gap-2"><button id="cCancel">ยกเลิก</button><button class="p" id="cSave">บันทึก</button></div>
 </dialog>
-<datalist id="dlType"></datalist><datalist id="dlTech"></datalist>
+<datalist id="dlType"></datalist>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -200,7 +205,7 @@ const b64=t=>{const u=new TextEncoder().encode(t);let x='';for(let i=0;i<u.lengt
 const unb64=c=>new TextDecoder().decode(Uint8Array.from(atob(c.replace(/\s/g,'')),ch=>ch.charCodeAt(0)));
 const gurl=()=>`https://api.github.com/repos/${G.owner}/${G.repo}/contents/${G.path.split('/').map(encodeURIComponent).join('/')}`;
 const gq=()=>G.branch?'?ref='+encodeURIComponent(G.branch):'';
-const gh=(x={})=>({Authorization:'Bearer '+G.token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...x});
+const gh=(x={})=>({...(G.token?{Authorization:'Bearer '+G.token}:{}),Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...x});
 async function gerr(res){
   if(res.status===401||res.status===403)return new Error('GitHub ปฏิเสธการเข้าถึง ('+res.status+') ตรวจสอบ token และสิทธิ์ Contents');
   return new Error('GitHub '+res.status+' '+(await res.text()).slice(0,140));
@@ -275,14 +280,14 @@ function apply(text){
   // แก้ข้อมูลเดิมที่ปีถูกเก็บเป็น พ.ศ. (เช่น 2569) ให้เป็น ค.ศ.
   d.records.forEach(r=>{const y=+(r.date||'').slice(0,4);if(y>2400){r.date=(y-543)+r.date.slice(4);r.seq=0}});
   if(fixed)CONV=true;
-  d.customers=d.customers||[];D=d;
+  d.customers=d.customers||[];D=d;syncTech();
 }
 async function persistConv(){
   if(!CONV)return;CONV=false;assignSeq();await write();
   alert('แปลงไฟล์ข้อมูลเป็นรูปแบบของระบบเรียบร้อย ('+D.records.length+' รายการ)');
 }
 async function load(){
-  if(G){apply((await gget(true)).text);return}
+  if(G){apply((await gget(true)).text);lastSync=new Date();return}
   const f=await H.getFile();lastMod=f.lastModified;apply(await f.text());
 }
 async function write(){
@@ -297,10 +302,11 @@ function assignSeq(){
   D.records.filter(r=>!r.seq).forEach(r=>{r.seq=mx[mk(r)]=(mx[mk(r)]||0)+1});
 }
 async function commit(fn){
+  if(G&&!G.token){alert('โหมดอ่านอย่างเดียว (ไม่ได้ใส่ token) บันทึกข้อมูลไม่ได้');return false}
   if(!ready()){alert('กรุณาเชื่อมต่อไฟล์ข้อมูลหรือ GitHub ก่อน');return false}
   try{
     for(let i=0;i<4;i++){
-      await load();fn();assignSeq();
+      await load();fn();syncTech();assignSeq();
       try{await write();break}catch(e){if(G)G.wsha=null;if(!e.conflict||i===3)throw e}
     }
     render();return true;
@@ -316,12 +322,13 @@ async function connectGH(cfg,save,mode){
   try{
     await load();await persistConv();
     if(!G.sha){
+      if(!G.token)throw new Error('ไม่พบไฟล์ข้อมูลใน repo (ต้องใส่ token ถึงจะสร้างไฟล์ใหม่ได้)');
       if(mode==='create'||(mode==='open'&&confirm('ไม่พบไฟล์ "'+G.path+'" ใน repo นี้ ต้องการสร้างไฟล์ข้อมูลใหม่หรือไม่?'))){D=empty();await write()}
       else throw new Error('ไม่พบไฟล์ข้อมูลใน repo');
     }
   }catch(e){G=old;throw e}
   H=null;if(save)localStorage.setItem(KEY,JSON.stringify(cfg));
-  $('#bRe').style.display='none';base='☁ GitHub: '+G.owner+'/'+G.repo+' · ซิงค์อัตโนมัติ';render();
+  $('#bRe').style.display='none';base='☁ ออนไลน์'+(G.token?'':' (อ่านอย่างเดียว)')+' · '+G.owner+'/'+G.repo;render();
 }
 const ft=[{description:'JSON',accept:{'application/json':['.json']}}];
 $('#bOpen').onclick=async()=>{try{const[h]=await showOpenFilePicker({types:ft});await connect(h,false)}catch(e){if(e.name!=='AbortError')alert(e.message)}};
@@ -329,7 +336,7 @@ $('#bNew').onclick=async()=>{try{const h=await showSaveFilePicker({suggestedName
 $('#bRe').onclick=async()=>{try{if(await H.requestPermission({mode:'readwrite'})==='granted')await connect(H,false)}catch(e){alert(e.message)}};
 setInterval(async()=>{
   try{
-    if(G){const r=await gget(false);if(r){apply(r.text);await persistConv();render()}}
+    if(G){if(!G.token&&lastSync&&Date.now()-lastSync<30000)return;const r=await gget(false);lastSync=new Date();if(r){apply(r.text);await persistConv();render()}else stat()}
     else if(H){const f=await H.getFile();if(f.lastModified!==lastMod){await load();await persistConv();render()}}
   }catch{}
 },4000);
@@ -354,9 +361,13 @@ function custTable(){
   return '<table><thead><tr><th>ลูกค้า</th><th>เบอร์โทร</th><th>LINE</th><th>งานซ่อม</th><th>ล่าสุด</th><th></th></tr></thead><tbody>'+
     list.map(c=>{const s=st[cn(c.name)]||{c:0,last:''};return `<tr><td><div class="cname"><span class="av">${esc([...c.name.trim()][0]||'?')}</span><b>${esc(c.name)}</b></div></td><td>${c.phone?`<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:'-'}</td><td>${c.line?`<span class="line">${esc(c.line)}</span>`:'-'}</td><td><span class="no">${s.c}</span></td><td>${fdate(s.last)}</td><td style="white-space:nowrap"><button class="s" data-ca="edit" data-id="${c.id}">แก้ไข</button> <button class="s d" data-ca="del" data-id="${c.id}">ลบ</button></td></tr>`}).join('')+'</tbody></table>';
 }
+let lastSync=null;
+function stat(){const n=D.records.filter(r=>!r.del).length;
+  $('#st').textContent=base+(lastSync?' · ซิงก์ล่าสุด '+lastSync.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}):'')+' · '+n+' รายการ';
+  $('#st').className='rounded-full px-3 py-1 text-xs font-medium '+(G&&!G.token?'bg-amber-300 text-amber-950':'bg-emerald-300 text-emerald-950')}
 function render(){
   const live=D.records.filter(r=>!r.del);
-  if(base)$('#st').textContent=base+' · '+live.length+' รายการ';
+  if(base)stat();
   const nowM=new Date().toISOString().slice(0,7), cnt={};
   live.forEach(r=>cnt[mk(r)]=(cnt[mk(r)]||0)+1);
   const months=[...new Set([nowM,...Object.keys(cnt)])].sort().reverse();
@@ -371,12 +382,11 @@ function render(){
   $('#stats').innerHTML=[['🛠',inM.length,'งานในเดือนที่เลือก'],['📚',live.length,'งานซ่อมทั้งหมด'],['👥',D.customers.filter(c=>!c.del).length,'ลูกค้าในฐานข้อมูล'],['🧑‍🔧',new Set(inM.map(r=>r.tech).filter(Boolean)).size,'ช่างที่มีงาน']].map(([i,n,t])=>`<div class="stat"><div class="ic">${i}</div><div><b>${n}</b><span>${t}</span></div></div>`).join('');
   $('#cusList').innerHTML=custTable();
   $('#dlType').innerHTML=[...new Set([...D.meta.types,...live.map(r=>r.type)])].filter(Boolean).map(x=>`<option value="${esc(x)}">`).join('');
-  $('#dlTech').innerHTML=D.meta.techs.map(x=>`<option value="${esc(x)}">`).join('');
-  if(admin){
+    if(admin){
     const im=D.meta.imports||[];
     $('#impList').innerHTML=im.length?`<table><thead><tr><th>ไฟล์</th><th>วันที่นำเข้า</th><th>จำนวนรายการ</th><th></th></tr></thead><tbody>`+
       im.slice().reverse().map(b=>`<tr><td>${esc(b.name)}</td><td>${new Date(b.at).toLocaleString('th-TH')}</td><td>${D.records.filter(r=>r.imp===b.id).length}</td><td><button class="s d" data-a="impdel" data-id="${b.id}">ลบทั้งชุดนี้</button></td></tr>`).join('')+'</tbody></table>':'<div class="empty">ยังไม่มีประวัติการนำเข้า</div>';
-    $('#allList').innerHTML=table(inM,'adm');$('#delList').innerHTML=table(D.records.filter(r=>r.del),'del')}
+    $('#techList').innerHTML=techTable();$('#allList').innerHTML=table(inM,'adm');$('#delList').innerHTML=table(D.records.filter(r=>r.del),'del')}
 }
 $('#q').oninput=render;$('#cq').oninput=render;
 let cEdit=null;
@@ -448,7 +458,7 @@ function openForm(id){
   editId=id;const r=D.records.find(x=>x.id===id)||{date:new Date().toISOString().slice(0,10),parts:[{}]};
   $('#dT').textContent=id?`แก้ไขรายการ ลำดับที่ ${r.seq}`:'เพิ่มรายการซ่อม';
   $('#fDate').value=r.date||'';$('#fCus').value=r.cus||'';$('#fSv').value=r.sv||'';$('#fType').value=r.type||'';
-  $('#fSn').value=r.sn||'';$('#fTech').value=r.tech||'';$('#fSym').value=r.sym||'';$('#fWork').value=r.work||'';
+  $('#fSn').value=r.sn||'';fillTech(r.tech||'');$('#fSym').value=r.sym||'';$('#fWork').value=r.work||'';
   $('#fLab').value=r.labor||'';$('#fRem').value=r.rem||'';
   AF={p:'',l:''};const cc=custByName(r.cus||'');$('#fPhone').value=cc?cc.phone||'':'';$('#fLine').value=cc?cc.line||'':'';
   $('#parts').innerHTML='';(r.parts?.length?r.parts:[{}]).forEach(partRow);showCus();$('#dlg').showModal();
@@ -569,44 +579,73 @@ document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
 $('#bLogin').onclick=()=>{
   if($('#pin').value!==D.meta.pin){alert('รหัสผ่านไม่ถูกต้อง');return}
   admin=true;$('#lock').style.display='none';$('#admin').style.display='';
-  $('#sTech').value=D.meta.techs.join('\n');$('#sType').value=D.meta.types.join('\n');$('#sPin').value=D.meta.pin;render();
+  $('#sType').value=D.meta.types.join('\n');$('#sPin').value=D.meta.pin;render();
 };
 $('#pin').onkeydown=e=>{if(e.key==='Enter')$('#bLogin').click()};
 $('#bSet').onclick=async()=>{
   const ls=s=>s.split('\n').map(x=>x.trim()).filter(Boolean);
   if(!$('#sPin').value.trim()){alert('รหัสผ่านห้ามว่าง');return}
-  if(await commit(()=>{D.meta.techs=ls($('#sTech').value);D.meta.types=ls($('#sType').value);D.meta.pin=$('#sPin').value.trim()}))alert('บันทึกการตั้งค่าแล้ว');
+  if(await commit(()=>{D.meta.types=ls($('#sType').value);D.meta.pin=$('#sPin').value.trim()}))alert('บันทึกการตั้งค่าแล้ว');
 };
 $('#bBak').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,1)],{type:'application/json'}));a.download='repair-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()};
 
 /* ---------- GitHub ---------- */
 $('#bGh').onclick=()=>{const c=G||gcfg()||{};
-  $('#gOwner').value=c.owner||'sahakoloa';$('#gRepo').value=c.repo||'sahakoloa.github.io';$('#gBr').value=c.branch||'';
-  $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gdlg').showModal()};
+  $('#gOwner').value=c.owner||'sahakoloa';$('#gRepo').value=c.repo||'sahakoloa.github.io';
+  $('#gPath').value=c.path||'repair-data/data.json';$('#gTok').value=c.token||'';$('#gOff').style.display=G?'':'none';$('#gdlg').showModal()};
 $('#gCancel').onclick=()=>$('#gdlg').close();
-$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';render();$('#gdlg').close()};
+$('#gOff').onclick=()=>{localStorage.removeItem(KEY);G=null;D=empty();base='';$('#st').textContent='ยังไม่ได้เชื่อมต่อไฟล์ข้อมูล';$('#st').className='rounded-full bg-white/20 px-3 py-1 text-xs';render();$('#gdlg').close()};
 function readCfg(){
-  const cfg={owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:$('#gBr').value.trim(),path:$('#gPath').value.trim().replace(/^\/+/,''),token:$('#gTok').value.trim()};
-  if(!cfg.owner||!cfg.repo||!cfg.path||!cfg.token){alert('กรุณากรอกข้อมูลให้ครบ (ยกเว้น branch)');return null}
+  const cfg={owner:$('#gOwner').value.trim(),repo:$('#gRepo').value.trim(),branch:(G||gcfg()||{}).branch||'',path:$('#gPath').value.trim().replace(/^\/+/,''),token:$('#gTok').value.trim()};
+  if(!cfg.owner||!cfg.repo||!cfg.path){alert('กรุณากรอก owner, repository และไฟล์ข้อมูล');return null}
   return cfg;
 }
 async function ghAction(fn){
-  $('#gGo').disabled=$('#gNew').disabled=true;
+  $('#gGo').disabled=true;
   try{await fn()}catch(e){alert('ทำรายการไม่สำเร็จ: '+e.message)}
-  $('#gGo').disabled=$('#gNew').disabled=false;
+  $('#gGo').disabled=false;
 }
 $('#gGo').onclick=()=>{const cfg=readCfg();if(cfg)ghAction(async()=>{await connectGH(cfg,true,'open');$('#gdlg').close()})};
-$('#gNew').onclick=()=>{const cfg=readCfg();if(!cfg)return;ghAction(async()=>{
-  const old=G;G=Object.assign({sha:null,etag:null},cfg);let exists;
-  try{await gget(true);exists=!!G.sha}finally{G=old}
-  if(exists){
-    if(!confirm('มีไฟล์ "'+cfg.path+'" อยู่แล้ว ระบบจะไม่สร้างทับ\nต้องการเชื่อมต่อกับไฟล์เดิมหรือไม่?'))return;
-    await connectGH(cfg,true,'open');
-  }else{
-    await connectGH(cfg,true,'create');alert('สร้างไฟล์ข้อมูล "'+cfg.path+'" ใน GitHub เรียบร้อย');
-  }
-  $('#gdlg').close();
-})};
+
+/* ---------- ช่างผู้ซ่อม ---------- */
+let tEdit=null;
+function techTable(){
+  const L=D.meta.techList||[];
+  if(!L.length)return '<div class="empty">👷 ยังไม่มีช่าง กรอกชื่อด้านบนแล้วกด "เพิ่มช่าง"</div>';
+  const st={};D.records.filter(r=>!r.del&&r.tech).forEach(r=>{const o=st[r.tech]||(st[r.tech]={c:0,l:0});o.c++;o.l+=num(r.labor)});
+  return '<table><thead><tr><th>ช่าง</th><th>เบอร์โทร</th><th>สถานะ</th><th>จำนวนงาน</th><th>ค่าแรงรวม</th><th></th></tr></thead><tbody>'+
+    L.map(t=>{const s=st[t.name]||{c:0,l:0},on=t.active!==false;
+      return `<tr class="${on?'':'opacity-50'}"><td><div class="cname"><span class="av">${esc([...t.name][0]||'?')}</span><b>${esc(t.name)}</b></div></td><td>${t.phone?`<a href="tel:${esc(t.phone)}">${esc(t.phone)}</a>`:'-'}</td><td><span class="tag">${on?'🟢 ใช้งาน':'⚪ ปิดใช้งาน'}</span></td><td><span class="no">${s.c}</span></td><td class="n">${fmt(s.l)}</td><td class="whitespace-nowrap"><button class="s" data-ta="edit" data-id="${t.id}">แก้ไข</button> <button class="s" data-ta="tog" data-id="${t.id}">${on?'ปิดใช้งาน':'เปิดใช้งาน'}</button> <button class="s d" data-ta="del" data-id="${t.id}">ลบ</button></td></tr>`}).join('')+'</tbody></table>';
+}
+function fillTech(v){
+  const L=(D.meta.techList||[]).filter(t=>t.active!==false).map(t=>t.name);if(v&&!L.includes(v))L.push(v);
+  $('#fTech').innerHTML='<option value="">— เลือกช่าง —</option>'+L.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');$('#fTech').value=v;
+}
+function techReset(){tEdit=null;$('#tName').value=$('#tPhone').value='';$('#tSave').textContent='+ เพิ่มช่าง';$('#tCancel').style.display='none'}
+$('#tCancel').onclick=techReset;
+$('#tSave').onclick=async()=>{
+  const name=$('#tName').value.trim(),phone=$('#tPhone').value.trim();
+  if(!name){alert('กรุณากรอกชื่อช่าง');return}
+  const ok=await commit(()=>{
+    const L=D.meta.techList;
+    if(L.some(t=>t.id!==tEdit&&cn(t.name)===cn(name)))throw new Error('มีช่างชื่อนี้อยู่แล้ว');
+    const t=tEdit&&L.find(x=>x.id===tEdit);
+    if(t){if(t.name!==name)D.records.forEach(r=>{if(r.tech===t.name)r.tech=name});Object.assign(t,{name,phone,upd:Date.now()})}
+    else L.push({id:crypto.randomUUID(),name,phone,active:true,upd:Date.now()});
+  });
+  if(ok)techReset();
+};
+$('#techList').onclick=e=>{
+  const b=e.target.closest('[data-ta]');if(!b)return;const id=b.dataset.id,a=b.dataset.ta,t=(D.meta.techList||[]).find(x=>x.id===id);if(!t)return;
+  if(a==='edit'){tEdit=id;$('#tName').value=t.name;$('#tPhone').value=t.phone||'';$('#tSave').textContent='บันทึกการแก้ไข';$('#tCancel').style.display='';$('#tName').focus()}
+  else if(a==='tog')commit(()=>{const x=D.meta.techList.find(y=>y.id===id);if(x)x.active=x.active===false})
+  else if(confirm('ลบช่างคนนี้ออกจากรายชื่อ? (ประวัติงานซ่อมยังอยู่ ถ้าแค่ไม่ให้เลือกแนะนำให้ "ปิดใช้งาน")'))commit(()=>{D.meta.techList=D.meta.techList.filter(y=>y.id!==id)});
+};
+function syncTech(){
+  const m=D.meta;
+  if(!Array.isArray(m.techList))m.techList=(m.techs||[]).map(n=>({id:'t-'+n,name:n,phone:'',active:true}));
+  m.techs=m.techList.filter(t=>t.active!==false).map(t=>t.name);
+}
 
 /* ---------- เริ่มต้น ---------- */
 (async()=>{
