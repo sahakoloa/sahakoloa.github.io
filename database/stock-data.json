@@ -38,7 +38,10 @@
  ],
  "seq": 0,
  "admin": {
-  "salt": "k3arxzpwbvaz7xl5",
-  "hash": "833369822d98b12d711f1f21766a6afb93b982ff695f3c2332639e260ed3a674"
- }
+  "salt": "5km2vvp88hi8bn73",
+  "hash": "p1$221f595ef85e8bc8371f4387eeaa8e8482a2a24581fcd2b8115fd998e3f631fb",
+  "usalt": "xof514tl2qheaohb",
+  "uhash": "p1$991edb6568cdc137ccf0ff4443bf0e8f4143ec585cd7761169a643e1c1172025"
+ },
+ "trash": []
 }
