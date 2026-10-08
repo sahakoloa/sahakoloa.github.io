@@ -102,7 +102,7 @@ function norm(d){if(!d||!Array.isArray(d.cats))throw Error("รูปแบบ�
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("stock-app",1);r.onupgradeneeded=()=>r.result.createObjectStore("h");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
 const idbSet=async h=>{try{(await idb()).transaction("h","readwrite").objectStore("h").put(h,"fh")}catch(e){}};
 const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{const x=d.transaction("h").objectStore("h").get("fh");x.onsuccess=()=>r(x.result);x.onerror=()=>r(null)})}catch(e){return null}};
-const FP={types:[{description:"ข้อมูลเบิกของ (JSON)",accept:{"application/json":[".json"]}}]};
+const FP={types:[{description:"stock-data.json",accept:{"application/json":[".json"]}}]};
 async function persist(){
   if(!loaded)return;try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
   if(src==="gh")return ghQueue();
@@ -118,10 +118,18 @@ async function useData(txt,h,sr,keep){
   if(fh){idbSet(fh);setStatus("ออฟไลน์ · เชื่อมไฟล์ "+fh.name+" (บันทึกอัตโนมัติ)","ok")}else if(src!=="gh")setStatus("ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์ — ไปที่หลังบ้าน > ข้อมูลและสำรอง","wa");
   render()}
 async function openFile(){try{let f,h=null;if(window.showOpenFilePicker){[h]=await showOpenFilePicker(FP);f=await h.getFile()}else f=await pick(".json");if(f)await useData(await f.text(),h)}catch(e){if(e.name!=="AbortError")toast("เปิดไฟล์ไม่สำเร็จ: "+e.message,"er")}}
-async function saveAs(){if(!window.showSaveFilePicker)return dl("stock.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
+async function dbHandle(){const d=await showDirectoryPicker({mode:"readwrite"}),db=d.name==="database"?d:await d.getDirectoryHandle("database",{create:true});return db.getFileHandle("stock-data.json",{create:true})}
+async function connectDir(){
+  if(!window.showDirectoryPicker)return toast("เบราว์เซอร์นี้ไม่รองรับการเชื่อมโฟลเดอร์ (ใช้ Chrome / Edge) — ใช้ “เปิดไฟล์ข้อมูล” แทน","er");
+  try{const h=await dbHandle(),txt=await(await h.getFile()).text();
+    if(txt.trim()){await useData(txt,h);toast("เชื่อมต่อ database/stock-data.json แล้ว")}
+    else{ensureLoaded();fh=h;src="file";idbSet(h);await persist();render();toast("สร้าง database/stock-data.json และบันทึกข้อมูลปัจจุบันลงไฟล์แล้ว")}}
+  catch(e){if(e.name!=="AbortError")toast("เชื่อมต่อไม่สำเร็จ: "+e.message,"er")}}
+async function saveAs(){if(!window.showSaveFilePicker)return dl("stock-data.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
 /* ================= storage: online (GitHub) ================= */
-const GH0={owner:"sahakoloa",repo:"sahakoloa.github.io",path:"stock.json",token:""};
-const ghCfg=()=>{try{return{...GH0,...JSON.parse(localStorage.getItem("gh-cfg")||"{}")}}catch(e){return{...GH0}}};
+const DB_PATH="database/stock-data.json";
+const ghAuto=()=>{const h=location.hostname;if(!h.endsWith(".github.io"))return{owner:"",repo:""};const seg=location.pathname.split("/").filter(Boolean)[0];return{owner:h.split(".")[0],repo:seg&&!/\.html?$/.test(seg)?seg:h}};
+const ghCfg=()=>{let sv={};try{sv=JSON.parse(localStorage.getItem("gh-cfg")||"{}")}catch(e){}const c={...ghAuto(),path:DB_PATH,token:""};for(const k in sv)if(sv[k]&&!(k==="path"&&sv[k]==="stock.json"))c[k]=sv[k];return c};
 const online=()=>!localStorage.getItem("gh-off")&&(location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg"));
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
 const ghUrl=c=>`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
@@ -146,13 +154,13 @@ async function ghPush(retry){
 async function ghMerge(){const g=await ghGet();ghSha=g.sha;if(!g.txt)return;const Rm=JSON.parse(g.txt),ids=new Set(S.log.map(l=>l.id));
   (Rm.log||[]).forEach(l=>{if(!ids.has(l.id))S.log.push(l)});S.seq=Math.max(S.seq||0,Rm.seq||0);
   if(!admin){S.cats=Rm.cats;if(Rm.admin)S.admin=Rm.admin;if(Rm.users)S.users=Rm.users}render()}
-async function ghBackup(){const c=ghCfg();if(!c.token)throw Error("ต้องตั้งค่า token ก่อน");const name=`backups/stock-${stamp()}.json`;
+async function ghBackup(){const c=ghCfg();if(!c.token)throw Error("ต้องตั้งค่า token ก่อน");const name=`database/backups/stock-${stamp()}.json`;
   const r=await fetch(ghUrl({...c,path:name}),{method:"PUT",headers:{...ghH(c),"Content-Type":"application/json"},body:JSON.stringify({message:"backup "+name,content:b64e(JSON.stringify(S,null,1))})});
   if(!r.ok)throw Error("GitHub "+r.status);toast("สำรองไปที่ "+name+" ใน repo แล้ว")}
 function ghDlg(){const c=ghCfg();
-  ask("ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}"><label>ไฟล์ข้อมูล</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint mt-2">ใช้ Fine-grained token สิทธิ์ <b>Contents: Read and write</b> เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br>repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</div>`,
-  ()=>{if(loaded&&src!=="gh"&&!confirm("การเชื่อมต่อออนไลน์จะโหลดข้อมูลจาก GitHub มาแทนข้อมูลที่เปิดอยู่ ต้องการดำเนินการต่อหรือไม่?"))return false;
-    localStorage.removeItem("gh-off");localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim(),token:v("g4").trim()}));ghWarned=true;ghLoad(loaded).catch(e=>{setStatus("ออนไลน์ · "+e.message,"wa");toast(e.message,"er")})},
+  ask("ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}" placeholder="ชื่อบัญชี GitHub"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}" placeholder="ชื่อ repository"><label>ไฟล์ข้อมูล (ค่าเริ่มต้น database/stock-data.json)</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint mt-2">ใช้ Fine-grained token สิทธิ์ <b>Contents: Read and write</b> เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br>repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</div>`,
+  ()=>{if(!v("g1").trim()||!v("g2").trim()){toast("กรุณากรอก owner และชื่อ repository","er");return false}if(loaded&&src!=="gh"&&!confirm("การเชื่อมต่อออนไลน์จะโหลดข้อมูลจาก GitHub มาแทนข้อมูลที่เปิดอยู่ ต้องการดำเนินการต่อหรือไม่?"))return false;
+    localStorage.removeItem("gh-off");localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim()||DB_PATH,token:v("g4").trim()}));ghWarned=true;ghLoad(loaded).catch(e=>{setStatus("ออนไลน์ · "+e.message,"wa");toast(e.message,"er")})},
   undefined,`<button type="button" class="d mr-auto" data-act="gh-off">${fa("link-slash")} ยกเลิกการเชื่อมต่อ</button>`)}
 const ghTick=()=>{if(src==="gh"&&!ghBusy&&!$("#dlg").open&&!document.hidden)ghLoad(true).catch(()=>{})};
 /* ================= auth ================= */
@@ -180,10 +188,10 @@ const thDate=()=>new Date().toLocaleDateString("th-TH",{weekday:"long",day:"nume
 let flt="all",bq="",rpm=today().slice(0,7),qtys={};
 function vWelcome(){return`<div class="grid min-h-screen place-items-center p-4"><div class="w-full max-w-md ${card} p-8 text-center shadow-xl">
 <div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-3xl text-white shadow-lg shadow-indigo-500/30">${fa("boxes-stacked")}</div>
-<h2 class="mt-4 text-xl font-bold">ระบบเบิกของติดตั้ง</h2><p class="mt-1 text-sm text-slate-500">เลือกแหล่งข้อมูลเพื่อเริ่มใช้งาน ข้อมูลทั้งหมดเก็บในไฟล์ JSON ไม่ได้ฝังอยู่ในหน้านี้</p>
+<h2 class="mt-4 text-xl font-bold">ระบบเบิกของติดตั้ง</h2><p class="mt-1 text-sm text-slate-500">เลือกแหล่งข้อมูลเพื่อเริ่มใช้งาน ข้อมูลทั้งหมดเก็บในไฟล์ database/stock-data.json ไม่ได้ฝังอยู่ในหน้านี้</p>
 <div class="mt-6 flex flex-col gap-2 text-left"><div class="mh !px-0 !pt-0">ออฟไลน์ · ไฟล์ในเครื่อง</div>
 ${lastH?`<button class="p" data-act="reconnect">${fa("link")} เชื่อมต่อ ${esc(lastH.name)} ต่อ</button>`:""}
-<button class="${lastH?"":"p"}" data-act="f-open">${fa("folder-open")} เปิดไฟล์ข้อมูล .json</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ข้อมูลใหม่</button>
+<button class="${lastH?"":"p"}" data-act="f-dir">${fa("folder-tree")} เชื่อมโฟลเดอร์ข้อมูล (database/stock-data.json)</button><button data-act="f-open">${fa("folder-open")} เปิดไฟล์ข้อมูล .json</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ข้อมูลใหม่</button>
 <div class="mh !px-0">ออนไลน์ · GitHub</div><button data-act="gh-set">${fa("cloud")} ตั้งค่า / เชื่อมต่อ GitHub</button>
 <div class="mh !px-0">นำเข้าข้อมูล</div><button data-act="im-restore">${fa("file-import")} กู้คืนจากไฟล์สำรอง (.json)</button><button data-act="im-any">${fa("file-csv")} นำเข้าข้อมูล (.json / .csv)</button>
 ${localStorage.getItem("stock-v1")?`<button data-act="usebackup">${fa("clock-rotate-left")} ใช้ข้อมูลสำรองในเบราว์เซอร์</button>`:""}
@@ -193,7 +201,7 @@ ${localStorage.getItem("stock-v1")?`<button data-act="usebackup">${fa("clock-rot
 function connMenu(){const m=src==="gh"?"ออนไลน์ · GitHub":fh?"ออฟไลน์ · "+fh.name:"ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์",lk=a=>admin?"":fa("lock","ml-auto text-[10px] text-slate-400"),mi=(act,ic,l,g)=>`<button class="mi" data-act="${act}">${fa(ic,"w-4 text-center text-slate-500")} ${l}${g?lk():""}</button>`;
   return`<div class="relative"><button data-m="cm" class="!gap-2" aria-label="การเชื่อมต่อและข้อมูล"><span class="h-2 w-2 rounded-full ${stat.c==="ok"?"bg-emerald-500":stat.c==="wa"?"bg-amber-500":"bg-slate-400"}"></span><span class="hidden sm:inline">การเชื่อมต่อและข้อมูล</span><span class="sm:hidden">${fa("database")}</span>${fa("chevron-down","text-[10px]")}</button>
 <div id="m-cm" class="menu right !w-72"><div class="px-3 py-2"><div class="text-[11px] text-slate-400">แหล่งข้อมูลปัจจุบัน</div><div class="text-sm font-semibold">${esc(m)}</div></div>
-<div class="mh">ออฟไลน์ · ไฟล์ในเครื่อง</div>${mi("f-open","folder-open","เปิดไฟล์ข้อมูล .json")}${mi("f-new","file-circle-plus","สร้างไฟล์ข้อมูลใหม่",1)}
+<div class="mh">ออฟไลน์ · ไฟล์ในเครื่อง</div>${mi("f-dir","folder-tree","เชื่อมโฟลเดอร์ข้อมูล (database/stock-data.json)")}${mi("f-open","folder-open","เปิดไฟล์ข้อมูล .json")}${mi("f-new","file-circle-plus","สร้างไฟล์ข้อมูลใหม่",1)}
 <div class="mh">ออนไลน์ · GitHub</div>${mi("gh-set","cloud","ตั้งค่า / เชื่อมต่อ GitHub")}${mi("gh-rf","rotate","ซิงก์ข้อมูลตอนนี้")}
 <div class="mh">สำรองและนำเข้าข้อมูล</div>${mi("bk-json","file-zipper","สำรองข้อมูล (.json)",1)}${mi("im-restore","clock-rotate-left","กู้คืนจากไฟล์สำรอง",1)}${mi("im-any","file-import","นำเข้าข้อมูล (.json / .csv)",1)}${mi("ex-items","file-csv","ส่งออกรายการ (.csv)",1)}
 <div class="mh">ระบบหลังบ้าน</div><a href="#/admin" class="mi">${fa("user-shield","w-4 text-center text-slate-500")} ${admin?"ไปหลังบ้าน":"เข้าหลังบ้าน"}</a></div></div>`}
@@ -284,7 +292,7 @@ function vTrash(){const T=[...S.trash].reverse(),K={cat:"หมวด",item:"ร
 function vData(){const c=ghCfg(),mode=src==="gh"?"ออนไลน์ (GitHub)":fh?"ออฟไลน์ · ไฟล์ "+fh.name:"ออฟไลน์ · เบราว์เซอร์นี้",sec=(ic,t,d,b)=>`<div class="${card} p-5"><div class="mb-1 flex items-center gap-2 font-semibold">${fa(ic,"text-indigo-500")} ${t}</div><div class="mb-3 text-xs text-slate-500">${d}</div><div class="flex flex-wrap gap-2">${b}</div></div>`;
   return`<div class="mb-5 flex flex-wrap items-center gap-3 ${card} p-4"><span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40">${fa(src==="gh"?"cloud":"hard-drive")}</span><div class="mr-auto"><div class="text-xs text-slate-500">แหล่งเก็บข้อมูลปัจจุบัน</div><div class="font-semibold">${mode}</div></div><span class="${stat.c==="ok"?"b ok":"b wa"} !min-w-0">${esc(stat.t)}</span></div>
 <div class="grid gap-4 md:grid-cols-2">
-${sec("hard-drive","ออฟไลน์ · ไฟล์ในเครื่อง","เก็บข้อมูลในไฟล์ .json บนเครื่อง (Chrome / Edge) บันทึกอัตโนมัติทุกครั้งที่มีการเปลี่ยนแปลง",`<button data-act="f-open">${fa("folder-open")} เปิดไฟล์</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ใหม่</button><button data-act="f-save">${fa("floppy-disk")} บันทึกเป็น…</button>`)}
+${sec("hard-drive","ออฟไลน์ · ไฟล์ในเครื่อง","เก็บข้อมูลที่ database/stock-data.json ในโฟลเดอร์ที่เลือก (Chrome / Edge) บันทึกอัตโนมัติทุกครั้งที่มีการเปลี่ยนแปลง",`<button class="p" data-act="f-dir">${fa("folder-tree")} เชื่อมโฟลเดอร์</button><button data-act="f-open">${fa("folder-open")} เปิดไฟล์</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ใหม่</button><button data-act="f-save">${fa("floppy-disk")} บันทึกเป็น…</button>`)}
 ${sec("cloud","ออนไลน์ · GitHub",`${esc(c.owner)}/${esc(c.repo)} · ${esc(c.path)} · token ${c.token?"ตั้งค่าแล้ว":"ยังไม่ได้ตั้ง"}`,`<button data-act="gh-set">${fa("gear")} ตั้งค่า / เชื่อมต่อ</button><button data-act="gh-rf">${fa("rotate")} ซิงก์ตอนนี้</button><button data-act="bk-gh">${fa("cloud-arrow-up")} สำรองไป repo</button>`)}
 ${sec("download","สำรองและส่งออก","ดาวน์โหลดสำเนาข้อมูลเก็บไว้ ใช้ได้ทั้งโหมดออนไลน์และออฟไลน์",`<button class="p" data-act="bk-json">${fa("file-zipper")} สำรองข้อมูล (.json)</button><button data-act="ex-items">${fa("file-csv")} รายการคงเหลือ (.csv)</button><button data-act="ex-log">${fa("file-csv")} ประวัติการเบิก (.csv)</button>`)}
 ${sec("file-import","กู้คืนและนำเข้า","กู้คืน = แทนที่ข้อมูลทั้งหมดด้วยไฟล์สำรอง · นำเข้า = เพิ่มเข้าไป เลือกได้ว่าจะข้ามหรืออัปเดตรายการซ้ำ ก่อนทำรายการระบบสำรองข้อมูลเดิมให้อัตโนมัติ",`<button class="p" data-act="im-restore">${fa("clock-rotate-left")} กู้คืนจากไฟล์สำรอง</button><button data-act="im-any">${fa("file-import")} นำเข้า (.json / .csv)</button><button data-act="tpl">${fa("table")} แม่แบบ CSV</button><button data-act="undo" ${localStorage.getItem("stock-undo")?"":"disabled"}>${fa("rotate-left")} ย้อนกลับล่าสุด</button>`)}</div>
@@ -372,8 +380,12 @@ function mergeJson(txt,upd){
 async function newFile(){
   const prev={S,loaded,src,fh};if(loaded&&!confirm("สร้างไฟล์ข้อมูลใหม่ (ว่าง)?\nข้อมูลที่เปิดอยู่ในหน้านี้จะถูกแทนที่ (บัญชีผู้ดูแลยังคงอยู่) — ควรสำรองข้อมูลก่อน"))return;
   S=norm({cats:[],admin:S.admin});loaded=true;fh=null;tab="all";bcat=undefined;
-  try{if(!window.showSaveFilePicker){dl("stock.json",JSON.stringify(S,null,1),"application/json");src=null;render();toast("ดาวน์โหลดไฟล์ข้อมูลใหม่แล้ว — ใช้ “เปิดไฟล์ข้อมูล” เพื่อเชื่อมต่อ");return}
-    fh=await showSaveFilePicker({...FP,suggestedName:"stock.json"});idbSet(fh);src="file";await persist();render();toast("สร้างไฟล์ข้อมูลใหม่แล้ว")}
+  try{
+    if(window.showDirectoryPicker){const h=await dbHandle(),old=await(await h.getFile()).text();
+      if(old.trim()&&!confirm("พบ database/stock-data.json ที่มีข้อมูลอยู่แล้ว การสร้างใหม่จะเขียนทับข้อมูลเดิม ต้องการดำเนินการต่อ?"))throw{name:"AbortError"};
+      fh=h;idbSet(h);src="file";await persist();render();toast("สร้าง database/stock-data.json ใหม่แล้ว");return}
+    if(!window.showSaveFilePicker){dl("stock-data.json",JSON.stringify(S,null,1),"application/json");src=null;render();toast("ดาวน์โหลดไฟล์ข้อมูลใหม่แล้ว — นำไปไว้ที่ database/stock-data.json แล้วใช้ “เปิดไฟล์ข้อมูล”");return}
+    fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render();toast("สร้างไฟล์ข้อมูลใหม่แล้ว")}
   catch(e){({S,loaded,src,fh}=prev);render();if(e.name!=="AbortError")toast("สร้างไฟล์ไม่สำเร็จ: "+e.message,"er")}}
 /* ================= actions ================= */
 const ADM=new Set(["addcat","rencat","delcat","additem","edititem","delitem","adduser","edituser","deluser","dellog","bk-json","bk-gh","ex-items","ex-log","tpl","acct","undo","f-save","f-new","im-restore","im-any","tr-restore","tr-del","tr-empty","rp-print","rp-csv"]);
@@ -417,7 +429,7 @@ const A={
   "tr-empty":()=>{if(confirm(`ล้างถังขยะ ${S.trash.length} รายการ? กู้คืนไม่ได้อีก`)){S.trash=[];change()}},
   "rp-print":printReport,
   "rp-csv":()=>{const D=reportData(),r=[["หมวด","รายการ","หน่วย","จำนวนที่เบิก","จำนวนครั้ง"]];D.items.forEach(i=>r.push([i.cat,i.name,i.unit,i.amt,i.n]));dl(`report-${rpm}.csv`,csvOut(r),"text/csv")},
-  "f-open":openFile,"f-save":saveAs,"f-new":newFile,"gh-set":ghDlg,
+  "f-open":openFile,"f-dir":connectDir,"f-save":saveAs,"f-new":newFile,"gh-set":ghDlg,
   "gh-off":()=>{localStorage.removeItem("gh-cfg");localStorage.setItem("gh-off","1");ghSha=null;if(src==="gh"){src=null;fh=null}if($("#dlg").open)$("#dlg").close();setStatus("ออฟไลน์ · ยกเลิกการเชื่อมต่อออนไลน์แล้ว (ข้อมูลในหน้านี้ยังอยู่)","wa");render();toast("ยกเลิกการเชื่อมต่อ GitHub แล้ว")},
   "gh-rf":()=>online()?ghLoad(true).then(()=>toast("ซิงก์ข้อมูลแล้ว")).catch(e=>toast(e.message,"er")):toast("ยังไม่ได้เชื่อมต่อออนไลน์ — เลือก “ตั้งค่า / เชื่อมต่อ GitHub”","er"),
   "bk-gh":()=>ghBackup().catch(e=>toast("สำรองไม่สำเร็จ: "+e.message,"er")),
@@ -460,7 +472,7 @@ setInterval(ghTick,60000);document.addEventListener("visibilitychange",ghTick);
 window.onbeforeunload=e=>{if(loaded&&!src&&!fh){e.preventDefault();e.returnValue=""}};
 async function init(){
   if(online()){try{await ghLoad(false)}catch(e){setStatus("โหลดออนไลน์ไม่สำเร็จ: "+e.message,"wa")}if(loaded)return}
-  try{const r=await fetch("stock.json",{cache:"no-store"});if(r.ok){await useData(await r.text(),null);setStatus("ออฟไลน์ · โหลดจาก stock.json (ยังไม่เชื่อมไฟล์สำหรับบันทึก)","wa");return}}catch(e){}
+  try{const r=await fetch(DB_PATH,{cache:"no-store"});if(r.ok){await useData(await r.text(),null);setStatus("ออฟไลน์ · โหลดจาก database/stock-data.json (ยังไม่เชื่อมโฟลเดอร์สำหรับบันทึก)","wa");return}}catch(e){}
   setStatus("ยังไม่ได้โหลดข้อมูล","wa");lastH=await idbGet();render()}
 render();init();
 </script></body></html>
