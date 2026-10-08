@@ -4,7 +4,15 @@
    "id": "26j3ncto",
    "name": "ไฟฟ้า",
    "icon": "bolt",
-   "items": []
+   "items": [
+    {
+     "id": "8w7ugh0s",
+     "name": "ข้อต่อกล่องหุน 22 mm. (1/2\") สีขาว NANO",
+     "code": "NNPW18",
+     "unit": "",
+     "qty": 20
+    }
+   ]
   },
   {
    "id": "7s6569at",
