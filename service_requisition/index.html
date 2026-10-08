@@ -128,9 +128,8 @@ async function connectDir(){
 async function saveAs(){if(!window.showSaveFilePicker)return dl("stock-data.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
 /* ================= storage: online (GitHub) ================= */
 const DB_PATH="database/stock-data.json";
-const ghAuto=()=>{const h=location.hostname;if(!h.endsWith(".github.io"))return{owner:"",repo:""};const seg=location.pathname.split("/").filter(Boolean)[0];return{owner:h.split(".")[0],repo:seg&&!/\.html?$/.test(seg)?seg:h}};
-const ghCfg=()=>{let sv={};try{sv=JSON.parse(localStorage.getItem("gh-cfg")||"{}")}catch(e){}const c={...ghAuto(),path:DB_PATH,token:""};for(const k in sv)if(sv[k]&&!(k==="path"&&sv[k]==="stock.json"))c[k]=sv[k];return c};
-const online=()=>!localStorage.getItem("gh-off")&&(location.hostname.endsWith("github.io")||!!localStorage.getItem("gh-cfg"));
+const ghCfg=()=>{let sv={};try{sv=JSON.parse(localStorage.getItem("gh-cfg")||"{}")}catch(e){}const c={owner:"",repo:"",path:DB_PATH,token:""};for(const k in sv)if(sv[k]&&!(k==="path"&&sv[k]==="stock.json"))c[k]=sv[k];return c};
+const online=()=>!localStorage.getItem("gh-off")&&!!localStorage.getItem("gh-cfg")&&!!ghCfg().owner&&!!ghCfg().repo;
 const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
 const ghUrl=c=>`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
 const ghH=c=>({Accept:"application/vnd.github+json",...(c.token?{Authorization:"Bearer "+c.token}:{})});
