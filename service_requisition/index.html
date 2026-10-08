@@ -1,439 +1,1770 @@
 <!DOCTYPE html>
 <html lang="th" class="h-full">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ระบบเบิกของติดตั้ง - Material Design 3</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      fontFamily: { sans: ['"Prompt"', 'sans-serif'] },
-      colors: {
-        theme: {
-          primary: 'var(--m3-primary)',
-          onPrimary: 'var(--m3-on-primary)',
-          primaryContainer: 'var(--m3-primary-container)',
-          onPrimaryContainer: 'var(--m3-on-primary-container)',
-          surface: 'var(--m3-surface)',
-          onSurface: 'var(--m3-on-surface)',
-          surfaceVariant: 'var(--m3-surface-variant)',
-          onSurfaceVariant: 'var(--m3-on-surface-variant)',
-          outline: 'var(--m3-outline)',
-          outlineVariant: 'var(--m3-outline-variant)'
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ระบบเบิกอุปกรณ์ติดตั้ง - Equipment Withdrawal System (M3)</title>
+  
+  <!-- Fonts: Google Fonts Google Sans / Noto Sans Thai / Roboto -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js for Admin Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            m3: {
+              // M3 Primary - Deep Purple / Indigo Tone
+              primary: {
+                DEFAULT: '#6750A4',
+                on: '#FFFFFF',
+                container: '#EADDFF',
+                onContainer: '#21005D',
+                dark: '#D0BCFF',
+                darkOn: '#381E72',
+                darkContainer: '#4F378B',
+                darkOnContainer: '#EADDFF'
+              },
+              // M3 Secondary - Teal / Slate Tone
+              secondary: {
+                DEFAULT: '#625B71',
+                on: '#FFFFFF',
+                container: '#E8DEF8',
+                onContainer: '#1D192B',
+                dark: '#CCC2DC',
+                darkOn: '#332D41',
+                darkContainer: '#4A4458',
+                darkOnContainer: '#E8DEF8'
+              },
+              // M3 Tertiary / Status Positive - Emerald/Teal
+              tertiary: {
+                DEFAULT: '#006A60',
+                on: '#FFFFFF',
+                container: '#74F8E5',
+                onContainer: '#00201C',
+                dark: '#53DBCA',
+                darkOn: '#003731',
+                darkContainer: '#005048',
+                darkOnContainer: '#74F8E5'
+              },
+              // M3 Error / Warning - Amber / Rose
+              error: {
+                DEFAULT: '#B3261E',
+                on: '#FFFFFF',
+                container: '#F9DEDC',
+                onContainer: '#410E0B',
+                dark: '#F2B8B5',
+                darkOn: '#601410',
+                darkContainer: '#8C1D18',
+                darkOnContainer: '#F9DEDC'
+              },
+              warning: {
+                DEFAULT: '#825500',
+                container: '#FFDDAE',
+                onContainer: '#2A1800',
+                dark: '#FFB95B',
+                darkContainer: '#633F00',
+                darkOnContainer: '#FFDDAE'
+              },
+              // Surface Containers (M3 Tonal Palette)
+              surface: {
+                dim: '#DED8E1',
+                DEFAULT: '#FEF7FF',
+                bright: '#FEF7FF',
+                containerLowest: '#FFFFFF',
+                containerLow: '#F7F2FA',
+                container: '#F3EDF7',
+                containerHigh: '#ECE6F0',
+                containerHighest: '#E6E0E9',
+                // Dark Surfaces
+                darkDim: '#141218',
+                darkDEFAULT: '#141218',
+                darkBright: '#3B383E',
+                darkContainerLowest: '#0F0D13',
+                darkContainerLow: '#1D1B20',
+                darkContainer: '#211F26',
+                darkContainerHigh: '#2B2930',
+                darkContainerHighest: '#36343B'
+              },
+              outline: {
+                DEFAULT: '#79747E',
+                variant: '#CAC4D0',
+                dark: '#938F96',
+                darkVariant: '#49454F'
+              }
+            }
+          },
+          borderRadius: {
+            'm3-xs': '4px',
+            'm3-sm': '8px',
+            'm3-md': '12px',
+            'm3-lg': '16px',
+            'm3-xl': '28px',
+            'm3-full': '9999px'
+          },
+          boxShadow: {
+            'm3-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
+            'm3-2': '0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
+            'm3-3': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30)',
+            'm3-4': '0px 6px 10px 4px rgba(0, 0, 0, 0.15), 0px 2px 4px 0px rgba(0, 0, 0, 0.30)',
+            'm3-5': '0px 8px 12px 6px rgba(0, 0, 0, 0.15), 0px 4px 4px 0px rgba(0, 0, 0, 0.30)'
+          }
         }
       }
     }
-  }
-}
-</script>
-<style>
-:root {
-  --m3-primary: #4f46e5;
-  --m3-on-primary: #ffffff;
-  --m3-primary-container: #e0e7ff;
-  --m3-on-primary-container: #1e1b4b;
-  --m3-surface: #f8fafc;
-  --m3-on-surface: #0f172a;
-  --m3-surface-variant: #f1f5f9;
-  --m3-on-surface-variant: #475569;
-  --m3-outline: #cbd5e1;
-  --m3-outline-variant: #e2e8f0;
-}
+  </script>
 
-/* Material 3 Palette Themes */
-[data-theme="indigo"] {
-  --m3-primary: #4f46e5; --m3-on-primary: #ffffff;
-  --m3-primary-container: #e0e7ff; --m3-on-primary-container: #1e1b4b;
-}
-[data-theme="emerald"] {
-  --m3-primary: #059669; --m3-on-primary: #ffffff;
-  --m3-primary-container: #d1fae5; --m3-on-primary-container: #064e3b;
-}
-[data-theme="rose"] {
-  --m3-primary: #e11d48; --m3-on-primary: #ffffff;
-  --m3-primary-container: #ffe4e6; --m3-on-primary-container: #881337;
-}
-[data-theme="amber"] {
-  --m3-primary: #d97706; --m3-on-primary: #ffffff;
-  --m3-primary-container: #fef3c7; --m3-on-primary-container: #78350f;
-}
-[data-theme="violet"] {
-  --m3-primary: #7c3aed; --m3-on-primary: #ffffff;
-  --m3-primary-container: #ede9fe; --m3-on-primary-container: #4c1d95;
-}
-[data-theme="slate"] {
-  --m3-primary: #475569; --m3-on-primary: #ffffff;
-  --m3-primary-container: #f1f5f9; --m3-on-primary-container: #0f172a;
-}
-
-body {
-  background-color: var(--m3-surface);
-  color: var(--m3-on-surface);
-  font-family: 'Prompt', sans-serif;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.m3-card {
-  background-color: #ffffff;
-  border: 1px solid var(--m3-outline-variant);
-  border-radius: 1.5rem;
-  transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
-}
-.dark .m3-card {
-  background-color: #1e293b;
-  border-color: #334155;
-}
-
-.m3-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
-  border-radius: 9999px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-.m3-btn-primary {
-  background-color: var(--m3-primary);
-  color: var(--m3-on-primary);
-}
-.m3-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
-.m3-btn-tonal {
-  background-color: var(--m3-primary-container);
-  color: var(--m3-on-primary-container);
-}
-.m3-btn-tonal:hover { opacity: 0.85; }
-.m3-btn-outlined {
-  border: 1px solid var(--m3-outline);
-  color: var(--m3-primary);
-}
-.m3-btn-outlined:hover { background-color: var(--m3-primary-container); }
-
-.m3-input {
-  width: 100%;
-  border-radius: 0.75rem;
-  border: 1px solid var(--m3-outline);
-  background: transparent;
-  padding: 0.625rem 1rem;
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.m3-input:focus {
-  border-color: var(--m3-primary);
-  box-shadow: 0 0 0 2px var(--m3-primary-container);
-}
-
-dialog::backdrop {
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
-}
-
-#pr { display: none; }
-@media print {
-  body { background: #fff !important; color: #000 !important; }
-  #app, dialog, #cartbar, #toast { display: none !important; }
-  #pr { display: block; font-size: 13px; }
-  #pr h2 { font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 12px; }
-  #pr table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  #pr th, #pr td { border: 1px solid #000; padding: 6px; font-size: 12px; }
-  #pr .sg { display: flex; justify-content: space-around; margin-top: 50px; text-align: center; }
-  #pr .sg i { display: block; border-top: 1px dotted #000; margin-top: 30px; padding-top: 4px; font-style: normal; }
-}
-</style>
-</head>
-<body class="h-full antialiased selection:bg-indigo-500 selection:text-white">
-
-<div id="app" class="min-h-full flex flex-col"></div>
-<div id="pr"></div>
-<div id="cartbar"></div>
-<div id="toast" class="pointer-events-none fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
-
-<dialog id="dlg" class="m3-card p-6 shadow-2xl backdrop:backdrop-blur-sm w-[92vw] max-w-md rounded-3xl border-0">
-  <form method="dialog" id="frm"></form>
-</dialog>
-
-<script>
-/* ================= Config & State ================= */
-const $ = s => document.querySelector(s);
-const v = id => $("#"+id)?.value || "";
-const esc = s => String(s??"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const uid = () => Math.random().toString(36).slice(2, 10);
-const today = () => new Date().toISOString().slice(0, 10);
-const fa = (n, x="") => `<i class="fa-solid fa-${n} ${x}"></i>`;
-
-// Dynamic Path Config
-const DEFAULT_PATH = "database/stock-data.json";
-
-// Theme Palette State
-let currentTheme = localStorage.getItem("m3-theme") || "indigo";
-function setTheme(theme) {
-  currentTheme = theme;
-  localStorage.setItem("m3-theme", theme);
-  document.documentElement.setAttribute("data-theme", theme);
-  render();
-}
-document.documentElement.setAttribute("data-theme", currentTheme);
-
-// Application Clean State (เริ่มต้นแบบไม่มีข้อมูลสินค้าค้างใน HTML)
-let S = { cats: [], log: [], users: [], trash: [], seq: 0 };
-let loaded = false, src = null, fh = null, admin = false, user = null, cart = [], ci = {}, tab = "all", bcat = null, q = "";
-let stat = { t: "กำลังเชื่อมต่อ…", c: "" };
-
-function setStatus(t, c) { stat = { t, c: c || "" }; const e = $("#st"); if (e) { e.textContent = t; } }
-function toast(m, type="ok") {
-  const t = document.createElement("div");
-  t.className = `pointer-events-auto flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-xl ${type==="er" ? "bg-red-600" : "bg-emerald-600"}`;
-  t.innerHTML = `${fa(type==="er"?"circle-exclamation":"check-circle")} ${m}`;
-  $("#toast").append(t);
-  setTimeout(() => t.remove(), 3500);
-}
-
-function ask(title, html, ok, extra) {
-  $("#frm").innerHTML = `<h3 class="text-xl font-bold mb-4">${title}</h3>${html}<div class="mt-6 flex justify-end gap-2">${extra||""}<button type="button" class="m3-btn m3-btn-outlined" id="cn">ยกเลิก</button><button class="m3-btn m3-btn-primary" id="ok" type="button">ตกลง</button></div>`;
-  if (!$("#dlg").open) $("#dlg").showModal();
-  $("#cn").onclick = () => $("#dlg").close();
-  $("#ok").onclick = () => { if (ok() !== false) $("#dlg").close(); };
-}
-
-/* ================= Storage & Data Normalization ================= */
-function norm(d) {
-  if (!d || typeof d !== 'object') d = {};
-  d.cats = Array.isArray(d.cats) ? d.cats : [];
-  d.log = Array.isArray(d.log) ? d.log : [];
-  d.users = Array.isArray(d.users) ? d.users : [];
-  d.trash = Array.isArray(d.trash) ? d.trash : [];
-  d.seq = d.seq || 0;
-  return d;
-}
-
-async function useData(txt, h, sr) {
-  try {
-    const d = norm(JSON.parse(txt));
-    S = d; fh = h || null; src = sr || (h ? "file" : null); loaded = true;
-    try { localStorage.setItem("stock-v1", JSON.stringify(S)); } catch(e){}
-    setStatus(fh ? `เชื่อมต่อไฟล์ ${fh.name}` : "โหลดข้อมูลออนไลน์สำเร็จ", "ok");
-  } catch(e) {
-    toast("รูปแบบไฟล์ JSON ไม่ถูกต้อง", "er");
-  }
-  render();
-}
-
-/* ================= GitHub Sync ================= */
-const ghCfg = () => {
-  try { return JSON.parse(localStorage.getItem("gh-cfg") || "{}"); } catch(e) { return {}; }
-};
-
-async function ghLoad() {
-  const c = ghCfg();
-  if (!c.owner || !c.repo) return false;
-  try {
-    const filePath = c.path || DEFAULT_PATH;
-    const url = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${filePath}?t=${Date.now()}`;
-    const h = { Accept: "application/vnd.github+json" };
-    if (c.token) h.Authorization = "Bearer " + c.token;
-    const r = await fetch(url, { headers: h, cache: "no-store" });
-    if (r.ok) {
-      const j = await r.json();
-      const txt = decodeURIComponent(escape(atob(j.content.replace(/\s/g, ""))));
-      await useData(txt, null, "gh");
-      return true;
+  <style>
+    /* M3 Ripple & Smooth Motion Transitions */
+    .m3-ripple {
+      position: relative;
+      overflow: hidden;
+      transform: translateZ(0);
     }
-  } catch(e) { console.error(e); }
-  return false;
-}
+    .m3-ripple::after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, currentColor 10%, transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transform: scale(10, 10);
+      opacity: 0;
+      transition: transform .5s, opacity 1s;
+    }
+    .m3-ripple:active::after {
+      transform: scale(0, 0);
+      opacity: .2;
+      transition: 0s;
+    }
+    
+    .glass-backdrop {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
 
-/* ================= Routing & Views ================= */
-const R = () => {
-  const h = location.hash.replace(/^#\/?/, "").split("/");
-  return h[0] === "admin" ? { area: "back", page: h[1] || "dash" } : { area: "front", page: h[0] || "stock" };
-};
-
-function headerUI() {
-  return `
-  <header class="sticky top-0 z-30 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-      <div class="flex items-center gap-3">
-        <div class="grid h-10 w-10 place-items-center rounded-2xl bg-theme-primary text-white shadow-md">
-          ${fa("boxes-stacked", "text-lg")}
-        </div>
-        <div>
-          <h1 class="text-base font-bold leading-tight">ระบบเบิกของติดตั้ง</h1>
-          <span id="st" class="text-xs text-slate-500">${esc(stat.t)}</span>
-        </div>
-      </div>
-
-      <!-- Color Theme Selector -->
-      <div class="flex items-center gap-2">
-        <div class="flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800 p-1.5 border border-slate-200 dark:border-slate-700">
-          ${['indigo', 'emerald', 'rose', 'amber', 'violet', 'slate'].map(t => `
-            <button data-act="set-theme" data-id="${t}" class="h-5 w-5 rounded-full transition-transform ${currentTheme===t?'scale-125 ring-2 ring-offset-2 ring-slate-400':''}" style="background-color: ${t==='indigo'?'#4f46e5':t==='emerald'?'#059669':t==='rose'?'#e11d48':t==='amber'?'#d97706':t==='violet'?'#7c3aed':'#475569'}"></button>
-          `).join('')}
-        </div>
-        <a href="#/admin" class="m3-btn m3-btn-tonal !py-1.5 !px-3 text-xs">${fa("user-shield")} หลังบ้าน</a>
-      </div>
-    </div>
-  </header>`;
-}
-
-function vHome() {
-  const allItems = S.cats.flatMap(c => c.items || []);
-  return `
-  <div class="mx-auto max-w-7xl px-4 py-6">
-    <!-- Hero Banner -->
-    <div class="m3-card p-6 md:p-8 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-transparent mb-6">
-      <div class="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-theme-primaryContainer px-3 py-1 text-xs font-semibold text-theme-onPrimaryContainer mb-2">
-            ${fa("cloud")} Online / Offline JSON Direct
-          </span>
-          <h2 class="text-2xl font-bold">ระบบจัดการเบิกวัสดุอุปกรณ์</h2>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">เริ่มต้นใช้งานด้วยการเชื่อมต่อไฟล์ database/stock-data.json หรือดึงข้อมูลผ่าน GitHub API</p>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button data-act="gh-set" class="m3-btn m3-btn-primary">${fa("cloud")} ตั้งค่า GitHub API</button>
-          <button data-act="f-open" class="m3-btn m3-btn-tonal">${fa("folder-open")} เปิดไฟล์ .json</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty State / Data View -->
-    ${allItems.length === 0 ? `
-      <div class="m3-card p-12 text-center">
-        <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-slate-100 dark:bg-slate-800 text-3xl text-slate-400 mb-4">
-          ${fa("box-open")}
-        </div>
-        <h3 class="text-lg font-bold">ยังไม่มีข้อมูลสินค้าในระบบ</h3>
-        <p class="text-sm text-slate-500 mt-1 max-w-md mx-auto">ระบบเริ่มต้นแบบสะอาดโดยไม่มีข้อมูลตัวอย่างฝังในโค้ด คุณสามารถเชื่อมต่อไฟล์ JSON หรือตั้งค่า GitHub API เพื่อดึงข้อมูลสินค้ามาแสดงผลได้ทันที</p>
-        <div class="mt-6 flex justify-center gap-3">
-          <a href="#/admin" class="m3-btn m3-btn-primary">${fa("plus")} จัดการในหลังบ้าน</a>
-        </div>
-      </div>
-    ` : `
-      <div class="m3-card p-6">
-        <h3 class="text-lg font-bold mb-4">รายการสินค้าทั้งหมด (${allItems.length} รายการ)</h3>
-      </div>
-    `}
-  </div>`;
-}
-
-function vBackOffice() {
-  const c = ghCfg();
-  return `
-  <div class="mx-auto max-w-7xl px-4 py-6">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-bold flex items-center gap-2">${fa("user-shield")} การจัดการระบบหลังบ้าน</h2>
-      <a href="#/" class="m3-btn m3-btn-outlined text-xs">${fa("arrow-left")} กลับหน้าหลัก</a>
-    </div>
-
-    <div class="grid gap-6 md:grid-cols-2">
-      <div class="m3-card p-6">
-        <h3 class="font-bold text-base mb-2 flex items-center gap-2">${fa("cloud")} เชื่อมต่อ GitHub API</h3>
-        <p class="text-xs text-slate-500 mb-4">ดึงและบันทึกข้อมูลสินค้าไปยังไฟล์ <code class="bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-theme-primary">database/stock-data.json</code> บน GitHub Repository โดยตรง</p>
-        <button data-act="gh-set" class="m3-btn m3-btn-primary w-full">${fa("gear")} ตั้งค่า GitHub Connection</button>
-      </div>
-
-      <div class="m3-card p-6">
-        <h3 class="font-bold text-base mb-2 flex items-center gap-2">${fa("file-import")} นำเข้า / ส่งออกข้อมูล JSON</h3>
-        <p class="text-xs text-slate-500 mb-4">สำรองข้อมูลหรือนำเข้าไฟล์ stock-data.json จากเครื่องของคุณ</p>
-        <div class="flex gap-2">
-          <button data-act="f-open" class="m3-btn m3-btn-tonal flex-1">${fa("folder-open")} เปิดไฟล์ JSON</button>
-          <button data-act="bk-json" class="m3-btn m3-btn-outlined flex-1">${fa("download")} ดาวน์โหลด JSON</button>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-/* ================= Render App ================= */
-function render() {
-  const app = $("#app");
-  const r = R();
-  if (r.area === "back") {
-    app.innerHTML = headerUI() + vBackOffice();
-  } else {
-    app.innerHTML = headerUI() + vHome();
-  }
-}
-
-/* ================= Event Listeners ================= */
-document.addEventListener("click", e => {
-  const b = e.target.closest("[data-act]");
-  if (!b) return;
-  const act = b.dataset.act;
-  const id = b.dataset.id;
-
-  if (act === "set-theme") setTheme(id);
-  if (act === "gh-set") {
-    const c = ghCfg();
-    ask("ตั้งค่า GitHub API Online", `
-      <label class="block text-xs font-semibold mb-1">Owner (ชื่อบัญชี GitHub)</label>
-      <input id="g1" class="m3-input mb-3" value="${esc(c.owner||"")}" placeholder="เช่น myusername">
-      
-      <label class="block text-xs font-semibold mb-1">Repository Name</label>
-      <input id="g2" class="m3-input mb-1" value="${esc(c.repo||"")}" placeholder="เช่น my-stock-repo">
-      <p class="text-[11px] text-slate-400 mb-3">*ใส่เฉพาะชื่อ Repository เท่านั้น ระบบจะอ้างอิงไปที่โฟลเดอร์ database/stock-data.json ให้อัตโนมัติ</p>
-      
-      <label class="block text-xs font-semibold mb-1">Personal Access Token (Fine-grained token)</label>
-      <input id="g3" type="password" class="m3-input mb-1" value="${esc(c.token||"")}" placeholder="github_pat_...">
-    `, () => {
-      const owner = v("g1").trim(), repo = v("g2").trim(), token = v("g3").trim();
-      if (!owner || !repo) { toast("กรุณากรอกข้อมูล Owner และ Repo", "er"); return false; }
-      localStorage.setItem("gh-cfg", JSON.stringify({ owner, repo, path: DEFAULT_PATH, token }));
-      ghLoad().then(ok => {
-        if (ok) toast("เชื่อมต่อ GitHub สำเร็จ!");
-        else toast("ไม่สามารถโหลดไฟล์ข้อมูลจาก GitHub ได้", "er");
-      });
-    });
-  }
-  if (act === "f-open") {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = e => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = ev => useData(ev.target.result, file, "file");
-        reader.readAsText(file);
+    /* Print Stylesheet for Official Withdrawal Slip */
+    @media print {
+      body * {
+        visibility: hidden;
       }
+      #printable-slip, #printable-slip * {
+        visibility: visible;
+      }
+      #printable-slip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px;
+        background: white !important;
+        color: black !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(121, 116, 126, 0.3);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(121, 116, 126, 0.5);
+    }
+  </style>
+</head>
+
+<body class="bg-m3-surface dark:bg-m3-surface-darkDim text-slate-800 dark:text-slate-100 font-sans h-full flex flex-col transition-colors duration-300 antialiased selection:bg-m3-primary-container selection:text-m3-primary-onContainer">
+
+  <div id="app" class="h-full flex flex-col overflow-hidden">
+    
+    <!-- Top App Bar (M3 Center-aligned / Small App Bar) -->
+    <header class="h-16 px-4 flex items-center justify-between border-b border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 bg-m3-surface-containerLow/80 dark:bg-m3-surface-darkContainerLow/80 glass-backdrop z-20 shrink-0">
+      <div class="flex items-center gap-3">
+        <button id="btn-toggle-rail" onclick="toggleNavRail()" class="w-10 h-10 rounded-m3-full flex items-center justify-center hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh text-slate-700 dark:text-slate-200 transition-all m3-ripple">
+          <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-m3-lg bg-m3-primary flex items-center justify-center text-white shadow-m3-1">
+            <i class="fa-solid fa-boxes-packing text-base"></i>
+          </div>
+          <div>
+            <h1 class="text-base font-semibold leading-tight tracking-wide text-slate-900 dark:text-white">Equipment Withdrawal</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Material Design 3 Stock Management</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Search & Quick Actions -->
+      <div class="flex items-center gap-2">
+        <!-- Live Sync Status Chip -->
+        <div id="sync-status-badge" onclick="openSyncDialog()" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-m3-full text-xs font-medium bg-m3-tertiary-container text-m3-tertiary-onContainer dark:bg-m3-tertiary-darkContainer dark:text-m3-tertiary-darkOnContainer cursor-pointer hover:opacity-90 transition-all shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="sync-status-text">Local Database</span>
+        </div>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button onclick="toggleTheme()" class="w-10 h-10 rounded-m3-full flex items-center justify-center hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh text-slate-700 dark:text-slate-200 transition-all m3-ripple" title="เปลี่ยนธีม">
+          <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
+        </button>
+
+        <!-- Active Cart Badge Button -->
+        <button onclick="openCartDrawer()" class="relative w-10 h-10 rounded-m3-full flex items-center justify-center hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh text-m3-primary dark:text-m3-primary-dark transition-all m3-ripple" title="รายการเบิกอุปกรณ์">
+          <i class="fa-solid fa-cart-flatbed text-lg"></i>
+          <span id="cart-badge-count" class="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-m3-error text-white text-xs font-bold flex items-center justify-center hidden shadow-md transform scale-100 transition-transform">0</span>
+        </button>
+
+        <!-- Current User Profile Chip -->
+        <div class="relative">
+          <button onclick="toggleUserDropdown()" class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-m3-full hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all border border-m3-outline-variant/50 dark:border-m3-outline-darkVariant/50">
+            <div id="user-avatar" class="w-7 h-7 rounded-full bg-m3-primary-container text-m3-primary-onContainer dark:bg-m3-primary-darkContainer dark:text-m3-primary-darkOnContainer font-bold text-xs flex items-center justify-center uppercase">
+              U
+            </div>
+            <span id="user-name-display" class="text-xs font-medium hidden md:inline">ผู้ใช้งาน</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+          
+          <!-- Profile Dropdown Menu -->
+          <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-m3-lg bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 shadow-m3-3 py-2 z-50">
+            <div class="px-4 py-2 border-b border-m3-outline-variant/20 dark:border-m3-outline-darkVariant/20">
+              <p id="user-dropdown-name" class="text-sm font-semibold text-slate-900 dark:text-slate-100">User</p>
+              <p id="user-dropdown-role" class="text-xs text-m3-primary dark:text-m3-primary-dark font-medium capitalize">Technician</p>
+            </div>
+            <button onclick="switchUserRole()" class="w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <i class="fa-solid fa-user-gear w-4"></i> สลับสิทธิ์ผู้ใช้งาน (Role)
+            </button>
+            <button onclick="openSyncDialog()" class="w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <i class="fa-solid fa-cloud-arrow-up w-4"></i> ตั้งค่าการ Sync (GitHub / Local)
+            </button>
+            <button onclick="exportFullData()" class="w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <i class="fa-solid fa-file-export w-4"></i> ส่งออกข้อมูล Backup (JSON)
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden relative">
+      
+      <!-- M3 Navigation Rail (Desktop/Tablet Expandable) -->
+      <aside id="nav-rail" class="w-20 transition-all duration-300 ease-in-out bg-m3-surface-containerLow dark:bg-m3-surface-darkContainerLow border-r border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 flex flex-col justify-between py-4 shrink-0 z-10">
+        <div class="flex flex-col gap-2 px-2">
+          <!-- Nav Item: Catalog -->
+          <button onclick="switchTab('catalog')" id="nav-btn-catalog" class="nav-item active flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
+            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
+              <i class="fa-solid fa-boxes-stacked text-base"></i>
+            </div>
+            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">รายการอุปกรณ์</span>
+          </button>
+
+          <!-- Nav Item: History / Transactions -->
+          <button onclick="switchTab('history')" id="nav-btn-history" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
+            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
+              <i class="fa-solid fa-clock-rotate-left text-base"></i>
+            </div>
+            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">ประวัติการเบิก</span>
+          </button>
+
+          <!-- Nav Item: Admin Stock Management (Admin Only Visual Indicator) -->
+          <button onclick="switchTab('inventory')" id="nav-btn-inventory" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
+            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
+              <i class="fa-solid fa-warehouse text-base"></i>
+            </div>
+            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">จัดการคลัง</span>
+          </button>
+
+          <!-- Nav Item: Analytics / Dashboard -->
+          <button onclick="switchTab('analytics')" id="nav-btn-analytics" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
+            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
+              <i class="fa-solid fa-chart-pie text-base"></i>
+            </div>
+            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">แดชบอร์ด</span>
+          </button>
+
+          <!-- Nav Item: Trash Bin -->
+          <button onclick="switchTab('trash')" id="nav-btn-trash" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
+            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
+              <i class="fa-solid fa-trash-can text-base"></i>
+            </div>
+            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">ถังขยะ</span>
+          </button>
+        </div>
+
+        <!-- FAB (Floating Action Button) in Navigation Rail -->
+        <div class="px-2 pt-2">
+          <button onclick="openCartDrawer()" class="w-full py-3.5 rounded-m3-xl bg-m3-primary text-white hover:bg-m3-primary/90 shadow-m3-2 flex flex-col items-center justify-center gap-1 transition-all m3-ripple">
+            <i class="fa-solid fa-paper-plane text-lg"></i>
+            <span class="text-[10px] font-semibold">ส่งใบเบิก</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-m3-surface dark:bg-m3-surface-darkDim">
+        
+        <!-- PAGE 1: EQUIPMENT CATALOG TAB -->
+        <section id="tab-catalog" class="tab-content block space-y-6 max-w-7xl mx-auto">
+          
+          <!-- Search Header & Filter Chips Bar -->
+          <div class="space-y-4">
+            <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+              
+              <!-- M3 Search Bar -->
+              <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input id="catalog-search" type="text" oninput="filterCatalog()" placeholder="ค้นหารหัสสินค้า, ชื่ออุปกรณ์, หมวดหมู่ หรือสถานที่เก็บ..." class="w-full pl-11 pr-10 py-3 rounded-m3-full bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh border border-transparent focus:border-m3-primary focus:bg-m3-surface-containerLowest dark:focus:bg-m3-surface-darkContainer text-sm outline-none transition-all shadow-sm">
+                <button onclick="clearSearch()" id="btn-clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div>
+
+              <!-- Action Controls: Direct File System Access & Quick Import/Export -->
+              <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+                <button onclick="openFileSystemFile()" class="px-3.5 py-2.5 rounded-m3-full border border-m3-outline-variant/60 dark:border-m3-outline-darkVariant/60 text-xs font-semibold hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-1.5 transition-all text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                  <i class="fa-solid fa-folder-open text-m3-primary dark:text-m3-primary-dark"></i>
+                  <span>เปิด stock-data.json</span>
+                </button>
+                <button onclick="triggerCSVImport()" class="px-3.5 py-2.5 rounded-m3-full border border-m3-outline-variant/60 dark:border-m3-outline-darkVariant/60 text-xs font-semibold hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-1.5 transition-all text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                  <i class="fa-solid fa-file-csv text-emerald-600"></i>
+                  <span>นำเข้า CSV</span>
+                </button>
+                <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleCSVImport(event)">
+              </div>
+            </div>
+
+            <!-- Filter Chips (Segmented Pill Style) -->
+            <div id="category-chips-container" class="flex items-center gap-2 overflow-x-auto pt-1 pb-2 no-scrollbar">
+              <!-- Dynamically populated chips -->
+            </div>
+          </div>
+
+          <!-- Stock Grid Summary Bar -->
+          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
+            <span>แสดงทั้งหมด <strong id="catalog-count-display" class="text-slate-900 dark:text-slate-100">0</strong> รายการ</span>
+            <div class="flex items-center gap-2">
+              <label class="flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" id="chk-low-stock-only" onchange="filterCatalog()" class="rounded text-m3-primary focus:ring-m3-primary">
+                <span>แสดงเฉพาะของใกล้หมด (< min)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Product Cards Grid (M3 Outlined / Elevated Cards) -->
+          <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Dynamic M3 Product Cards generated via JS -->
+          </div>
+
+          <!-- Empty State Container -->
+          <div id="catalog-empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center">
+            <div class="w-16 h-16 rounded-full bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh flex items-center justify-center text-slate-400 mb-3">
+              <i class="fa-solid fa-box-open text-2xl"></i>
+            </div>
+            <h3 class="text-base font-semibold text-slate-800 dark:text-slate-200">ไม่พบรายการอุปกรณ์</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ลองเปลี่ยนคำค้นหา หรือเลือกหมวดใหม่อีกครั้ง</p>
+          </div>
+        </section>
+
+        <section id="tab-history" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white">ประวัติการเบิกอุปกรณ์</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">รายการใบเบิกทั้งหมดที่ถูกบันทึกไว้ในระบบ</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <input type="text" id="history-search" oninput="renderHistoryTable()" placeholder="ค้นหาตามเลขที่ใบเบิก หรือผู้เบิก..." class="px-4 py-2 rounded-m3-full bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh border border-transparent text-xs outline-none w-64 focus:border-m3-primary">
+              <button onclick="exportHistoryCSV()" class="px-3 py-2 rounded-m3-full border border-m3-outline-variant/60 text-xs font-semibold hover:bg-m3-surface-container flex items-center gap-1.5">
+                <i class="fa-solid fa-download"></i> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- History Table Container -->
+          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-m3-surface-containerHigh/60 dark:bg-m3-surface-darkContainerHigh/60 text-slate-600 dark:text-slate-300 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="p-3.5">เลขที่ใบเบิก</th>
+                    <th class="p-3.5">วันที่-เวลา</th>
+                    <th class="p-3.5">ผู้ขอเบิก</th>
+                    <th class="p-3.5">งาน / สถานที่</th>
+                    <th class="p-3.5 text-center">จำนวนรายการ</th>
+                    <th class="p-3.5 text-center">สถานะ</th>
+                    <th class="p-3.5 text-right">การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body" class="divide-y divide-m3-outline-variant/20 dark:divide-m3-outline-darkVariant/20">
+                  <!-- Dynamic rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-inventory" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white">จัดการคลังสินค้าและอุปกรณ์</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">เพิ่ม แก้ไข หรือปรับปรุงจำนวนอุปกรณ์คงเหลือ</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="openAddProductModal()" class="px-4 py-2.5 rounded-m3-full bg-m3-primary text-white text-xs font-semibold hover:bg-m3-primary/90 flex items-center gap-2 shadow-m3-1 m3-ripple">
+                <i class="fa-solid fa-plus"></i> เพิ่มอุปกรณ์ใหม่
+              </button>
+            </div>
+          </div>
+
+          <!-- Inventory List Card Table -->
+          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-m3-surface-containerHigh/60 dark:bg-m3-surface-darkContainerHigh/60 text-slate-600 dark:text-slate-300 font-semibold">
+                  <tr>
+                    <th class="p-3.5">รหัสสินค้า</th>
+                    <th class="p-3.5">ชื่ออุปกรณ์</th>
+                    <th class="p-3.5">หมวดหมู่</th>
+                    <th class="p-3.5">สถานที่เก็บ</th>
+                    <th class="p-3.5 text-center">คงเหลือ / ขั้นต่ำ</th>
+                    <th class="p-3.5 text-right">การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="divide-y divide-m3-outline-variant/20 dark:divide-m3-outline-darkVariant/20">
+                  <!-- Dynamic Rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-analytics" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white">แดชบอร์ดสรุปภาพรวม</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">วิเคราะห์อัตราการเบิกใช้อุปกรณ์และสินค้าคงคลัง</p>
+          </div>
+
+          <!-- Summary Key Metrics Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-4 rounded-m3-xl bg-m3-primary-container/40 dark:bg-m3-primary-darkContainer/30 border border-m3-primary/20">
+              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">จำนวนอุปกรณ์ทั้งหมด</p>
+              <h3 id="stat-total-items" class="text-2xl font-bold text-m3-primary-onContainer dark:text-m3-primary-darkOnContainer mt-1">0</h3>
+            </div>
+            <div class="p-4 rounded-m3-xl bg-m3-warning-container/40 dark:bg-m3-warning-darkContainer/30 border border-m3-warning/20">
+              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">สินค้าใกล้หมด (Low Stock)</p>
+              <h3 id="stat-low-stock" class="text-2xl font-bold text-m3-warning dark:text-m3-warning-dark mt-1">0</h3>
+            </div>
+            <div class="p-4 rounded-m3-xl bg-m3-tertiary-container/40 dark:bg-m3-tertiary-darkContainer/30 border border-m3-tertiary/20">
+              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">จำนวนใบเบิกทั้งหมด</p>
+              <h3 id="stat-total-slips" class="text-2xl font-bold text-m3-tertiary dark:text-m3-tertiary-dark mt-1">0</h3>
+            </div>
+            <div class="p-4 rounded-m3-xl bg-m3-secondary-container/40 dark:bg-m3-secondary-darkContainer/30 border border-m3-secondary/20">
+              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">รวมเบิกวันนี้</p>
+              <h3 id="stat-today-withdrawals" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0</h3>
+            </div>
+          </div>
+
+          <!-- Analytics Charts Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="p-5 rounded-m3-xl bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30">
+              <h4 class="text-sm font-semibold mb-4 text-slate-800 dark:text-slate-200">อุปกรณ์ที่มีการเบิกสูงสุด (Top Withdrawn)</h4>
+              <div class="h-64 relative">
+                <canvas id="chart-top-withdrawn"></canvas>
+              </div>
+            </div>
+            <div class="p-5 rounded-m3-xl bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30">
+              <h4 class="text-sm font-semibold mb-4 text-slate-800 dark:text-slate-200">สัดส่วนสต็อกตามหมวดหมู่</h4>
+              <div class="h-64 relative flex items-center justify-center">
+                <canvas id="chart-category-stock"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-trash" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 dark:text-white">ถังขยะ (Trash Bin)</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">รายการที่ถูกลบชั่วคราว สามารถกู้คืนหรือลบถาวรได้ที่นี่</p>
+            </div>
+            <button onclick="emptyTrashBin()" class="px-3.5 py-2 rounded-m3-full bg-m3-error text-white text-xs font-semibold hover:bg-m3-error/90 flex items-center gap-1.5 shadow-sm">
+              <i class="fa-solid fa-broom"></i> ล้างถังขยะทั้งหมด
+            </button>
+          </div>
+
+          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-m3-surface-containerHigh/60 dark:bg-m3-surface-darkContainerHigh/60 text-slate-600 dark:text-slate-300 font-semibold">
+                  <tr>
+                    <th class="p-3.5">ประเภท</th>
+                    <th class="p-3.5">รายการ / ID</th>
+                    <th class="p-3.5">วันที่ถูกลบ</th>
+                    <th class="p-3.5 text-right">การกู้คืน</th>
+                  </tr>
+                </thead>
+                <tbody id="trash-table-body" class="divide-y divide-m3-outline-variant/20 dark:divide-m3-outline-darkVariant/20">
+                  <!-- Dynamic Trash items -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <div id="cart-drawer-backdrop" onclick="closeCartDrawer()" class="fixed inset-0 bg-slate-900/40 glass-backdrop z-40 hidden transition-opacity"></div>
+    <aside id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full sm:w-[420px] bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow z-50 border-l border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 shadow-m3-5 transform translate-x-full transition-transform duration-300 flex flex-col">
+      
+      <!-- Drawer Header -->
+      <div class="p-4 border-b border-m3-outline-variant/20 dark:border-m3-outline-darkVariant/20 flex items-center justify-between bg-m3-surface-containerLow dark:bg-m3-surface-darkContainer">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-solid fa-cart-flatbed text-m3-primary dark:text-m3-primary-dark text-lg"></i>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">ตะกร้าขอเบิกอุปกรณ์</h3>
+            <p id="cart-drawer-subtitle" class="text-xs text-slate-500">เลือกแล้ว 0 รายการ</p>
+          </div>
+        </div>
+        <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-m3-surface-containerHigh text-slate-500">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <!-- Drawer Content: Selected Items List with Quick Adjust -->
+      <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- Dynamic Cart Items -->
+      </div>
+
+      <!-- Drawer Form & Footer Actions -->
+      <div class="p-4 border-t border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 bg-m3-surface-containerLow/50 dark:bg-m3-surface-darkContainerLow/50 space-y-3">
+        
+        <!-- Withdrawal Form Inputs -->
+        <div class="space-y-2 text-xs">
+          <div>
+            <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">ชื่อ-นามสกุล ผู้ขอเบิก *</label>
+            <input type="text" id="cart-requester-name" placeholder="ระบุชื่อผู้เบิกอุปกรณ์" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer text-xs outline-none focus:border-m3-primary">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">ชื่องาน / หน่วยงาน / โครงการ *</label>
+            <input type="text" id="cart-project-name" placeholder="เช่น ติดตั้งสาขา พญาไท / Job #402" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer text-xs outline-none focus:border-m3-primary">
+          </div>
+          <div>
+            <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">หมายเหตุเพิ่มเติม</label>
+            <input type="text" id="cart-remarks" placeholder="ระบุเหตุผลหรือสถานที่ใช้งาน" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer text-xs outline-none focus:border-m3-primary">
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 flex items-center gap-2">
+          <button onclick="clearCart()" class="w-1/3 py-2.5 rounded-m3-full border border-m3-outline text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-m3-surface-container">
+            ล้างตะกร้า
+          </button>
+          <button onclick="submitWithdrawalOrder()" class="w-2/3 py-2.5 rounded-m3-full bg-m3-primary text-white text-xs font-semibold hover:bg-m3-primary/90 shadow-m3-2 flex items-center justify-center gap-2 m3-ripple">
+            <i class="fa-solid fa-check"></i> บันทึกและพิมพ์ใบเบิก
+          </button>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  
+  <!-- Add / Edit Product Modal Container -->
+  <div id="product-modal" class="fixed inset-0 bg-slate-900/50 glass-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow w-full max-w-md rounded-m3-xl p-6 shadow-m3-4 border border-m3-outline-variant/30 space-y-4 transform transition-all scale-100">
+      <div class="flex justify-between items-center border-b border-m3-outline-variant/20 pb-3">
+        <h3 id="product-modal-title" class="text-base font-bold text-slate-900 dark:text-white">เพิ่มอุปกรณ์ใหม่</h3>
+        <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="product-form" onsubmit="handleProductSubmit(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="modal-product-id">
+        <div>
+          <label class="block font-medium mb-1">รหัสสินค้า (SKU/Code) *</label>
+          <input type="text" id="modal-sku" required class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+        </div>
+        <div>
+          <label class="block font-medium mb-1">ชื่ออุปกรณ์ *</label>
+          <input type="text" id="modal-name" required class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-medium mb-1">หมวดหมู่</label>
+            <input type="text" id="modal-category" placeholder="เช่น สายไฟ, กล้อง" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+          </div>
+          <div>
+            <label class="block font-medium mb-1">หน่วยนับ</label>
+            <input type="text" id="modal-unit" placeholder="ชิ้น, ตัว, เมตร" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-medium mb-1">จำนวนคงเหลือ *</label>
+            <input type="number" id="modal-quantity" min="0" required class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+          </div>
+          <div>
+            <label class="block font-medium mb-1">จำนวนขั้นต่ำ (Low Stock)</label>
+            <input type="number" id="modal-min-qty" min="0" value="5" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+          </div>
+        </div>
+        <div>
+          <label class="block font-medium mb-1">สถานที่เก็บ (Location / Shelf)</label>
+          <input type="text" id="modal-location" placeholder="เช่น ชั้น A3, ตู้ B" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2">
+          <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-m3-full border border-m3-outline text-xs font-medium">ยกเลิก</button>
+          <button type="submit" class="px-4 py-2 rounded-m3-full bg-m3-primary text-white text-xs font-medium hover:bg-m3-primary/90">บันทึกข้อมูล</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sync Configuration Modal (GitHub Sync & Database Access) -->
+  <div id="sync-modal" class="fixed inset-0 bg-slate-900/50 glass-backdrop z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow w-full max-w-lg rounded-m3-xl p-6 shadow-m3-4 border border-m3-outline-variant/30 space-y-4">
+      <div class="flex justify-between items-center border-b border-m3-outline-variant/20 pb-3">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-m3-primary"></i> ตั้งค่าการเชื่อมโยงข้อมูล (Sync System)
+        </h3>
+        <button onclick="closeSyncDialog()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="p-3 rounded-m3-lg bg-m3-primary-container/30 text-m3-primary-onContainer border border-m3-primary/20">
+          <p class="font-semibold mb-1">IndexedDB Local Storage Enabled</p>
+          <p class="text-[11px] opacity-90">ข้อมูลของคุณจะถูกบันทึกอย่างปลอดภัยในเบราว์เซอร์ รวมถึงรองรับการเลือกไฟล์ <code>database/stock-data.json</code> ผ่าน File System Access API</p>
+        </div>
+
+        <!-- GitHub Integration Section -->
+        <div class="space-y-2 border-t border-m3-outline-variant/20 pt-3">
+          <h4 class="font-bold text-slate-800 dark:text-slate-200">GitHub API Integration (Optional Sync)</h4>
+          <div>
+            <label class="block font-medium mb-1">GitHub Personal Access Token</label>
+            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-medium mb-1">Repo Name (user/repo)</label>
+              <input type="text" id="gh-repo" placeholder="owner/repository" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none">
+            </div>
+            <div>
+              <label class="block font-medium mb-1">FilePath in Repo</label>
+              <input type="text" id="gh-path" value="database/stock-data.json" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-between items-center">
+        <button onclick="saveSyncSettings()" class="px-4 py-2 rounded-m3-full bg-m3-primary text-white text-xs font-medium hover:bg-m3-primary/90">
+          บันทึกการตั้งค่า Sync
+        </button>
+        <button onclick="closeSyncDialog()" class="px-4 py-2 rounded-m3-full border border-m3-outline text-xs font-medium">
+          ปิด
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINTABLE SLIP CONTAINER (Visible only when printing) -->
+  <div id="printable-slip" class="hidden">
+    <!-- Populated dynamically upon print command -->
+  </div>
+
+  <!-- Toast Notification Snackbar -->
+  <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <script>
+    /* ==========================================================================
+       APPLICATION STATE & INITIALIZATION
+       ========================================================================== */
+    const DB_NAME = 'EquipmentWithdrawalDB_M3';
+    const DB_VERSION = 1;
+    let db = null;
+
+    // Default Initial Equipment Data (Fallback / Stock Seed)
+    const initialStockData = [
+      { id: 'EQ-1001', sku: 'CAB-CAT6-01', name: 'สายสัญญาณ LAN CAT6 (300m)', category: 'สายสัญญาณ', unit: 'ม้วน', quantity: 15, minQuantity: 3, location: 'Shelf A-01' },
+      { id: 'EQ-1002', sku: 'CON-RJ45-01', name: 'หัวขั้วต่อ RJ45 Cat6 (100 ชิ้น)', category: 'ข้อต่อและหัวเสียบ', unit: 'กล่อง', quantity: 8, minQuantity: 5, location: 'Shelf A-02' },
+      { id: 'EQ-1003', sku: 'CAM-IP-2MP', name: 'กล้องวงจรปิด IP Camera 2MP Outdoor', category: 'กล้องและบันทึก', unit: 'ตัว', quantity: 4, minQuantity: 5, location: 'Shelf B-01' },
+      { id: 'EQ-1004', sku: 'POW-SUP-12V', name: 'Power Supply 12V 5A for CCTV', category: 'อุปกรณ์จ่ายไฟ', unit: 'ตัว', quantity: 22, minQuantity: 10, location: 'Shelf C-03' },
+      { id: 'EQ-1005', sku: 'TOOL-CRIMP-1', name: 'คีมย้ำหัวสาย LAN & Telephone Professional', category: 'เครื่องมือช่าง', unit: 'อัน', quantity: 6, minQuantity: 2, location: 'Tool Cabinet 1' },
+      { id: 'EQ-1006', sku: 'SW-POE-8P', name: 'Gigabit PoE Switch 8 Port Managed', category: 'อุปกรณ์เครือข่าย', unit: 'ตัว', quantity: 3, minQuantity: 4, location: 'Shelf B-03' },
+      { id: 'EQ-1007', sku: 'TAPE-INS-01', name: 'เทปพันสายไฟ 3M สีดำ', category: 'วัสดุสิ้นเปลือง', unit: 'ม้วน', quantity: 45, minQuantity: 15, location: 'Shelf A-05' }
+    ];
+
+    let currentProducts = [];
+    let currentHistory = [];
+    let currentTrash = [];
+    let cart = []; // Array of { product, qty }
+    let selectedCategory = 'all';
+    let currentUser = { name: 'นายช่างติดตั้ง A', role: 'technician' }; // 'technician' or 'admin'
+    let fileHandle = null; // File System Access API handle
+
+    /* ==========================================================================
+       INDEXEDDB DATABASE MANAGER
+       ========================================================================== */
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        
+        request.onupgradeneeded = (e) => {
+          const dbInstance = e.target.result;
+          if (!dbInstance.objectStoreNames.contains('products')) {
+            dbInstance.createObjectStore('products', { keyPath: 'id' });
+          }
+          if (!dbInstance.objectStoreNames.contains('history')) {
+            dbInstance.createObjectStore('history', { keyPath: 'id' });
+          }
+          if (!dbInstance.objectStoreNames.contains('trash')) {
+            dbInstance.createObjectStore('trash', { keyPath: 'id' });
+          }
+        };
+
+        request.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+
+        request.onerror = (e) => {
+          console.error('IndexedDB error:', e.target.error);
+          reject(e.target.error);
+        };
+      });
+    }
+
+    async function loadAllData() {
+      try {
+        await initDB();
+        
+        // Fetch products from IndexedDB
+        const productsFromDB = await getAllFromStore('products');
+        if (productsFromDB && productsFromDB.length > 0) {
+          currentProducts = productsFromDB;
+        } else {
+          // Seed initial products
+          currentProducts = [...initialStockData];
+          for (const item of currentProducts) {
+            await saveToStore('products', item);
+          }
+        }
+
+        // Fetch history and trash
+        currentHistory = await getAllFromStore('history');
+        currentTrash = await getAllFromStore('trash');
+
+        renderAllViews();
+        showToast('โหลดข้อมูลสำเร็จ', 'success');
+      } catch (err) {
+        console.error('Error loading data:', err);
+        showToast('เกิดข้อผิดพลาดในการโหลดข้อมูล', 'error');
+      }
+    }
+
+    function getAllFromStore(storeName) {
+      return new Promise((resolve) => {
+        if (!db) return resolve([]);
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => resolve([]);
+      });
+    }
+
+    function saveToStore(storeName, item) {
+      return new Promise((resolve, reject) => {
+        if (!db) return resolve();
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.put(item);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    function deleteFromStore(storeName, id) {
+      return new Promise((resolve, reject) => {
+        if (!db) return resolve();
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e);
+      });
+    }
+
+    /* ==========================================================================
+       FILE SYSTEM ACCESS API INTEGRATION
+       ========================================================================== */
+    async function openFileSystemFile() {
+      if (!('showOpenFilePicker' in window)) {
+        showToast('เบราว์เซอร์นี้ไม่รองรับ File System Access API ใช้ปุ่ม Import/Export แทน', 'warning');
+        return;
+      }
+      try {
+        [fileHandle] = await window.showOpenFilePicker({
+          types: [{
+            description: 'JSON Stock File',
+            accept: { 'application/json': ['.json'] }
+          }]
+        });
+        const file = await fileHandle.getFile();
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if (Array.isArray(data)) {
+          currentProducts = data;
+          // Sync with IndexedDB
+          for (const item of data) {
+            await saveToStore('products', item);
+          }
+          renderAllViews();
+          showToast(`ผูกไฟล์ ${file.name} สำเร็จแล้ว`, 'success');
+          document.getElementById('sync-status-text').textContent = `File: ${file.name}`;
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          showToast('ไม่สามารถอ่านไฟล์ได้', 'error');
+        }
+      }
+    }
+
+    /* ==========================================================================
+       UI RENDERING & CATALOG CONTROLLER
+       ========================================================================== */
+    function renderAllViews() {
+      renderCategoryChips();
+      filterCatalog();
+      renderHistoryTable();
+      renderInventoryTable();
+      renderTrashTable();
+      renderAnalyticsCharts();
+      updateCartBadge();
+    }
+
+    function renderCategoryChips() {
+      const container = document.getElementById('category-chips-container');
+      const categories = ['all', ...new Set(currentProducts.map(p => p.category || 'ทั่วไป'))];
+      
+      container.innerHTML = categories.map(cat => {
+        const isSelected = selectedCategory === cat;
+        const label = cat === 'all' ? 'ทั้งหมด' : cat;
+        return `
+          <button onclick="selectCategory('${cat}')" class="px-4 py-1.5 rounded-m3-full text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
+            isSelected 
+              ? 'bg-m3-primary text-white shadow-sm font-semibold' 
+              : 'bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh text-slate-700 dark:text-slate-300 hover:bg-m3-surface-container'
+          }">
+            ${isSelected ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+            <span>${label}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectCategory(cat) {
+      selectedCategory = cat;
+      renderCategoryChips();
+      filterCatalog();
+    }
+
+    function filterCatalog() {
+      const searchTerm = (document.getElementById('catalog-search').value || '').toLowerCase().trim();
+      const showLowStockOnly = document.getElementById('chk-low-stock-only').checked;
+      const clearBtn = document.getElementById('btn-clear-search');
+      
+      if (clearBtn) {
+        clearBtn.classList.toggle('hidden', searchTerm.length === 0);
+      }
+
+      const filtered = currentProducts.filter(item => {
+        const matchesCategory = selectedCategory === 'all' || (item.category || 'ทั่วไป') === selectedCategory;
+        const matchesSearch = !searchTerm || 
+          (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+          (item.sku && item.sku.toLowerCase().includes(searchTerm)) ||
+          (item.location && item.location.toLowerCase().includes(searchTerm));
+        const matchesLowStock = !showLowStockOnly || (item.quantity <= (item.minQuantity || 5));
+
+        return matchesCategory && matchesSearch && matchesLowStock;
+      });
+
+      document.getElementById('catalog-count-display').textContent = filtered.length;
+      renderProductCards(filtered);
+    }
+
+    function clearSearch() {
+      document.getElementById('catalog-search').value = '';
+      filterCatalog();
+    }
+
+    function renderProductCards(products) {
+      const grid = document.getElementById('product-grid');
+      const emptyState = document.getElementById('catalog-empty-state');
+
+      if (!products || products.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = products.map(item => {
+        const isLowStock = item.quantity <= (item.minQuantity || 5);
+        const isOutOfStock = item.quantity <= 0;
+        const cartItem = cart.find(c => c.product.id === item.id);
+        const inCartQty = cartItem ? cartItem.qty : 0;
+
+        return `
+          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl p-4 border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 hover:shadow-m3-2 transition-all flex flex-col justify-between group relative overflow-hidden">
+            <!-- Low stock badge banner -->
+            ${isLowStock ? `
+              <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-m3-lg ${isOutOfStock ? 'bg-m3-error text-white' : 'bg-m3-warning-container text-m3-warning-onContainer'} text-[10px] font-bold uppercase tracking-wider">
+                ${isOutOfStock ? 'สินค้าหมด' : 'ใกล้หมดคลัง'}
+              </div>
+            ` : ''}
+
+            <div>
+              <div class="text-[10px] font-mono font-semibold text-slate-400 dark:text-slate-500 mb-1">${item.sku}</div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-m3-primary dark:group-hover:text-m3-primary-dark transition-colors line-clamp-2">${item.name}</h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
+                <span><i class="fa-solid fa-tag text-[10px] opacity-70"></i> ${item.category || 'ทั่วไป'}</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-location-dot text-[10px] opacity-70"></i> ${item.location || '-'}</span>
+              </p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-m3-outline-variant/20 dark:border-m3-outline-darkVariant/20 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-400">คงเหลือ</span>
+                <p class="text-base font-bold ${isLowStock ? 'text-m3-error dark:text-m3-error-dark' : 'text-slate-800 dark:text-slate-100'}">
+                  ${item.quantity} <span class="text-xs font-normal text-slate-500">${item.unit}</span>
+                </p>
+              </div>
+
+              <!-- Quick Adjust & Add to Cart Controls -->
+              <div class="flex items-center gap-1">
+                ${inCartQty > 0 ? `
+                  <div class="flex items-center rounded-m3-full bg-m3-primary-container dark:bg-m3-primary-darkContainer p-1 border border-m3-primary/30">
+                    <button onclick="updateCartQty('${item.id}', ${inCartQty - 1})" class="w-7 h-7 rounded-full bg-white dark:bg-m3-surface-dark flex items-center justify-center text-xs font-bold text-m3-primary shadow-sm hover:scale-105 active:scale-95 transition-all">
+                      <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <span class="px-2 text-xs font-bold text-m3-primary-onContainer dark:text-m3-primary-darkOnContainer min-w-[20px] text-center">${inCartQty}</span>
+                    <button onclick="updateCartQty('${item.id}', ${inCartQty + 1})" class="w-7 h-7 rounded-full bg-m3-primary text-white flex items-center justify-center text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all ${inCartQty >= item.quantity ? 'opacity-50 cursor-not-allowed' : ''}" ${inCartQty >= item.quantity ? 'disabled' : ''}>
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                  </div>
+                ` : `
+                  <button onclick="addToCart('${item.id}')" ${isOutOfStock ? 'disabled' : ''} class="px-3.5 py-2 rounded-m3-full ${isOutOfStock ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-m3-primary text-white hover:bg-m3-primary/90 shadow-sm'} text-xs font-semibold flex items-center gap-1.5 transition-all m3-ripple">
+                    <i class="fa-solid fa-plus"></i> เบิกสินค้า
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ==========================================================================
+       CART & WITHDRAWAL SYSTEM LOGIC
+       ========================================================================== */
+    function addToCart(productId) {
+      const product = currentProducts.find(p => p.id === productId);
+      if (!product || product.quantity <= 0) return;
+
+      const existing = cart.find(c => c.product.id === productId);
+      if (existing) {
+        if (existing.qty < product.quantity) {
+          existing.qty += 1;
+        } else {
+          showToast('จำนวนที่เบิกเกินกว่าสินค้าที่มีอยู่ในคลัง', 'warning');
+        }
+      } else {
+        cart.push({ product, qty: 1 });
+      }
+
+      updateCartBadge();
+      renderProductCards(currentProducts);
+      renderCartDrawer();
+      showToast(`เพิ่ม ${product.name} ลงในรายการเบิกแล้ว`, 'info');
+    }
+
+    function updateCartQty(productId, newQty) {
+      const index = cart.findIndex(c => c.product.id === productId);
+      if (index === -1) return;
+
+      const product = cart[index].product;
+
+      if (newQty <= 0) {
+        cart.splice(index, 1);
+      } else if (newQty > product.quantity) {
+        showToast('จำนวนที่ระบุเกินกว่าสต็อกคงเหลือ', 'warning');
+        return;
+      } else {
+        cart[index].qty = newQty;
+      }
+
+      updateCartBadge();
+      filterCatalog();
+      renderCartDrawer();
+    }
+
+    function updateCartBadge() {
+      const badge = document.getElementById('cart-badge-count');
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+      if (totalCount > 0) {
+        badge.textContent = totalCount;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      document.getElementById('cart-drawer-subtitle').textContent = `เลือกแล้ว ${cart.length} รายการ (${totalCount} ชิ้น)`;
+    }
+
+    function openCartDrawer() {
+      renderCartDrawer();
+      document.getElementById('cart-drawer-backdrop').classList.remove('hidden');
+      document.getElementById('cart-drawer').classList.remove('translate-x-full');
+    }
+
+    function closeCartDrawer() {
+      document.getElementById('cart-drawer-backdrop').classList.add('hidden');
+      document.getElementById('cart-drawer').classList.add('translate-x-full');
+    }
+
+    function renderCartDrawer() {
+      const container = document.getElementById('cart-items-container');
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 flex flex-col items-center justify-center text-center text-slate-400">
+            <i class="fa-solid fa-cart-arrow-down text-3xl mb-2"></i>
+            <p class="text-xs font-medium">ยังไม่มีรายการอุปกรณ์ในตะกร้า</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = cart.map(item => `
+        <div class="p-3 rounded-m3-lg bg-m3-surface-container dark:bg-m3-surface-darkContainer flex items-center justify-between border border-m3-outline-variant/20">
+          <div class="flex-1 pr-2">
+            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 line-clamp-1">${item.product.name}</h5>
+            <p class="text-[10px] text-slate-500">SKU: ${item.product.sku} | คงเหลือ: ${item.product.quantity} ${item.product.unit}</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="flex items-center rounded-m3-full bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/40 px-1 py-0.5">
+              <button onclick="updateCartQty('${item.product.id}', ${item.qty - 1})" class="w-6 h-6 text-xs text-slate-600 hover:text-m3-primary font-bold flex items-center justify-center">
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <span class="px-2 text-xs font-bold text-slate-800 dark:text-slate-100">${item.qty}</span>
+              <button onclick="updateCartQty('${item.product.id}', ${item.qty + 1})" class="w-6 h-6 text-xs text-slate-600 hover:text-m3-primary font-bold flex items-center justify-center">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+
+            <button onclick="updateCartQty('${item.product.id}', 0)" class="text-m3-error hover:text-red-700 p-1" title="ลบออก">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function clearCart() {
+      cart = [];
+      updateCartBadge();
+      renderCartDrawer();
+      filterCatalog();
+    }
+
+    async function submitWithdrawalOrder() {
+      if (cart.length === 0) {
+        showToast('กรุณาเลือกรายการอุปกรณ์ก่อนทำรายการ', 'warning');
+        return;
+      }
+
+      const requesterName = document.getElementById('cart-requester-name').value.trim();
+      const projectName = document.getElementById('cart-project-name').value.trim();
+      const remarks = document.getElementById('cart-remarks').value.trim();
+
+      if (!requesterName || !projectName) {
+        showToast('กรุณากรอกชื่อผู้เบิกและชื่องาน/โครงการ', 'warning');
+        return;
+      }
+
+      const slipId = 'REQ-' + Date.now().toString().slice(-6);
+      const timestamp = new Date().toISOString();
+
+      const orderData = {
+        id: slipId,
+        requester: requesterName,
+        project: projectName,
+        remarks: remarks,
+        items: cart.map(c => ({
+          id: c.product.id,
+          sku: c.product.sku,
+          name: c.product.name,
+          qty: c.qty,
+          unit: c.product.unit
+        })),
+        createdAt: timestamp,
+        status: 'completed'
+      };
+
+      // Deduct inventory quantities
+      for (const cartItem of cart) {
+        const prod = currentProducts.find(p => p.id === cartItem.product.id);
+        if (prod) {
+          prod.quantity = Math.max(0, prod.quantity - cartItem.qty);
+          await saveToStore('products', prod);
+        }
+      }
+
+      // Save order to history
+      currentHistory.unshift(orderData);
+      await saveToStore('history', orderData);
+
+      // Save to external File System if opened
+      if (fileHandle) {
+        try {
+          const writable = await fileHandle.createWritable();
+          await writable.write(JSON.stringify(currentProducts, null, 2));
+          await writable.close();
+        } catch (e) {
+          console.error('File System write error:', e);
+        }
+      }
+
+      // Generate Printable Slip Window
+      generateAndPrintSlip(orderData);
+
+      // Reset Cart and Form
+      clearCart();
+      document.getElementById('cart-requester-name').value = '';
+      document.getElementById('cart-project-name').value = '';
+      document.getElementById('cart-remarks').value = '';
+      closeCartDrawer();
+
+      renderAllViews();
+      showToast(`บันทึกใบเบิก ${slipId} สำเร็จแล้ว`, 'success');
+    }
+
+    /* ==========================================================================
+       HISTORY & SLIP PRINTING LOGIC
+       ========================================================================== */
+    function renderHistoryTable() {
+      const tbody = document.getElementById('history-table-body');
+      const search = (document.getElementById('history-search')?.value || '').toLowerCase();
+
+      const filtered = currentHistory.filter(h => 
+        !search || 
+        h.id.toLowerCase().includes(search) || 
+        h.requester.toLowerCase().includes(search) ||
+        h.project.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">ไม่พบประวัติการเบิกอุปกรณ์</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(h => {
+        const dateStr = new Date(h.createdAt).toLocaleString('th-TH');
+        return `
+          <tr class="hover:bg-m3-surface-container/50 transition-colors">
+            <td class="p-3.5 font-mono font-bold text-m3-primary dark:text-m3-primary-dark">${h.id}</td>
+            <td class="p-3.5 text-slate-600 dark:text-slate-300">${dateStr}</td>
+            <td class="p-3.5 font-medium text-slate-900 dark:text-slate-100">${h.requester}</td>
+            <td class="p-3.5 text-slate-600 dark:text-slate-300">${h.project}</td>
+            <td class="p-3.5 text-center font-bold">${h.items.length} รายการ</td>
+            <td class="p-3.5 text-center">
+              <span class="px-2.5 py-1 rounded-m3-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
+                เบิกสำเร็จ
+              </span>
+            </td>
+            <td class="p-3.5 text-right space-x-1">
+              <button onclick="generateAndPrintSlipById('${h.id}')" class="px-2.5 py-1 rounded-m3-md border border-m3-outline text-xs hover:bg-m3-surface-container" title="พิมพ์ใบเบิก">
+                <i class="fa-solid fa-print"></i> พิมพ์
+              </button>
+              <button onclick="softDeleteHistory('${h.id}')" class="px-2.5 py-1 rounded-m3-md bg-m3-error/10 text-m3-error text-xs hover:bg-m3-error/20" title="ยกเลิก/ลบใบเบิก">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function generateAndPrintSlipById(slipId) {
+      const order = currentHistory.find(h => h.id === slipId);
+      if (order) {
+        generateAndPrintSlip(order);
+      }
+    }
+
+    function generateAndPrintSlip(order) {
+      const printContainer = document.getElementById('printable-slip');
+      const dateStr = new Date(order.createdAt).toLocaleString('th-TH');
+
+      printContainer.innerHTML = `
+        <div style="font-family: 'Prompt', sans-serif; max-width: 800px; margin: 0 auto; border: 1px solid #ccc; padding: 24px; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6750A4; pb-12px; margin-bottom: 16px;">
+            <div>
+              <h2 style="margin: 0; font-size: 20px; color: #6750A4; font-weight: bold;">ใบเบิกอุปกรณ์ติดตั้ง / Withdrawal Slip</h2>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">Equipment Withdrawal Management System</p>
+            </div>
+            <div style="text-align: right;">
+              <p style="margin: 0; font-weight: bold; font-size: 16px; font-family: monospace;">${order.id}</p>
+              <p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">วันที่: ${dateStr}</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8f9fa; padding: 12px; border-radius: 6px;">
+            <div><strong>ผู้ขอเบิก:</strong> ${order.requester}</div>
+            <div><strong>งาน / โครงการ:</strong> ${order.project}</div>
+            <div style="grid-column: span 2;"><strong>หมายเหตุ:</strong> ${order.remarks || '-'}</div>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 24px;">
+            <thead>
+              <tr style="background: #EADDFF; color: #21005D;">
+                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">ลำดับ</th>
+                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">SKU</th>
+                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">รายการอุปกรณ์</th>
+                <th style="padding: 8px; border: 1px solid #ccc; text-align: center;">จำนวนที่เบิก</th>
+                <th style="padding: 8px; border: 1px solid #ccc; text-align: center;">หน่วย</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${order.items.map((item, idx) => `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">${idx + 1}</td>
+                  <td style="padding: 8px; border: 1px solid #ccc; font-family: monospace;">${item.sku}</td>
+                  <td style="padding: 8px; border: 1px solid #ccc; font-weight: bold;">${item.name}</td>
+                  <td style="padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold;">${item.qty}</td>
+                  <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">${item.unit}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; text-align: center; font-size: 12px;">
+            <div>
+              <p>____________________</p>
+              <p>(${order.requester})<br>ผู้ขอเบิกอุปกรณ์</p>
+            </div>
+            <div>
+              <p>____________________</p>
+              <p>ผู้จ่ายอุปกรณ์ / คลังสินค้า</p>
+            </div>
+            <div>
+              <p>____________________</p>
+              <p>ผู้อนุมัติ</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      window.print();
+    }
+
+    /* ==========================================================================
+       INVENTORY MANAGEMENT & MODAL CONTROLLER
+       ========================================================================== */
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventory-table-body');
+      
+      tbody.innerHTML = currentProducts.map(p => `
+        <tr class="hover:bg-m3-surface-container/50 transition-colors">
+          <td class="p-3.5 font-mono font-bold text-slate-500">${p.sku}</td>
+          <td class="p-3.5 font-bold text-slate-900 dark:text-slate-100">${p.name}</td>
+          <td class="p-3.5 text-slate-600 dark:text-slate-300">${p.category || 'ทั่วไป'}</td>
+          <td class="p-3.5 text-slate-600 dark:text-slate-300">${p.location || '-'}</td>
+          <td class="p-3.5 text-center font-bold">
+            <span class="${p.quantity <= p.minQuantity ? 'text-m3-error' : 'text-slate-800 dark:text-slate-200'}">
+              ${p.quantity} / ${p.minQuantity || 5} ${p.unit}
+            </span>
+          </td>
+          <td class="p-3.5 text-right space-x-1">
+            <button onclick="editProductModal('${p.id}')" class="px-2.5 py-1 rounded-m3-md bg-m3-primary-container text-m3-primary-onContainer text-xs font-semibold hover:opacity-90">
+              <i class="fa-solid fa-pen-to-square"></i> แก้ไข
+            </button>
+            <button onclick="softDeleteProduct('${p.id}')" class="px-2.5 py-1 rounded-m3-md bg-m3-error/10 text-m3-error text-xs font-semibold hover:bg-m3-error/20">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddProductModal() {
+      document.getElementById('product-modal-title').textContent = 'เพิ่มอุปกรณ์ใหม่';
+      document.getElementById('product-form').reset();
+      document.getElementById('modal-product-id').value = '';
+      document.getElementById('modal-sku').value = 'EQ-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function editProductModal(productId) {
+      const prod = currentProducts.find(p => p.id === productId);
+      if (!prod) return;
+
+      document.getElementById('product-modal-title').textContent = 'แก้ไขข้อมูลอุปกรณ์';
+      document.getElementById('modal-product-id').value = prod.id;
+      document.getElementById('modal-sku').value = prod.sku;
+      document.getElementById('modal-name').value = prod.name;
+      document.getElementById('modal-category').value = prod.category || '';
+      document.getElementById('modal-unit').value = prod.unit;
+      document.getElementById('modal-quantity').value = prod.quantity;
+      document.getElementById('modal-min-qty').value = prod.minQuantity || 5;
+      document.getElementById('modal-location').value = prod.location || '';
+
+      document.getElementById('product-modal').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+    }
+
+    async function handleProductSubmit(e) {
+      e.preventDefault();
+
+      const editId = document.getElementById('modal-product-id').value;
+      const productObj = {
+        id: editId || 'PROD-' + Date.now(),
+        sku: document.getElementById('modal-sku').value.trim(),
+        name: document.getElementById('modal-name').value.trim(),
+        category: document.getElementById('modal-category').value.trim() || 'ทั่วไป',
+        unit: document.getElementById('modal-unit').value.trim() || 'ชิ้น',
+        quantity: parseInt(document.getElementById('modal-quantity').value, 10) || 0,
+        minQuantity: parseInt(document.getElementById('modal-min-qty').value, 10) || 5,
+        location: document.getElementById('modal-location').value.trim() || 'คลังหลัก'
+      };
+
+      if (editId) {
+        const idx = currentProducts.findIndex(p => p.id === editId);
+        if (idx !== -1) currentProducts[idx] = productObj;
+      } else {
+        currentProducts.push(productObj);
+      }
+
+      await saveToStore('products', productObj);
+      closeProductModal();
+      renderAllViews();
+      showToast('บันทึกข้อมูลสินค้าเรียบร้อยแล้ว', 'success');
+    }
+
+    /* ==========================================================================
+       UNDO & SOFT DELETE (TRASH BIN) SYSTEM
+       ========================================================================== */
+    async function softDeleteProduct(productId) {
+      const idx = currentProducts.findIndex(p => p.id === productId);
+      if (idx === -1) return;
+
+      const product = currentProducts[idx];
+      const trashItem = {
+        id: 'TRASH-' + Date.now(),
+        type: 'product',
+        originalId: product.id,
+        data: product,
+        deletedAt: new Date().toISOString()
+      };
+
+      currentProducts.splice(idx, 1);
+      currentTrash.unshift(trashItem);
+
+      await deleteFromStore('products', product.id);
+      await saveToStore('trash', trashItem);
+
+      renderAllViews();
+      showToastWithUndo('ลบอุปกรณ์ชั่วคราวแล้ว', trashItem.id);
+    }
+
+    async function softDeleteHistory(historyId) {
+      const idx = currentHistory.findIndex(h => h.id === historyId);
+      if (idx === -1) return;
+
+      const historyItem = currentHistory[idx];
+      const trashItem = {
+        id: 'TRASH-' + Date.now(),
+        type: 'history',
+        originalId: historyItem.id,
+        data: historyItem,
+        deletedAt: new Date().toISOString()
+      };
+
+      currentHistory.splice(idx, 1);
+      currentTrash.unshift(trashItem);
+
+      await deleteFromStore('history', historyItem.id);
+      await saveToStore('trash', trashItem);
+
+      renderAllViews();
+      showToastWithUndo('ย้ายใบเบิกไปที่ถังขยะแล้ว', trashItem.id);
+    }
+
+    async function restoreFromTrash(trashId) {
+      const idx = currentTrash.findIndex(t => t.id === trashId);
+      if (idx === -1) return;
+
+      const trashObj = currentTrash[idx];
+      if (trashObj.type === 'product') {
+        currentProducts.push(trashObj.data);
+        await saveToStore('products', trashObj.data);
+      } else if (trashObj.type === 'history') {
+        currentHistory.unshift(trashObj.data);
+        await saveToStore('history', trashObj.data);
+      }
+
+      currentTrash.splice(idx, 1);
+      await deleteFromStore('trash', trashId);
+
+      renderAllViews();
+      showToast('กู้คืนรายการเรียบร้อยแล้ว', 'success');
+    }
+
+    function renderTrashTable() {
+      const tbody = document.getElementById('trash-table-body');
+      if (currentTrash.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">ไม่มีรายการในถังขยะ</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = currentTrash.map(t => `
+        <tr class="hover:bg-m3-surface-container/50">
+          <td class="p-3.5 capitalize font-bold text-slate-600">${t.type}</td>
+          <td class="p-3.5 font-bold">${t.data.name || t.data.id}</td>
+          <td class="p-3.5 text-slate-500">${new Date(t.deletedAt).toLocaleString('th-TH')}</td>
+          <td class="p-3.5 text-right">
+            <button onclick="restoreFromTrash('${t.id}')" class="px-3 py-1 rounded-m3-full bg-m3-tertiary text-white text-xs font-semibold hover:bg-m3-tertiary/90">
+              <i class="fa-solid fa-rotate-left"></i> กู้คืน
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function emptyTrashBin() {
+      if (confirm('คุณต้องการลบรายการในถังขยะอย่างถาวรหรือไม่?')) {
+        for (const t of currentTrash) {
+          await deleteFromStore('trash', t.id);
+        }
+        currentTrash = [];
+        renderTrashTable();
+        showToast('ล้างถังขยะแล้ว', 'info');
+      }
+    }
+
+    /* ==========================================================================
+       ANALYTICS & CHARTS
+       ========================================================================== */
+    let topChart = null;
+    let catChart = null;
+
+    function renderAnalyticsCharts() {
+      // Update Key Stats Cards
+      document.getElementById('stat-total-items').textContent = currentProducts.length;
+      document.getElementById('stat-low-stock').textContent = currentProducts.filter(p => p.quantity <= (p.minQuantity || 5)).length;
+      document.getElementById('stat-total-slips').textContent = currentHistory.length;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todaySlips = currentHistory.filter(h => h.createdAt.startsWith(todayStr));
+      document.getElementById('stat-today-withdrawals').textContent = todaySlips.length;
+
+      // Render Charts if Chart.js is loaded
+      if (typeof Chart === 'undefined') return;
+
+      // Top Withdrawn Items Analytics
+      const itemUsageMap = {};
+      currentHistory.forEach(h => {
+        h.items.forEach(item => {
+          itemUsageMap[item.name] = (itemUsageMap[item.name] || 0) + item.qty;
+        });
+      });
+
+      const sortedTop = Object.entries(itemUsageMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+
+      const topLabels = sortedTop.map(x => x[0]);
+      const topData = sortedTop.map(x => x[1]);
+
+      const ctxTop = document.getElementById('chart-top-withdrawn')?.getContext('2d');
+      if (ctxTop) {
+        if (topChart) topChart.destroy();
+        topChart = new Chart(ctxTop, {
+          type: 'bar',
+          data: {
+            labels: topLabels.length ? topLabels : ['ไม่มีข้อมูล'],
+            datasets: [{
+              label: 'จำนวนเบิกออก (หน่วย)',
+              data: topData.length ? topData : [0],
+              backgroundColor: '#6750A4',
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // Stock by Category Pie Chart
+      const catMap = {};
+      currentProducts.forEach(p => {
+        const cat = p.category || 'ทั่วไป';
+        catMap[cat] = (catMap[cat] || 0) + p.quantity;
+      });
+
+      const ctxCat = document.getElementById('chart-category-stock')?.getContext('2d');
+      if (ctxCat) {
+        if (catChart) catChart.destroy();
+        catChart = new Chart(ctxCat, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(catMap),
+            datasets: [{
+              data: Object.values(catMap),
+              backgroundColor: ['#6750A4', '#006A60', '#825500', '#B3261E', '#625B71', '#381E72']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        });
+      }
+    }
+
+    /* ==========================================================================
+       IMPORT & EXPORT (CSV / JSON)
+       ========================================================================== */
+    function triggerCSVImport() {
+      document.getElementById('csv-file-input').click();
+    }
+
+    function handleCSVImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim().length > 0);
+        
+        let addedCount = 0;
+        // Simple CSV Parsing
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',').map(c => c.trim().replace(/^"(.*)"$/, '$1'));
+          if (cols.length >= 2) {
+            const newItem = {
+              id: 'EQ-' + Date.now() + '-' + i,
+              sku: cols[0] || 'SKU-' + i,
+              name: cols[1],
+              category: cols[2] || 'ทั่วไป',
+              unit: cols[3] || 'ชิ้น',
+              quantity: parseInt(cols[4], 10) || 0,
+              minQuantity: parseInt(cols[5], 10) || 5,
+              location: cols[6] || 'คลังหลัก'
+            };
+            currentProducts.push(newItem);
+            await saveToStore('products', newItem);
+            addedCount++;
+          }
+        }
+
+        renderAllViews();
+        showToast(`นำเข้าข้อมูลสำเร็จ ${addedCount} รายการ`, 'success');
+      };
+      reader.readAsText(file);
+    }
+
+    function exportHistoryCSV() {
+      if (currentHistory.length === 0) return;
+      let csv = 'SlipID,Date,Requester,Project,ItemSKU,ItemName,Qty,Unit\n';
+      
+      currentHistory.forEach(h => {
+        h.items.forEach(item => {
+          csv += `"${h.id}","${h.createdAt}","${h.requester}","${h.project}","${item.sku}","${item.name}",${item.qty},"${item.unit}"\n`;
+        });
+      });
+
+      downloadFile(csv, `withdrawal-history-${Date.now()}.csv`, 'text/csv');
+    }
+
+    function exportFullData() {
+      const fullBackup = {
+        products: currentProducts,
+        history: currentHistory,
+        trash: currentTrash,
+        exportedAt: new Date().toISOString()
+      };
+      downloadFile(JSON.stringify(fullBackup, null, 2), `backup-equipment-system-${Date.now()}.json`, 'application/json');
+    }
+
+    function downloadFile(content, fileName, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    /* ==========================================================================
+       UX MOTIONS, NAVIGATION & DIALOGS
+       ========================================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      const activeTab = document.getElementById(`tab-${tabId}`);
+      const activeNav = document.getElementById(`nav-btn-${tabId}`);
+
+      if (activeTab) activeTab.classList.remove('hidden');
+      if (activeNav) activeNav.classList.add('active');
+
+      if (tabId === 'analytics') {
+        renderAnalyticsCharts();
+      }
+    }
+
+    function toggleNavRail() {
+      const rail = document.getElementById('nav-rail');
+      rail.classList.toggle('w-20');
+      rail.classList.toggle('w-56');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.className = 'fa-solid fa-moon text-base';
+      } else {
+        html.classList.add('dark');
+        icon.className = 'fa-solid fa-sun text-base';
+      }
+    }
+
+    function toggleUserDropdown() {
+      document.getElementById('user-dropdown').classList.toggle('hidden');
+    }
+
+    function switchUserRole() {
+      if (currentUser.role === 'technician') {
+        currentUser = { name: 'ผู้ดูแลระบบ (Admin)', role: 'admin' };
+      } else {
+        currentUser = { name: 'นายช่างติดตั้ง A', role: 'technician' };
+      }
+      document.getElementById('user-name-display').textContent = currentUser.name;
+      document.getElementById('user-dropdown-name').textContent = currentUser.name;
+      document.getElementById('user-dropdown-role').textContent = currentUser.role;
+      toggleUserDropdown();
+      showToast(`สลับสิทธิ์เป็น ${currentUser.role}`, 'info');
+    }
+
+    function openSyncDialog() {
+      document.getElementById('sync-modal').classList.remove('hidden');
+    }
+
+    function closeSyncDialog() {
+      document.getElementById('sync-modal').classList.add('hidden');
+    }
+
+    function saveSyncSettings() {
+      showToast('บันทึกการตั้งค่า Sync แล้ว', 'success');
+      closeSyncDialog();
+    }
+
+    /* ==========================================================================
+       M3 TOAST NOTIFICATION SYSTEM
+       ========================================================================== */
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const colors = {
+        success: 'bg-m3-tertiary-container text-m3-tertiary-onContainer border-m3-tertiary/30',
+        warning: 'bg-m3-warning-container text-m3-warning-onContainer border-m3-warning/30',
+        error: 'bg-m3-error-container text-m3-error-onContainer border-m3-error/30',
+        info: 'bg-m3-surface-bright dark:bg-m3-surface-darkBright text-slate-800 dark:text-slate-100 border-m3-outline-variant/40'
+      };
+
+      toast.className = `px-4 py-2.5 rounded-m3-full text-xs font-medium border shadow-m3-3 flex items-center gap-2 transform transition-all duration-300 pointer-events-auto ${colors[type] || colors.info}`;
+      toast.innerHTML = `<span>${message}</span>`;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function showToastWithUndo(message, trashId) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      toast.className = `px-4 py-2.5 rounded-m3-full text-xs font-medium bg-slate-900 text-white shadow-m3-4 flex items-center gap-3 pointer-events-auto`;
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button onclick="restoreFromTrash('${trashId}'); this.parentElement.remove();" class="text-m3-primary-dark font-bold hover:underline">
+          เลิกทำ (Undo)
+        </button>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 5000);
+    }
+
+    /* ==========================================================================
+       APP INITIALIZATION ENTRY POINT
+       ========================================================================== */
+    window.onload = function() {
+      loadAllData();
     };
-    input.click();
-  }
-  if (act === "bk-json") {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S, null, 2));
-    const dlAnchor = document.createElement('a');
-    dlAnchor.setAttribute("href", dataStr);
-    dlAnchor.setAttribute("download", `stock-data-${today()}.json`);
-    document.body.appendChild(dlAnchor);
-    dlAnchor.click();
-    dlAnchor.remove();
-    toast("ดาวน์โหลดไฟล์สำรองเรียบร้อย");
-  }
-});
-
-window.addEventListener("hashchange", render);
-
-// Auto Init Connection
-async function init() {
-  const loadedGh = await ghLoad();
-  if (!loadedGh) {
-    setStatus("ยังไม่ได้เชื่อมต่อแหล่งข้อมูล JSON", "wa");
-    render();
-  }
-}
-
-init();
-</script>
+  </script>
 </body>
 </html>
