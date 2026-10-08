@@ -1,1770 +1,491 @@
 <!DOCTYPE html>
-<html lang="th" class="h-full">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ระบบเบิกอุปกรณ์ติดตั้ง - Equipment Withdrawal System (M3)</title>
-  
-  <!-- Fonts: Google Fonts Google Sans / Noto Sans Thai / Roboto -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Chart.js for Admin Analytics -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Prompt', 'Roboto', 'sans-serif'],
-          },
-          colors: {
-            m3: {
-              // M3 Primary - Deep Purple / Indigo Tone
-              primary: {
-                DEFAULT: '#6750A4',
-                on: '#FFFFFF',
-                container: '#EADDFF',
-                onContainer: '#21005D',
-                dark: '#D0BCFF',
-                darkOn: '#381E72',
-                darkContainer: '#4F378B',
-                darkOnContainer: '#EADDFF'
-              },
-              // M3 Secondary - Teal / Slate Tone
-              secondary: {
-                DEFAULT: '#625B71',
-                on: '#FFFFFF',
-                container: '#E8DEF8',
-                onContainer: '#1D192B',
-                dark: '#CCC2DC',
-                darkOn: '#332D41',
-                darkContainer: '#4A4458',
-                darkOnContainer: '#E8DEF8'
-              },
-              // M3 Tertiary / Status Positive - Emerald/Teal
-              tertiary: {
-                DEFAULT: '#006A60',
-                on: '#FFFFFF',
-                container: '#74F8E5',
-                onContainer: '#00201C',
-                dark: '#53DBCA',
-                darkOn: '#003731',
-                darkContainer: '#005048',
-                darkOnContainer: '#74F8E5'
-              },
-              // M3 Error / Warning - Amber / Rose
-              error: {
-                DEFAULT: '#B3261E',
-                on: '#FFFFFF',
-                container: '#F9DEDC',
-                onContainer: '#410E0B',
-                dark: '#F2B8B5',
-                darkOn: '#601410',
-                darkContainer: '#8C1D18',
-                darkOnContainer: '#F9DEDC'
-              },
-              warning: {
-                DEFAULT: '#825500',
-                container: '#FFDDAE',
-                onContainer: '#2A1800',
-                dark: '#FFB95B',
-                darkContainer: '#633F00',
-                darkOnContainer: '#FFDDAE'
-              },
-              // Surface Containers (M3 Tonal Palette)
-              surface: {
-                dim: '#DED8E1',
-                DEFAULT: '#FEF7FF',
-                bright: '#FEF7FF',
-                containerLowest: '#FFFFFF',
-                containerLow: '#F7F2FA',
-                container: '#F3EDF7',
-                containerHigh: '#ECE6F0',
-                containerHighest: '#E6E0E9',
-                // Dark Surfaces
-                darkDim: '#141218',
-                darkDEFAULT: '#141218',
-                darkBright: '#3B383E',
-                darkContainerLowest: '#0F0D13',
-                darkContainerLow: '#1D1B20',
-                darkContainer: '#211F26',
-                darkContainerHigh: '#2B2930',
-                darkContainerHighest: '#36343B'
-              },
-              outline: {
-                DEFAULT: '#79747E',
-                variant: '#CAC4D0',
-                dark: '#938F96',
-                darkVariant: '#49454F'
-              }
-            }
-          },
-          borderRadius: {
-            'm3-xs': '4px',
-            'm3-sm': '8px',
-            'm3-md': '12px',
-            'm3-lg': '16px',
-            'm3-xl': '28px',
-            'm3-full': '9999px'
-          },
-          boxShadow: {
-            'm3-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
-            'm3-2': '0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
-            'm3-3': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30)',
-            'm3-4': '0px 6px 10px 4px rgba(0, 0, 0, 0.15), 0px 2px 4px 0px rgba(0, 0, 0, 0.30)',
-            'm3-5': '0px 8px 12px 6px rgba(0, 0, 0, 0.15), 0px 4px 4px 0px rgba(0, 0, 0, 0.30)'
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /* M3 Ripple & Smooth Motion Transitions */
-    .m3-ripple {
-      position: relative;
-      overflow: hidden;
-      transform: translateZ(0);
-    }
-    .m3-ripple::after {
-      content: "";
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, currentColor 10%, transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      transform: scale(10, 10);
-      opacity: 0;
-      transition: transform .5s, opacity 1s;
-    }
-    .m3-ripple:active::after {
-      transform: scale(0, 0);
-      opacity: .2;
-      transition: 0s;
-    }
-    
-    .glass-backdrop {
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-
-    /* Print Stylesheet for Official Withdrawal Slip */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printable-slip, #printable-slip * {
-        visibility: visible;
-      }
-      #printable-slip {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        padding: 20px;
-        background: white !important;
-        color: black !important;
-      }
-      .no-print {
-        display: none !important;
-      }
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(121, 116, 126, 0.3);
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(121, 116, 126, 0.5);
-    }
-  </style>
-</head>
-
-<body class="bg-m3-surface dark:bg-m3-surface-darkDim text-slate-800 dark:text-slate-100 font-sans h-full flex flex-col transition-colors duration-300 antialiased selection:bg-m3-primary-container selection:text-m3-primary-onContainer">
-
-  <div id="app" class="h-full flex flex-col overflow-hidden">
-    
-    <!-- Top App Bar (M3 Center-aligned / Small App Bar) -->
-    <header class="h-16 px-4 flex items-center justify-between border-b border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 bg-m3-surface-containerLow/80 dark:bg-m3-surface-darkContainerLow/80 glass-backdrop z-20 shrink-0">
-      <div class="flex items-center gap-3">
-        <button id="btn-toggle-rail" onclick="toggleNavRail()" class="w-10 h-10 rounded-m3-full flex items-center justify-center hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh text-slate-700 dark:text-slate-200 transition-all m3-ripple">
-          <i class="fa-solid fa-bars text-lg"></i>
-        </button>
-        <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-m3-lg bg-m3-primary flex items-center justify-center text-white shadow-m3-1">
-            <i class="fa-solid fa-boxes-packing text-base"></i>
-          </div>
-          <div>
-            <h1 class="text-base font-semibold leading-tight tracking-wide text-slate-900 dark:text-white">Equipment Withdrawal</h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Material Design 3 Stock Management</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Top Search & Quick Actions -->
-      <div class="flex items-center gap-2">
-        <!-- Live Sync Status Chip -->
-        <div id="sync-status-badge" onclick="openSyncDialog()" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-m3-full text-xs font-medium bg-m3-tertiary-container text-m3-tertiary-onContainer dark:bg-m3-tertiary-darkContainer dark:text-m3-tertiary-darkOnContainer cursor-pointer hover:opacity-90 transition-all shadow-sm">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="sync-status-text">Local Database</span>
-        </div>
-
-        <!-- Dark/Light Theme Toggle -->
-        <button onclick="toggleTheme()" class="w-10 h-10 rounded-m3-full flex items-center justify-center hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh text-slate-700 dark:text-slate-200 transition-all m3-ripple" title="เปลี่ยนธีม">
-          <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
-        </button>
-
-        <!-- Active Cart Badge Button -->
-        <button onclick="openCartDrawer()" class="relative w-10 h-10 rounded-m3-full flex items-center justify-center hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh text-m3-primary dark:text-m3-primary-dark transition-all m3-ripple" title="รายการเบิกอุปกรณ์">
-          <i class="fa-solid fa-cart-flatbed text-lg"></i>
-          <span id="cart-badge-count" class="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-m3-error text-white text-xs font-bold flex items-center justify-center hidden shadow-md transform scale-100 transition-transform">0</span>
-        </button>
-
-        <!-- Current User Profile Chip -->
-        <div class="relative">
-          <button onclick="toggleUserDropdown()" class="flex items-center gap-2 pl-2 pr-3 py-1 rounded-m3-full hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all border border-m3-outline-variant/50 dark:border-m3-outline-darkVariant/50">
-            <div id="user-avatar" class="w-7 h-7 rounded-full bg-m3-primary-container text-m3-primary-onContainer dark:bg-m3-primary-darkContainer dark:text-m3-primary-darkOnContainer font-bold text-xs flex items-center justify-center uppercase">
-              U
-            </div>
-            <span id="user-name-display" class="text-xs font-medium hidden md:inline">ผู้ใช้งาน</span>
-            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
-          </button>
-          
-          <!-- Profile Dropdown Menu -->
-          <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 rounded-m3-lg bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 shadow-m3-3 py-2 z-50">
-            <div class="px-4 py-2 border-b border-m3-outline-variant/20 dark:border-m3-outline-darkVariant/20">
-              <p id="user-dropdown-name" class="text-sm font-semibold text-slate-900 dark:text-slate-100">User</p>
-              <p id="user-dropdown-role" class="text-xs text-m3-primary dark:text-m3-primary-dark font-medium capitalize">Technician</p>
-            </div>
-            <button onclick="switchUserRole()" class="w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              <i class="fa-solid fa-user-gear w-4"></i> สลับสิทธิ์ผู้ใช้งาน (Role)
-            </button>
-            <button onclick="openSyncDialog()" class="w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              <i class="fa-solid fa-cloud-arrow-up w-4"></i> ตั้งค่าการ Sync (GitHub / Local)
-            </button>
-            <button onclick="exportFullData()" class="w-full text-left px-4 py-2.5 text-xs font-medium hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-2 text-slate-700 dark:text-slate-300">
-              <i class="fa-solid fa-file-export w-4"></i> ส่งออกข้อมูล Backup (JSON)
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="flex flex-1 overflow-hidden relative">
-      
-      <!-- M3 Navigation Rail (Desktop/Tablet Expandable) -->
-      <aside id="nav-rail" class="w-20 transition-all duration-300 ease-in-out bg-m3-surface-containerLow dark:bg-m3-surface-darkContainerLow border-r border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 flex flex-col justify-between py-4 shrink-0 z-10">
-        <div class="flex flex-col gap-2 px-2">
-          <!-- Nav Item: Catalog -->
-          <button onclick="switchTab('catalog')" id="nav-btn-catalog" class="nav-item active flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
-            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
-              <i class="fa-solid fa-boxes-stacked text-base"></i>
-            </div>
-            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">รายการอุปกรณ์</span>
-          </button>
-
-          <!-- Nav Item: History / Transactions -->
-          <button onclick="switchTab('history')" id="nav-btn-history" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
-            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
-              <i class="fa-solid fa-clock-rotate-left text-base"></i>
-            </div>
-            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">ประวัติการเบิก</span>
-          </button>
-
-          <!-- Nav Item: Admin Stock Management (Admin Only Visual Indicator) -->
-          <button onclick="switchTab('inventory')" id="nav-btn-inventory" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
-            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
-              <i class="fa-solid fa-warehouse text-base"></i>
-            </div>
-            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">จัดการคลัง</span>
-          </button>
-
-          <!-- Nav Item: Analytics / Dashboard -->
-          <button onclick="switchTab('analytics')" id="nav-btn-analytics" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
-            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
-              <i class="fa-solid fa-chart-pie text-base"></i>
-            </div>
-            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">แดชบอร์ด</span>
-          </button>
-
-          <!-- Nav Item: Trash Bin -->
-          <button onclick="switchTab('trash')" id="nav-btn-trash" class="nav-item flex flex-col items-center justify-center p-2 rounded-m3-xl text-slate-600 dark:text-slate-400 hover:bg-m3-surface-containerHigh dark:hover:bg-m3-surface-darkContainerHigh transition-all group m3-ripple">
-            <div class="nav-icon-box w-14 h-8 rounded-m3-full flex items-center justify-center group-[.active]:bg-m3-primary-container group-[.active]:text-m3-primary-onContainer dark:group-[.active]:bg-m3-primary-darkContainer dark:group-[.active]:text-m3-primary-darkOnContainer transition-all">
-              <i class="fa-solid fa-trash-can text-base"></i>
-            </div>
-            <span class="text-[11px] font-medium mt-1 group-[.active]:font-bold group-[.active]:text-m3-primary dark:group-[.active]:text-m3-primary-dark tracking-tight">ถังขยะ</span>
-          </button>
-        </div>
-
-        <!-- FAB (Floating Action Button) in Navigation Rail -->
-        <div class="px-2 pt-2">
-          <button onclick="openCartDrawer()" class="w-full py-3.5 rounded-m3-xl bg-m3-primary text-white hover:bg-m3-primary/90 shadow-m3-2 flex flex-col items-center justify-center gap-1 transition-all m3-ripple">
-            <i class="fa-solid fa-paper-plane text-lg"></i>
-            <span class="text-[10px] font-semibold">ส่งใบเบิก</span>
-          </button>
-        </div>
-      </aside>
-
-      <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-m3-surface dark:bg-m3-surface-darkDim">
-        
-        <!-- PAGE 1: EQUIPMENT CATALOG TAB -->
-        <section id="tab-catalog" class="tab-content block space-y-6 max-w-7xl mx-auto">
-          
-          <!-- Search Header & Filter Chips Bar -->
-          <div class="space-y-4">
-            <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-              
-              <!-- M3 Search Bar -->
-              <div class="relative flex-1">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input id="catalog-search" type="text" oninput="filterCatalog()" placeholder="ค้นหารหัสสินค้า, ชื่ออุปกรณ์, หมวดหมู่ หรือสถานที่เก็บ..." class="w-full pl-11 pr-10 py-3 rounded-m3-full bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh border border-transparent focus:border-m3-primary focus:bg-m3-surface-containerLowest dark:focus:bg-m3-surface-darkContainer text-sm outline-none transition-all shadow-sm">
-                <button onclick="clearSearch()" id="btn-clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                  <i class="fa-solid fa-circle-xmark"></i>
-                </button>
-              </div>
-
-              <!-- Action Controls: Direct File System Access & Quick Import/Export -->
-              <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
-                <button onclick="openFileSystemFile()" class="px-3.5 py-2.5 rounded-m3-full border border-m3-outline-variant/60 dark:border-m3-outline-darkVariant/60 text-xs font-semibold hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-1.5 transition-all text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                  <i class="fa-solid fa-folder-open text-m3-primary dark:text-m3-primary-dark"></i>
-                  <span>เปิด stock-data.json</span>
-                </button>
-                <button onclick="triggerCSVImport()" class="px-3.5 py-2.5 rounded-m3-full border border-m3-outline-variant/60 dark:border-m3-outline-darkVariant/60 text-xs font-semibold hover:bg-m3-surface-container dark:hover:bg-m3-surface-darkContainer flex items-center gap-1.5 transition-all text-slate-700 dark:text-slate-200 whitespace-nowrap">
-                  <i class="fa-solid fa-file-csv text-emerald-600"></i>
-                  <span>นำเข้า CSV</span>
-                </button>
-                <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleCSVImport(event)">
-              </div>
-            </div>
-
-            <!-- Filter Chips (Segmented Pill Style) -->
-            <div id="category-chips-container" class="flex items-center gap-2 overflow-x-auto pt-1 pb-2 no-scrollbar">
-              <!-- Dynamically populated chips -->
-            </div>
-          </div>
-
-          <!-- Stock Grid Summary Bar -->
-          <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 px-1">
-            <span>แสดงทั้งหมด <strong id="catalog-count-display" class="text-slate-900 dark:text-slate-100">0</strong> รายการ</span>
-            <div class="flex items-center gap-2">
-              <label class="flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" id="chk-low-stock-only" onchange="filterCatalog()" class="rounded text-m3-primary focus:ring-m3-primary">
-                <span>แสดงเฉพาะของใกล้หมด (< min)</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Product Cards Grid (M3 Outlined / Elevated Cards) -->
-          <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <!-- Dynamic M3 Product Cards generated via JS -->
-          </div>
-
-          <!-- Empty State Container -->
-          <div id="catalog-empty-state" class="hidden py-16 flex flex-col items-center justify-center text-center">
-            <div class="w-16 h-16 rounded-full bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh flex items-center justify-center text-slate-400 mb-3">
-              <i class="fa-solid fa-box-open text-2xl"></i>
-            </div>
-            <h3 class="text-base font-semibold text-slate-800 dark:text-slate-200">ไม่พบรายการอุปกรณ์</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">ลองเปลี่ยนคำค้นหา หรือเลือกหมวดใหม่อีกครั้ง</p>
-          </div>
-        </section>
-
-        <section id="tab-history" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h2 class="text-lg font-bold text-slate-900 dark:text-white">ประวัติการเบิกอุปกรณ์</h2>
-              <p class="text-xs text-slate-500 dark:text-slate-400">รายการใบเบิกทั้งหมดที่ถูกบันทึกไว้ในระบบ</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <input type="text" id="history-search" oninput="renderHistoryTable()" placeholder="ค้นหาตามเลขที่ใบเบิก หรือผู้เบิก..." class="px-4 py-2 rounded-m3-full bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh border border-transparent text-xs outline-none w-64 focus:border-m3-primary">
-              <button onclick="exportHistoryCSV()" class="px-3 py-2 rounded-m3-full border border-m3-outline-variant/60 text-xs font-semibold hover:bg-m3-surface-container flex items-center gap-1.5">
-                <i class="fa-solid fa-download"></i> Export CSV
-              </button>
-            </div>
-          </div>
-
-          <!-- History Table Container -->
-          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-m3-surface-containerHigh/60 dark:bg-m3-surface-darkContainerHigh/60 text-slate-600 dark:text-slate-300 font-semibold uppercase tracking-wider">
-                  <tr>
-                    <th class="p-3.5">เลขที่ใบเบิก</th>
-                    <th class="p-3.5">วันที่-เวลา</th>
-                    <th class="p-3.5">ผู้ขอเบิก</th>
-                    <th class="p-3.5">งาน / สถานที่</th>
-                    <th class="p-3.5 text-center">จำนวนรายการ</th>
-                    <th class="p-3.5 text-center">สถานะ</th>
-                    <th class="p-3.5 text-right">การจัดการ</th>
-                  </tr>
-                </thead>
-                <tbody id="history-table-body" class="divide-y divide-m3-outline-variant/20 dark:divide-m3-outline-darkVariant/20">
-                  <!-- Dynamic rows -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="tab-inventory" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h2 class="text-lg font-bold text-slate-900 dark:text-white">จัดการคลังสินค้าและอุปกรณ์</h2>
-              <p class="text-xs text-slate-500 dark:text-slate-400">เพิ่ม แก้ไข หรือปรับปรุงจำนวนอุปกรณ์คงเหลือ</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="openAddProductModal()" class="px-4 py-2.5 rounded-m3-full bg-m3-primary text-white text-xs font-semibold hover:bg-m3-primary/90 flex items-center gap-2 shadow-m3-1 m3-ripple">
-                <i class="fa-solid fa-plus"></i> เพิ่มอุปกรณ์ใหม่
-              </button>
-            </div>
-          </div>
-
-          <!-- Inventory List Card Table -->
-          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-m3-surface-containerHigh/60 dark:bg-m3-surface-darkContainerHigh/60 text-slate-600 dark:text-slate-300 font-semibold">
-                  <tr>
-                    <th class="p-3.5">รหัสสินค้า</th>
-                    <th class="p-3.5">ชื่ออุปกรณ์</th>
-                    <th class="p-3.5">หมวดหมู่</th>
-                    <th class="p-3.5">สถานที่เก็บ</th>
-                    <th class="p-3.5 text-center">คงเหลือ / ขั้นต่ำ</th>
-                    <th class="p-3.5 text-right">การจัดการ</th>
-                  </tr>
-                </thead>
-                <tbody id="inventory-table-body" class="divide-y divide-m3-outline-variant/20 dark:divide-m3-outline-darkVariant/20">
-                  <!-- Dynamic Rows -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="tab-analytics" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
-          <div>
-            <h2 class="text-lg font-bold text-slate-900 dark:text-white">แดชบอร์ดสรุปภาพรวม</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">วิเคราะห์อัตราการเบิกใช้อุปกรณ์และสินค้าคงคลัง</p>
-          </div>
-
-          <!-- Summary Key Metrics Cards -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="p-4 rounded-m3-xl bg-m3-primary-container/40 dark:bg-m3-primary-darkContainer/30 border border-m3-primary/20">
-              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">จำนวนอุปกรณ์ทั้งหมด</p>
-              <h3 id="stat-total-items" class="text-2xl font-bold text-m3-primary-onContainer dark:text-m3-primary-darkOnContainer mt-1">0</h3>
-            </div>
-            <div class="p-4 rounded-m3-xl bg-m3-warning-container/40 dark:bg-m3-warning-darkContainer/30 border border-m3-warning/20">
-              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">สินค้าใกล้หมด (Low Stock)</p>
-              <h3 id="stat-low-stock" class="text-2xl font-bold text-m3-warning dark:text-m3-warning-dark mt-1">0</h3>
-            </div>
-            <div class="p-4 rounded-m3-xl bg-m3-tertiary-container/40 dark:bg-m3-tertiary-darkContainer/30 border border-m3-tertiary/20">
-              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">จำนวนใบเบิกทั้งหมด</p>
-              <h3 id="stat-total-slips" class="text-2xl font-bold text-m3-tertiary dark:text-m3-tertiary-dark mt-1">0</h3>
-            </div>
-            <div class="p-4 rounded-m3-xl bg-m3-secondary-container/40 dark:bg-m3-secondary-darkContainer/30 border border-m3-secondary/20">
-              <p class="text-xs font-medium text-slate-600 dark:text-slate-300">รวมเบิกวันนี้</p>
-              <h3 id="stat-today-withdrawals" class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">0</h3>
-            </div>
-          </div>
-
-          <!-- Analytics Charts Grid -->
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="p-5 rounded-m3-xl bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30">
-              <h4 class="text-sm font-semibold mb-4 text-slate-800 dark:text-slate-200">อุปกรณ์ที่มีการเบิกสูงสุด (Top Withdrawn)</h4>
-              <div class="h-64 relative">
-                <canvas id="chart-top-withdrawn"></canvas>
-              </div>
-            </div>
-            <div class="p-5 rounded-m3-xl bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30">
-              <h4 class="text-sm font-semibold mb-4 text-slate-800 dark:text-slate-200">สัดส่วนสต็อกตามหมวดหมู่</h4>
-              <div class="h-64 relative flex items-center justify-center">
-                <canvas id="chart-category-stock"></canvas>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="tab-trash" class="tab-content hidden space-y-6 max-w-7xl mx-auto">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-lg font-bold text-slate-900 dark:text-white">ถังขยะ (Trash Bin)</h2>
-              <p class="text-xs text-slate-500 dark:text-slate-400">รายการที่ถูกลบชั่วคราว สามารถกู้คืนหรือลบถาวรได้ที่นี่</p>
-            </div>
-            <button onclick="emptyTrashBin()" class="px-3.5 py-2 rounded-m3-full bg-m3-error text-white text-xs font-semibold hover:bg-m3-error/90 flex items-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-broom"></i> ล้างถังขยะทั้งหมด
-            </button>
-          </div>
-
-          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 overflow-hidden">
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead class="bg-m3-surface-containerHigh/60 dark:bg-m3-surface-darkContainerHigh/60 text-slate-600 dark:text-slate-300 font-semibold">
-                  <tr>
-                    <th class="p-3.5">ประเภท</th>
-                    <th class="p-3.5">รายการ / ID</th>
-                    <th class="p-3.5">วันที่ถูกลบ</th>
-                    <th class="p-3.5 text-right">การกู้คืน</th>
-                  </tr>
-                </thead>
-                <tbody id="trash-table-body" class="divide-y divide-m3-outline-variant/20 dark:divide-m3-outline-darkVariant/20">
-                  <!-- Dynamic Trash items -->
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-      </main>
-    </div>
-
-    <div id="cart-drawer-backdrop" onclick="closeCartDrawer()" class="fixed inset-0 bg-slate-900/40 glass-backdrop z-40 hidden transition-opacity"></div>
-    <aside id="cart-drawer" class="fixed right-0 top-0 bottom-0 w-full sm:w-[420px] bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow z-50 border-l border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 shadow-m3-5 transform translate-x-full transition-transform duration-300 flex flex-col">
-      
-      <!-- Drawer Header -->
-      <div class="p-4 border-b border-m3-outline-variant/20 dark:border-m3-outline-darkVariant/20 flex items-center justify-between bg-m3-surface-containerLow dark:bg-m3-surface-darkContainer">
-        <div class="flex items-center gap-2.5">
-          <i class="fa-solid fa-cart-flatbed text-m3-primary dark:text-m3-primary-dark text-lg"></i>
-          <div>
-            <h3 class="text-sm font-bold text-slate-900 dark:text-white">ตะกร้าขอเบิกอุปกรณ์</h3>
-            <p id="cart-drawer-subtitle" class="text-xs text-slate-500">เลือกแล้ว 0 รายการ</p>
-          </div>
-        </div>
-        <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-m3-surface-containerHigh text-slate-500">
-          <i class="fa-solid fa-xmark text-base"></i>
-        </button>
-      </div>
-
-      <!-- Drawer Content: Selected Items List with Quick Adjust -->
-      <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3">
-        <!-- Dynamic Cart Items -->
-      </div>
-
-      <!-- Drawer Form & Footer Actions -->
-      <div class="p-4 border-t border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 bg-m3-surface-containerLow/50 dark:bg-m3-surface-darkContainerLow/50 space-y-3">
-        
-        <!-- Withdrawal Form Inputs -->
-        <div class="space-y-2 text-xs">
-          <div>
-            <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">ชื่อ-นามสกุล ผู้ขอเบิก *</label>
-            <input type="text" id="cart-requester-name" placeholder="ระบุชื่อผู้เบิกอุปกรณ์" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer text-xs outline-none focus:border-m3-primary">
-          </div>
-          <div>
-            <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">ชื่องาน / หน่วยงาน / โครงการ *</label>
-            <input type="text" id="cart-project-name" placeholder="เช่น ติดตั้งสาขา พญาไท / Job #402" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer text-xs outline-none focus:border-m3-primary">
-          </div>
-          <div>
-            <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">หมายเหตุเพิ่มเติม</label>
-            <input type="text" id="cart-remarks" placeholder="ระบุเหตุผลหรือสถานที่ใช้งาน" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer text-xs outline-none focus:border-m3-primary">
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="pt-2 flex items-center gap-2">
-          <button onclick="clearCart()" class="w-1/3 py-2.5 rounded-m3-full border border-m3-outline text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-m3-surface-container">
-            ล้างตะกร้า
-          </button>
-          <button onclick="submitWithdrawalOrder()" class="w-2/3 py-2.5 rounded-m3-full bg-m3-primary text-white text-xs font-semibold hover:bg-m3-primary/90 shadow-m3-2 flex items-center justify-center gap-2 m3-ripple">
-            <i class="fa-solid fa-check"></i> บันทึกและพิมพ์ใบเบิก
-          </button>
-        </div>
-      </div>
-    </aside>
-
-  </div>
-
-  
-  <!-- Add / Edit Product Modal Container -->
-  <div id="product-modal" class="fixed inset-0 bg-slate-900/50 glass-backdrop z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow w-full max-w-md rounded-m3-xl p-6 shadow-m3-4 border border-m3-outline-variant/30 space-y-4 transform transition-all scale-100">
-      <div class="flex justify-between items-center border-b border-m3-outline-variant/20 pb-3">
-        <h3 id="product-modal-title" class="text-base font-bold text-slate-900 dark:text-white">เพิ่มอุปกรณ์ใหม่</h3>
-        <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <form id="product-form" onsubmit="handleProductSubmit(event)" class="space-y-3 text-xs">
-        <input type="hidden" id="modal-product-id">
-        <div>
-          <label class="block font-medium mb-1">รหัสสินค้า (SKU/Code) *</label>
-          <input type="text" id="modal-sku" required class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-        </div>
-        <div>
-          <label class="block font-medium mb-1">ชื่ออุปกรณ์ *</label>
-          <input type="text" id="modal-name" required class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-medium mb-1">หมวดหมู่</label>
-            <input type="text" id="modal-category" placeholder="เช่น สายไฟ, กล้อง" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-          </div>
-          <div>
-            <label class="block font-medium mb-1">หน่วยนับ</label>
-            <input type="text" id="modal-unit" placeholder="ชิ้น, ตัว, เมตร" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-medium mb-1">จำนวนคงเหลือ *</label>
-            <input type="number" id="modal-quantity" min="0" required class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-          </div>
-          <div>
-            <label class="block font-medium mb-1">จำนวนขั้นต่ำ (Low Stock)</label>
-            <input type="number" id="modal-min-qty" min="0" value="5" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-          </div>
-        </div>
-        <div>
-          <label class="block font-medium mb-1">สถานที่เก็บ (Location / Shelf)</label>
-          <input type="text" id="modal-location" placeholder="เช่น ชั้น A3, ตู้ B" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none focus:border-m3-primary">
-        </div>
-
-        <div class="pt-3 flex justify-end gap-2">
-          <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-m3-full border border-m3-outline text-xs font-medium">ยกเลิก</button>
-          <button type="submit" class="px-4 py-2 rounded-m3-full bg-m3-primary text-white text-xs font-medium hover:bg-m3-primary/90">บันทึกข้อมูล</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Sync Configuration Modal (GitHub Sync & Database Access) -->
-  <div id="sync-modal" class="fixed inset-0 bg-slate-900/50 glass-backdrop z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow w-full max-w-lg rounded-m3-xl p-6 shadow-m3-4 border border-m3-outline-variant/30 space-y-4">
-      <div class="flex justify-between items-center border-b border-m3-outline-variant/20 pb-3">
-        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <i class="fa-solid fa-cloud-arrow-up text-m3-primary"></i> ตั้งค่าการเชื่อมโยงข้อมูล (Sync System)
-        </h3>
-        <button onclick="closeSyncDialog()" class="text-slate-400 hover:text-slate-600">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <div class="space-y-4 text-xs">
-        <div class="p-3 rounded-m3-lg bg-m3-primary-container/30 text-m3-primary-onContainer border border-m3-primary/20">
-          <p class="font-semibold mb-1">IndexedDB Local Storage Enabled</p>
-          <p class="text-[11px] opacity-90">ข้อมูลของคุณจะถูกบันทึกอย่างปลอดภัยในเบราว์เซอร์ รวมถึงรองรับการเลือกไฟล์ <code>database/stock-data.json</code> ผ่าน File System Access API</p>
-        </div>
-
-        <!-- GitHub Integration Section -->
-        <div class="space-y-2 border-t border-m3-outline-variant/20 pt-3">
-          <h4 class="font-bold text-slate-800 dark:text-slate-200">GitHub API Integration (Optional Sync)</h4>
-          <div>
-            <label class="block font-medium mb-1">GitHub Personal Access Token</label>
-            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none">
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-medium mb-1">Repo Name (user/repo)</label>
-              <input type="text" id="gh-repo" placeholder="owner/repository" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none">
-            </div>
-            <div>
-              <label class="block font-medium mb-1">FilePath in Repo</label>
-              <input type="text" id="gh-path" value="database/stock-data.json" class="w-full px-3 py-2 rounded-m3-md border border-m3-outline dark:border-m3-outline-dark bg-m3-surface dark:bg-m3-surface-darkContainer outline-none">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pt-2 flex justify-between items-center">
-        <button onclick="saveSyncSettings()" class="px-4 py-2 rounded-m3-full bg-m3-primary text-white text-xs font-medium hover:bg-m3-primary/90">
-          บันทึกการตั้งค่า Sync
-        </button>
-        <button onclick="closeSyncDialog()" class="px-4 py-2 rounded-m3-full border border-m3-outline text-xs font-medium">
-          ปิด
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- PRINTABLE SLIP CONTAINER (Visible only when printing) -->
-  <div id="printable-slip" class="hidden">
-    <!-- Populated dynamically upon print command -->
-  </div>
-
-  <!-- Toast Notification Snackbar -->
-  <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col gap-2"></div>
-
-  <script>
-    /* ==========================================================================
-       APPLICATION STATE & INITIALIZATION
-       ========================================================================== */
-    const DB_NAME = 'EquipmentWithdrawalDB_M3';
-    const DB_VERSION = 1;
-    let db = null;
-
-    // Default Initial Equipment Data (Fallback / Stock Seed)
-    const initialStockData = [
-      { id: 'EQ-1001', sku: 'CAB-CAT6-01', name: 'สายสัญญาณ LAN CAT6 (300m)', category: 'สายสัญญาณ', unit: 'ม้วน', quantity: 15, minQuantity: 3, location: 'Shelf A-01' },
-      { id: 'EQ-1002', sku: 'CON-RJ45-01', name: 'หัวขั้วต่อ RJ45 Cat6 (100 ชิ้น)', category: 'ข้อต่อและหัวเสียบ', unit: 'กล่อง', quantity: 8, minQuantity: 5, location: 'Shelf A-02' },
-      { id: 'EQ-1003', sku: 'CAM-IP-2MP', name: 'กล้องวงจรปิด IP Camera 2MP Outdoor', category: 'กล้องและบันทึก', unit: 'ตัว', quantity: 4, minQuantity: 5, location: 'Shelf B-01' },
-      { id: 'EQ-1004', sku: 'POW-SUP-12V', name: 'Power Supply 12V 5A for CCTV', category: 'อุปกรณ์จ่ายไฟ', unit: 'ตัว', quantity: 22, minQuantity: 10, location: 'Shelf C-03' },
-      { id: 'EQ-1005', sku: 'TOOL-CRIMP-1', name: 'คีมย้ำหัวสาย LAN & Telephone Professional', category: 'เครื่องมือช่าง', unit: 'อัน', quantity: 6, minQuantity: 2, location: 'Tool Cabinet 1' },
-      { id: 'EQ-1006', sku: 'SW-POE-8P', name: 'Gigabit PoE Switch 8 Port Managed', category: 'อุปกรณ์เครือข่าย', unit: 'ตัว', quantity: 3, minQuantity: 4, location: 'Shelf B-03' },
-      { id: 'EQ-1007', sku: 'TAPE-INS-01', name: 'เทปพันสายไฟ 3M สีดำ', category: 'วัสดุสิ้นเปลือง', unit: 'ม้วน', quantity: 45, minQuantity: 15, location: 'Shelf A-05' }
-    ];
-
-    let currentProducts = [];
-    let currentHistory = [];
-    let currentTrash = [];
-    let cart = []; // Array of { product, qty }
-    let selectedCategory = 'all';
-    let currentUser = { name: 'นายช่างติดตั้ง A', role: 'technician' }; // 'technician' or 'admin'
-    let fileHandle = null; // File System Access API handle
-
-    /* ==========================================================================
-       INDEXEDDB DATABASE MANAGER
-       ========================================================================== */
-    function initDB() {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
-        
-        request.onupgradeneeded = (e) => {
-          const dbInstance = e.target.result;
-          if (!dbInstance.objectStoreNames.contains('products')) {
-            dbInstance.createObjectStore('products', { keyPath: 'id' });
-          }
-          if (!dbInstance.objectStoreNames.contains('history')) {
-            dbInstance.createObjectStore('history', { keyPath: 'id' });
-          }
-          if (!dbInstance.objectStoreNames.contains('trash')) {
-            dbInstance.createObjectStore('trash', { keyPath: 'id' });
-          }
-        };
-
-        request.onsuccess = (e) => {
-          db = e.target.result;
-          resolve(db);
-        };
-
-        request.onerror = (e) => {
-          console.error('IndexedDB error:', e.target.error);
-          reject(e.target.error);
-        };
-      });
-    }
-
-    async function loadAllData() {
-      try {
-        await initDB();
-        
-        // Fetch products from IndexedDB
-        const productsFromDB = await getAllFromStore('products');
-        if (productsFromDB && productsFromDB.length > 0) {
-          currentProducts = productsFromDB;
-        } else {
-          // Seed initial products
-          currentProducts = [...initialStockData];
-          for (const item of currentProducts) {
-            await saveToStore('products', item);
-          }
-        }
-
-        // Fetch history and trash
-        currentHistory = await getAllFromStore('history');
-        currentTrash = await getAllFromStore('trash');
-
-        renderAllViews();
-        showToast('โหลดข้อมูลสำเร็จ', 'success');
-      } catch (err) {
-        console.error('Error loading data:', err);
-        showToast('เกิดข้อผิดพลาดในการโหลดข้อมูล', 'error');
-      }
-    }
-
-    function getAllFromStore(storeName) {
-      return new Promise((resolve) => {
-        if (!db) return resolve([]);
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => resolve([]);
-      });
-    }
-
-    function saveToStore(storeName, item) {
-      return new Promise((resolve, reject) => {
-        if (!db) return resolve();
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.put(item);
-        req.onsuccess = () => resolve();
-        req.onerror = (e) => reject(e);
-      });
-    }
-
-    function deleteFromStore(storeName, id) {
-      return new Promise((resolve, reject) => {
-        if (!db) return resolve();
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.delete(id);
-        req.onsuccess = () => resolve();
-        req.onerror = (e) => reject(e);
-      });
-    }
-
-    /* ==========================================================================
-       FILE SYSTEM ACCESS API INTEGRATION
-       ========================================================================== */
-    async function openFileSystemFile() {
-      if (!('showOpenFilePicker' in window)) {
-        showToast('เบราว์เซอร์นี้ไม่รองรับ File System Access API ใช้ปุ่ม Import/Export แทน', 'warning');
-        return;
-      }
-      try {
-        [fileHandle] = await window.showOpenFilePicker({
-          types: [{
-            description: 'JSON Stock File',
-            accept: { 'application/json': ['.json'] }
-          }]
-        });
-        const file = await fileHandle.getFile();
-        const text = await file.text();
-        const data = JSON.parse(text);
-
-        if (Array.isArray(data)) {
-          currentProducts = data;
-          // Sync with IndexedDB
-          for (const item of data) {
-            await saveToStore('products', item);
-          }
-          renderAllViews();
-          showToast(`ผูกไฟล์ ${file.name} สำเร็จแล้ว`, 'success');
-          document.getElementById('sync-status-text').textContent = `File: ${file.name}`;
-        }
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          showToast('ไม่สามารถอ่านไฟล์ได้', 'error');
-        }
-      }
-    }
-
-    /* ==========================================================================
-       UI RENDERING & CATALOG CONTROLLER
-       ========================================================================== */
-    function renderAllViews() {
-      renderCategoryChips();
-      filterCatalog();
-      renderHistoryTable();
-      renderInventoryTable();
-      renderTrashTable();
-      renderAnalyticsCharts();
-      updateCartBadge();
-    }
-
-    function renderCategoryChips() {
-      const container = document.getElementById('category-chips-container');
-      const categories = ['all', ...new Set(currentProducts.map(p => p.category || 'ทั่วไป'))];
-      
-      container.innerHTML = categories.map(cat => {
-        const isSelected = selectedCategory === cat;
-        const label = cat === 'all' ? 'ทั้งหมด' : cat;
-        return `
-          <button onclick="selectCategory('${cat}')" class="px-4 py-1.5 rounded-m3-full text-xs font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
-            isSelected 
-              ? 'bg-m3-primary text-white shadow-sm font-semibold' 
-              : 'bg-m3-surface-containerHigh dark:bg-m3-surface-darkContainerHigh text-slate-700 dark:text-slate-300 hover:bg-m3-surface-container'
-          }">
-            ${isSelected ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
-            <span>${label}</span>
-          </button>
-        `;
-      }).join('');
-    }
-
-    function selectCategory(cat) {
-      selectedCategory = cat;
-      renderCategoryChips();
-      filterCatalog();
-    }
-
-    function filterCatalog() {
-      const searchTerm = (document.getElementById('catalog-search').value || '').toLowerCase().trim();
-      const showLowStockOnly = document.getElementById('chk-low-stock-only').checked;
-      const clearBtn = document.getElementById('btn-clear-search');
-      
-      if (clearBtn) {
-        clearBtn.classList.toggle('hidden', searchTerm.length === 0);
-      }
-
-      const filtered = currentProducts.filter(item => {
-        const matchesCategory = selectedCategory === 'all' || (item.category || 'ทั่วไป') === selectedCategory;
-        const matchesSearch = !searchTerm || 
-          (item.name && item.name.toLowerCase().includes(searchTerm)) ||
-          (item.sku && item.sku.toLowerCase().includes(searchTerm)) ||
-          (item.location && item.location.toLowerCase().includes(searchTerm));
-        const matchesLowStock = !showLowStockOnly || (item.quantity <= (item.minQuantity || 5));
-
-        return matchesCategory && matchesSearch && matchesLowStock;
-      });
-
-      document.getElementById('catalog-count-display').textContent = filtered.length;
-      renderProductCards(filtered);
-    }
-
-    function clearSearch() {
-      document.getElementById('catalog-search').value = '';
-      filterCatalog();
-    }
-
-    function renderProductCards(products) {
-      const grid = document.getElementById('product-grid');
-      const emptyState = document.getElementById('catalog-empty-state');
-
-      if (!products || products.length === 0) {
-        grid.innerHTML = '';
-        emptyState.classList.remove('hidden');
-        return;
-      }
-
-      emptyState.classList.add('hidden');
-      grid.innerHTML = products.map(item => {
-        const isLowStock = item.quantity <= (item.minQuantity || 5);
-        const isOutOfStock = item.quantity <= 0;
-        const cartItem = cart.find(c => c.product.id === item.id);
-        const inCartQty = cartItem ? cartItem.qty : 0;
-
-        return `
-          <div class="bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow rounded-m3-xl p-4 border border-m3-outline-variant/30 dark:border-m3-outline-darkVariant/30 hover:shadow-m3-2 transition-all flex flex-col justify-between group relative overflow-hidden">
-            <!-- Low stock badge banner -->
-            ${isLowStock ? `
-              <div class="absolute top-0 right-0 px-3 py-1 rounded-bl-m3-lg ${isOutOfStock ? 'bg-m3-error text-white' : 'bg-m3-warning-container text-m3-warning-onContainer'} text-[10px] font-bold uppercase tracking-wider">
-                ${isOutOfStock ? 'สินค้าหมด' : 'ใกล้หมดคลัง'}
-              </div>
-            ` : ''}
-
-            <div>
-              <div class="text-[10px] font-mono font-semibold text-slate-400 dark:text-slate-500 mb-1">${item.sku}</div>
-              <h4 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-m3-primary dark:group-hover:text-m3-primary-dark transition-colors line-clamp-2">${item.name}</h4>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
-                <span><i class="fa-solid fa-tag text-[10px] opacity-70"></i> ${item.category || 'ทั่วไป'}</span>
-                <span>•</span>
-                <span><i class="fa-solid fa-location-dot text-[10px] opacity-70"></i> ${item.location || '-'}</span>
-              </p>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-m3-outline-variant/20 dark:border-m3-outline-darkVariant/20 flex items-center justify-between">
-              <div>
-                <span class="text-xs text-slate-400">คงเหลือ</span>
-                <p class="text-base font-bold ${isLowStock ? 'text-m3-error dark:text-m3-error-dark' : 'text-slate-800 dark:text-slate-100'}">
-                  ${item.quantity} <span class="text-xs font-normal text-slate-500">${item.unit}</span>
-                </p>
-              </div>
-
-              <!-- Quick Adjust & Add to Cart Controls -->
-              <div class="flex items-center gap-1">
-                ${inCartQty > 0 ? `
-                  <div class="flex items-center rounded-m3-full bg-m3-primary-container dark:bg-m3-primary-darkContainer p-1 border border-m3-primary/30">
-                    <button onclick="updateCartQty('${item.id}', ${inCartQty - 1})" class="w-7 h-7 rounded-full bg-white dark:bg-m3-surface-dark flex items-center justify-center text-xs font-bold text-m3-primary shadow-sm hover:scale-105 active:scale-95 transition-all">
-                      <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <span class="px-2 text-xs font-bold text-m3-primary-onContainer dark:text-m3-primary-darkOnContainer min-w-[20px] text-center">${inCartQty}</span>
-                    <button onclick="updateCartQty('${item.id}', ${inCartQty + 1})" class="w-7 h-7 rounded-full bg-m3-primary text-white flex items-center justify-center text-xs font-bold shadow-sm hover:scale-105 active:scale-95 transition-all ${inCartQty >= item.quantity ? 'opacity-50 cursor-not-allowed' : ''}" ${inCartQty >= item.quantity ? 'disabled' : ''}>
-                      <i class="fa-solid fa-plus"></i>
-                    </button>
-                  </div>
-                ` : `
-                  <button onclick="addToCart('${item.id}')" ${isOutOfStock ? 'disabled' : ''} class="px-3.5 py-2 rounded-m3-full ${isOutOfStock ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-m3-primary text-white hover:bg-m3-primary/90 shadow-sm'} text-xs font-semibold flex items-center gap-1.5 transition-all m3-ripple">
-                    <i class="fa-solid fa-plus"></i> เบิกสินค้า
-                  </button>
-                `}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    /* ==========================================================================
-       CART & WITHDRAWAL SYSTEM LOGIC
-       ========================================================================== */
-    function addToCart(productId) {
-      const product = currentProducts.find(p => p.id === productId);
-      if (!product || product.quantity <= 0) return;
-
-      const existing = cart.find(c => c.product.id === productId);
-      if (existing) {
-        if (existing.qty < product.quantity) {
-          existing.qty += 1;
-        } else {
-          showToast('จำนวนที่เบิกเกินกว่าสินค้าที่มีอยู่ในคลัง', 'warning');
-        }
-      } else {
-        cart.push({ product, qty: 1 });
-      }
-
-      updateCartBadge();
-      renderProductCards(currentProducts);
-      renderCartDrawer();
-      showToast(`เพิ่ม ${product.name} ลงในรายการเบิกแล้ว`, 'info');
-    }
-
-    function updateCartQty(productId, newQty) {
-      const index = cart.findIndex(c => c.product.id === productId);
-      if (index === -1) return;
-
-      const product = cart[index].product;
-
-      if (newQty <= 0) {
-        cart.splice(index, 1);
-      } else if (newQty > product.quantity) {
-        showToast('จำนวนที่ระบุเกินกว่าสต็อกคงเหลือ', 'warning');
-        return;
-      } else {
-        cart[index].qty = newQty;
-      }
-
-      updateCartBadge();
-      filterCatalog();
-      renderCartDrawer();
-    }
-
-    function updateCartBadge() {
-      const badge = document.getElementById('cart-badge-count');
-      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
-
-      if (totalCount > 0) {
-        badge.textContent = totalCount;
-        badge.classList.remove('hidden');
-      } else {
-        badge.classList.add('hidden');
-      }
-
-      document.getElementById('cart-drawer-subtitle').textContent = `เลือกแล้ว ${cart.length} รายการ (${totalCount} ชิ้น)`;
-    }
-
-    function openCartDrawer() {
-      renderCartDrawer();
-      document.getElementById('cart-drawer-backdrop').classList.remove('hidden');
-      document.getElementById('cart-drawer').classList.remove('translate-x-full');
-    }
-
-    function closeCartDrawer() {
-      document.getElementById('cart-drawer-backdrop').classList.add('hidden');
-      document.getElementById('cart-drawer').classList.add('translate-x-full');
-    }
-
-    function renderCartDrawer() {
-      const container = document.getElementById('cart-items-container');
-
-      if (cart.length === 0) {
-        container.innerHTML = `
-          <div class="py-12 flex flex-col items-center justify-center text-center text-slate-400">
-            <i class="fa-solid fa-cart-arrow-down text-3xl mb-2"></i>
-            <p class="text-xs font-medium">ยังไม่มีรายการอุปกรณ์ในตะกร้า</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = cart.map(item => `
-        <div class="p-3 rounded-m3-lg bg-m3-surface-container dark:bg-m3-surface-darkContainer flex items-center justify-between border border-m3-outline-variant/20">
-          <div class="flex-1 pr-2">
-            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-100 line-clamp-1">${item.product.name}</h5>
-            <p class="text-[10px] text-slate-500">SKU: ${item.product.sku} | คงเหลือ: ${item.product.quantity} ${item.product.unit}</p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <div class="flex items-center rounded-m3-full bg-m3-surface-containerLowest dark:bg-m3-surface-darkContainerLow border border-m3-outline-variant/40 px-1 py-0.5">
-              <button onclick="updateCartQty('${item.product.id}', ${item.qty - 1})" class="w-6 h-6 text-xs text-slate-600 hover:text-m3-primary font-bold flex items-center justify-center">
-                <i class="fa-solid fa-minus"></i>
-              </button>
-              <span class="px-2 text-xs font-bold text-slate-800 dark:text-slate-100">${item.qty}</span>
-              <button onclick="updateCartQty('${item.product.id}', ${item.qty + 1})" class="w-6 h-6 text-xs text-slate-600 hover:text-m3-primary font-bold flex items-center justify-center">
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
-
-            <button onclick="updateCartQty('${item.product.id}', 0)" class="text-m3-error hover:text-red-700 p-1" title="ลบออก">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function clearCart() {
-      cart = [];
-      updateCartBadge();
-      renderCartDrawer();
-      filterCatalog();
-    }
-
-    async function submitWithdrawalOrder() {
-      if (cart.length === 0) {
-        showToast('กรุณาเลือกรายการอุปกรณ์ก่อนทำรายการ', 'warning');
-        return;
-      }
-
-      const requesterName = document.getElementById('cart-requester-name').value.trim();
-      const projectName = document.getElementById('cart-project-name').value.trim();
-      const remarks = document.getElementById('cart-remarks').value.trim();
-
-      if (!requesterName || !projectName) {
-        showToast('กรุณากรอกชื่อผู้เบิกและชื่องาน/โครงการ', 'warning');
-        return;
-      }
-
-      const slipId = 'REQ-' + Date.now().toString().slice(-6);
-      const timestamp = new Date().toISOString();
-
-      const orderData = {
-        id: slipId,
-        requester: requesterName,
-        project: projectName,
-        remarks: remarks,
-        items: cart.map(c => ({
-          id: c.product.id,
-          sku: c.product.sku,
-          name: c.product.name,
-          qty: c.qty,
-          unit: c.product.unit
-        })),
-        createdAt: timestamp,
-        status: 'completed'
-      };
-
-      // Deduct inventory quantities
-      for (const cartItem of cart) {
-        const prod = currentProducts.find(p => p.id === cartItem.product.id);
-        if (prod) {
-          prod.quantity = Math.max(0, prod.quantity - cartItem.qty);
-          await saveToStore('products', prod);
-        }
-      }
-
-      // Save order to history
-      currentHistory.unshift(orderData);
-      await saveToStore('history', orderData);
-
-      // Save to external File System if opened
-      if (fileHandle) {
-        try {
-          const writable = await fileHandle.createWritable();
-          await writable.write(JSON.stringify(currentProducts, null, 2));
-          await writable.close();
-        } catch (e) {
-          console.error('File System write error:', e);
-        }
-      }
-
-      // Generate Printable Slip Window
-      generateAndPrintSlip(orderData);
-
-      // Reset Cart and Form
-      clearCart();
-      document.getElementById('cart-requester-name').value = '';
-      document.getElementById('cart-project-name').value = '';
-      document.getElementById('cart-remarks').value = '';
-      closeCartDrawer();
-
-      renderAllViews();
-      showToast(`บันทึกใบเบิก ${slipId} สำเร็จแล้ว`, 'success');
-    }
-
-    /* ==========================================================================
-       HISTORY & SLIP PRINTING LOGIC
-       ========================================================================== */
-    function renderHistoryTable() {
-      const tbody = document.getElementById('history-table-body');
-      const search = (document.getElementById('history-search')?.value || '').toLowerCase();
-
-      const filtered = currentHistory.filter(h => 
-        !search || 
-        h.id.toLowerCase().includes(search) || 
-        h.requester.toLowerCase().includes(search) ||
-        h.project.toLowerCase().includes(search)
-      );
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">ไม่พบประวัติการเบิกอุปกรณ์</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = filtered.map(h => {
-        const dateStr = new Date(h.createdAt).toLocaleString('th-TH');
-        return `
-          <tr class="hover:bg-m3-surface-container/50 transition-colors">
-            <td class="p-3.5 font-mono font-bold text-m3-primary dark:text-m3-primary-dark">${h.id}</td>
-            <td class="p-3.5 text-slate-600 dark:text-slate-300">${dateStr}</td>
-            <td class="p-3.5 font-medium text-slate-900 dark:text-slate-100">${h.requester}</td>
-            <td class="p-3.5 text-slate-600 dark:text-slate-300">${h.project}</td>
-            <td class="p-3.5 text-center font-bold">${h.items.length} รายการ</td>
-            <td class="p-3.5 text-center">
-              <span class="px-2.5 py-1 rounded-m3-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
-                เบิกสำเร็จ
-              </span>
-            </td>
-            <td class="p-3.5 text-right space-x-1">
-              <button onclick="generateAndPrintSlipById('${h.id}')" class="px-2.5 py-1 rounded-m3-md border border-m3-outline text-xs hover:bg-m3-surface-container" title="พิมพ์ใบเบิก">
-                <i class="fa-solid fa-print"></i> พิมพ์
-              </button>
-              <button onclick="softDeleteHistory('${h.id}')" class="px-2.5 py-1 rounded-m3-md bg-m3-error/10 text-m3-error text-xs hover:bg-m3-error/20" title="ยกเลิก/ลบใบเบิก">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function generateAndPrintSlipById(slipId) {
-      const order = currentHistory.find(h => h.id === slipId);
-      if (order) {
-        generateAndPrintSlip(order);
-      }
-    }
-
-    function generateAndPrintSlip(order) {
-      const printContainer = document.getElementById('printable-slip');
-      const dateStr = new Date(order.createdAt).toLocaleString('th-TH');
-
-      printContainer.innerHTML = `
-        <div style="font-family: 'Prompt', sans-serif; max-width: 800px; margin: 0 auto; border: 1px solid #ccc; padding: 24px; border-radius: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6750A4; pb-12px; margin-bottom: 16px;">
-            <div>
-              <h2 style="margin: 0; font-size: 20px; color: #6750A4; font-weight: bold;">ใบเบิกอุปกรณ์ติดตั้ง / Withdrawal Slip</h2>
-              <p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">Equipment Withdrawal Management System</p>
-            </div>
-            <div style="text-align: right;">
-              <p style="margin: 0; font-weight: bold; font-size: 16px; font-family: monospace;">${order.id}</p>
-              <p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">วันที่: ${dateStr}</p>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #f8f9fa; padding: 12px; border-radius: 6px;">
-            <div><strong>ผู้ขอเบิก:</strong> ${order.requester}</div>
-            <div><strong>งาน / โครงการ:</strong> ${order.project}</div>
-            <div style="grid-column: span 2;"><strong>หมายเหตุ:</strong> ${order.remarks || '-'}</div>
-          </div>
-
-          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 24px;">
-            <thead>
-              <tr style="background: #EADDFF; color: #21005D;">
-                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">ลำดับ</th>
-                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">SKU</th>
-                <th style="padding: 8px; border: 1px solid #ccc; text-align: left;">รายการอุปกรณ์</th>
-                <th style="padding: 8px; border: 1px solid #ccc; text-align: center;">จำนวนที่เบิก</th>
-                <th style="padding: 8px; border: 1px solid #ccc; text-align: center;">หน่วย</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${order.items.map((item, idx) => `
-                <tr>
-                  <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">${idx + 1}</td>
-                  <td style="padding: 8px; border: 1px solid #ccc; font-family: monospace;">${item.sku}</td>
-                  <td style="padding: 8px; border: 1px solid #ccc; font-weight: bold;">${item.name}</td>
-                  <td style="padding: 8px; border: 1px solid #ccc; text-align: center; font-weight: bold;">${item.qty}</td>
-                  <td style="padding: 8px; border: 1px solid #ccc; text-align: center;">${item.unit}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; text-align: center; font-size: 12px;">
-            <div>
-              <p>____________________</p>
-              <p>(${order.requester})<br>ผู้ขอเบิกอุปกรณ์</p>
-            </div>
-            <div>
-              <p>____________________</p>
-              <p>ผู้จ่ายอุปกรณ์ / คลังสินค้า</p>
-            </div>
-            <div>
-              <p>____________________</p>
-              <p>ผู้อนุมัติ</p>
-            </div>
-          </div>
-        </div>
-      `;
-
-      window.print();
-    }
-
-    /* ==========================================================================
-       INVENTORY MANAGEMENT & MODAL CONTROLLER
-       ========================================================================== */
-    function renderInventoryTable() {
-      const tbody = document.getElementById('inventory-table-body');
-      
-      tbody.innerHTML = currentProducts.map(p => `
-        <tr class="hover:bg-m3-surface-container/50 transition-colors">
-          <td class="p-3.5 font-mono font-bold text-slate-500">${p.sku}</td>
-          <td class="p-3.5 font-bold text-slate-900 dark:text-slate-100">${p.name}</td>
-          <td class="p-3.5 text-slate-600 dark:text-slate-300">${p.category || 'ทั่วไป'}</td>
-          <td class="p-3.5 text-slate-600 dark:text-slate-300">${p.location || '-'}</td>
-          <td class="p-3.5 text-center font-bold">
-            <span class="${p.quantity <= p.minQuantity ? 'text-m3-error' : 'text-slate-800 dark:text-slate-200'}">
-              ${p.quantity} / ${p.minQuantity || 5} ${p.unit}
-            </span>
-          </td>
-          <td class="p-3.5 text-right space-x-1">
-            <button onclick="editProductModal('${p.id}')" class="px-2.5 py-1 rounded-m3-md bg-m3-primary-container text-m3-primary-onContainer text-xs font-semibold hover:opacity-90">
-              <i class="fa-solid fa-pen-to-square"></i> แก้ไข
-            </button>
-            <button onclick="softDeleteProduct('${p.id}')" class="px-2.5 py-1 rounded-m3-md bg-m3-error/10 text-m3-error text-xs font-semibold hover:bg-m3-error/20">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function openAddProductModal() {
-      document.getElementById('product-modal-title').textContent = 'เพิ่มอุปกรณ์ใหม่';
-      document.getElementById('product-form').reset();
-      document.getElementById('modal-product-id').value = '';
-      document.getElementById('modal-sku').value = 'EQ-' + Math.floor(1000 + Math.random() * 9000);
-      document.getElementById('product-modal').classList.remove('hidden');
-    }
-
-    function editProductModal(productId) {
-      const prod = currentProducts.find(p => p.id === productId);
-      if (!prod) return;
-
-      document.getElementById('product-modal-title').textContent = 'แก้ไขข้อมูลอุปกรณ์';
-      document.getElementById('modal-product-id').value = prod.id;
-      document.getElementById('modal-sku').value = prod.sku;
-      document.getElementById('modal-name').value = prod.name;
-      document.getElementById('modal-category').value = prod.category || '';
-      document.getElementById('modal-unit').value = prod.unit;
-      document.getElementById('modal-quantity').value = prod.quantity;
-      document.getElementById('modal-min-qty').value = prod.minQuantity || 5;
-      document.getElementById('modal-location').value = prod.location || '';
-
-      document.getElementById('product-modal').classList.remove('hidden');
-    }
-
-    function closeProductModal() {
-      document.getElementById('product-modal').classList.add('hidden');
-    }
-
-    async function handleProductSubmit(e) {
-      e.preventDefault();
-
-      const editId = document.getElementById('modal-product-id').value;
-      const productObj = {
-        id: editId || 'PROD-' + Date.now(),
-        sku: document.getElementById('modal-sku').value.trim(),
-        name: document.getElementById('modal-name').value.trim(),
-        category: document.getElementById('modal-category').value.trim() || 'ทั่วไป',
-        unit: document.getElementById('modal-unit').value.trim() || 'ชิ้น',
-        quantity: parseInt(document.getElementById('modal-quantity').value, 10) || 0,
-        minQuantity: parseInt(document.getElementById('modal-min-qty').value, 10) || 5,
-        location: document.getElementById('modal-location').value.trim() || 'คลังหลัก'
-      };
-
-      if (editId) {
-        const idx = currentProducts.findIndex(p => p.id === editId);
-        if (idx !== -1) currentProducts[idx] = productObj;
-      } else {
-        currentProducts.push(productObj);
-      }
-
-      await saveToStore('products', productObj);
-      closeProductModal();
-      renderAllViews();
-      showToast('บันทึกข้อมูลสินค้าเรียบร้อยแล้ว', 'success');
-    }
-
-    /* ==========================================================================
-       UNDO & SOFT DELETE (TRASH BIN) SYSTEM
-       ========================================================================== */
-    async function softDeleteProduct(productId) {
-      const idx = currentProducts.findIndex(p => p.id === productId);
-      if (idx === -1) return;
-
-      const product = currentProducts[idx];
-      const trashItem = {
-        id: 'TRASH-' + Date.now(),
-        type: 'product',
-        originalId: product.id,
-        data: product,
-        deletedAt: new Date().toISOString()
-      };
-
-      currentProducts.splice(idx, 1);
-      currentTrash.unshift(trashItem);
-
-      await deleteFromStore('products', product.id);
-      await saveToStore('trash', trashItem);
-
-      renderAllViews();
-      showToastWithUndo('ลบอุปกรณ์ชั่วคราวแล้ว', trashItem.id);
-    }
-
-    async function softDeleteHistory(historyId) {
-      const idx = currentHistory.findIndex(h => h.id === historyId);
-      if (idx === -1) return;
-
-      const historyItem = currentHistory[idx];
-      const trashItem = {
-        id: 'TRASH-' + Date.now(),
-        type: 'history',
-        originalId: historyItem.id,
-        data: historyItem,
-        deletedAt: new Date().toISOString()
-      };
-
-      currentHistory.splice(idx, 1);
-      currentTrash.unshift(trashItem);
-
-      await deleteFromStore('history', historyItem.id);
-      await saveToStore('trash', trashItem);
-
-      renderAllViews();
-      showToastWithUndo('ย้ายใบเบิกไปที่ถังขยะแล้ว', trashItem.id);
-    }
-
-    async function restoreFromTrash(trashId) {
-      const idx = currentTrash.findIndex(t => t.id === trashId);
-      if (idx === -1) return;
-
-      const trashObj = currentTrash[idx];
-      if (trashObj.type === 'product') {
-        currentProducts.push(trashObj.data);
-        await saveToStore('products', trashObj.data);
-      } else if (trashObj.type === 'history') {
-        currentHistory.unshift(trashObj.data);
-        await saveToStore('history', trashObj.data);
-      }
-
-      currentTrash.splice(idx, 1);
-      await deleteFromStore('trash', trashId);
-
-      renderAllViews();
-      showToast('กู้คืนรายการเรียบร้อยแล้ว', 'success');
-    }
-
-    function renderTrashTable() {
-      const tbody = document.getElementById('trash-table-body');
-      if (currentTrash.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">ไม่มีรายการในถังขยะ</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = currentTrash.map(t => `
-        <tr class="hover:bg-m3-surface-container/50">
-          <td class="p-3.5 capitalize font-bold text-slate-600">${t.type}</td>
-          <td class="p-3.5 font-bold">${t.data.name || t.data.id}</td>
-          <td class="p-3.5 text-slate-500">${new Date(t.deletedAt).toLocaleString('th-TH')}</td>
-          <td class="p-3.5 text-right">
-            <button onclick="restoreFromTrash('${t.id}')" class="px-3 py-1 rounded-m3-full bg-m3-tertiary text-white text-xs font-semibold hover:bg-m3-tertiary/90">
-              <i class="fa-solid fa-rotate-left"></i> กู้คืน
-            </button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    async function emptyTrashBin() {
-      if (confirm('คุณต้องการลบรายการในถังขยะอย่างถาวรหรือไม่?')) {
-        for (const t of currentTrash) {
-          await deleteFromStore('trash', t.id);
-        }
-        currentTrash = [];
-        renderTrashTable();
-        showToast('ล้างถังขยะแล้ว', 'info');
-      }
-    }
-
-    /* ==========================================================================
-       ANALYTICS & CHARTS
-       ========================================================================== */
-    let topChart = null;
-    let catChart = null;
-
-    function renderAnalyticsCharts() {
-      // Update Key Stats Cards
-      document.getElementById('stat-total-items').textContent = currentProducts.length;
-      document.getElementById('stat-low-stock').textContent = currentProducts.filter(p => p.quantity <= (p.minQuantity || 5)).length;
-      document.getElementById('stat-total-slips').textContent = currentHistory.length;
-
-      const todayStr = new Date().toISOString().split('T')[0];
-      const todaySlips = currentHistory.filter(h => h.createdAt.startsWith(todayStr));
-      document.getElementById('stat-today-withdrawals').textContent = todaySlips.length;
-
-      // Render Charts if Chart.js is loaded
-      if (typeof Chart === 'undefined') return;
-
-      // Top Withdrawn Items Analytics
-      const itemUsageMap = {};
-      currentHistory.forEach(h => {
-        h.items.forEach(item => {
-          itemUsageMap[item.name] = (itemUsageMap[item.name] || 0) + item.qty;
-        });
-      });
-
-      const sortedTop = Object.entries(itemUsageMap)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-
-      const topLabels = sortedTop.map(x => x[0]);
-      const topData = sortedTop.map(x => x[1]);
-
-      const ctxTop = document.getElementById('chart-top-withdrawn')?.getContext('2d');
-      if (ctxTop) {
-        if (topChart) topChart.destroy();
-        topChart = new Chart(ctxTop, {
-          type: 'bar',
-          data: {
-            labels: topLabels.length ? topLabels : ['ไม่มีข้อมูล'],
-            datasets: [{
-              label: 'จำนวนเบิกออก (หน่วย)',
-              data: topData.length ? topData : [0],
-              backgroundColor: '#6750A4',
-              borderRadius: 8
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } }
-          }
-        });
-      }
-
-      // Stock by Category Pie Chart
-      const catMap = {};
-      currentProducts.forEach(p => {
-        const cat = p.category || 'ทั่วไป';
-        catMap[cat] = (catMap[cat] || 0) + p.quantity;
-      });
-
-      const ctxCat = document.getElementById('chart-category-stock')?.getContext('2d');
-      if (ctxCat) {
-        if (catChart) catChart.destroy();
-        catChart = new Chart(ctxCat, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(catMap),
-            datasets: [{
-              data: Object.values(catMap),
-              backgroundColor: ['#6750A4', '#006A60', '#825500', '#B3261E', '#625B71', '#381E72']
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false
-          }
-        });
-      }
-    }
-
-    /* ==========================================================================
-       IMPORT & EXPORT (CSV / JSON)
-       ========================================================================== */
-    function triggerCSVImport() {
-      document.getElementById('csv-file-input').click();
-    }
-
-    function handleCSVImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const text = e.target.result;
-        const lines = text.split('\n').filter(line => line.trim().length > 0);
-        
-        let addedCount = 0;
-        // Simple CSV Parsing
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(',').map(c => c.trim().replace(/^"(.*)"$/, '$1'));
-          if (cols.length >= 2) {
-            const newItem = {
-              id: 'EQ-' + Date.now() + '-' + i,
-              sku: cols[0] || 'SKU-' + i,
-              name: cols[1],
-              category: cols[2] || 'ทั่วไป',
-              unit: cols[3] || 'ชิ้น',
-              quantity: parseInt(cols[4], 10) || 0,
-              minQuantity: parseInt(cols[5], 10) || 5,
-              location: cols[6] || 'คลังหลัก'
-            };
-            currentProducts.push(newItem);
-            await saveToStore('products', newItem);
-            addedCount++;
-          }
-        }
-
-        renderAllViews();
-        showToast(`นำเข้าข้อมูลสำเร็จ ${addedCount} รายการ`, 'success');
-      };
-      reader.readAsText(file);
-    }
-
-    function exportHistoryCSV() {
-      if (currentHistory.length === 0) return;
-      let csv = 'SlipID,Date,Requester,Project,ItemSKU,ItemName,Qty,Unit\n';
-      
-      currentHistory.forEach(h => {
-        h.items.forEach(item => {
-          csv += `"${h.id}","${h.createdAt}","${h.requester}","${h.project}","${item.sku}","${item.name}",${item.qty},"${item.unit}"\n`;
-        });
-      });
-
-      downloadFile(csv, `withdrawal-history-${Date.now()}.csv`, 'text/csv');
-    }
-
-    function exportFullData() {
-      const fullBackup = {
-        products: currentProducts,
-        history: currentHistory,
-        trash: currentTrash,
-        exportedAt: new Date().toISOString()
-      };
-      downloadFile(JSON.stringify(fullBackup, null, 2), `backup-equipment-system-${Date.now()}.json`, 'application/json');
-    }
-
-    function downloadFile(content, fileName, mimeType) {
-      const blob = new Blob([content], { type: mimeType });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    /* ==========================================================================
-       UX MOTIONS, NAVIGATION & DIALOGS
-       ========================================================================== */
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-      const activeTab = document.getElementById(`tab-${tabId}`);
-      const activeNav = document.getElementById(`nav-btn-${tabId}`);
-
-      if (activeTab) activeTab.classList.remove('hidden');
-      if (activeNav) activeNav.classList.add('active');
-
-      if (tabId === 'analytics') {
-        renderAnalyticsCharts();
-      }
-    }
-
-    function toggleNavRail() {
-      const rail = document.getElementById('nav-rail');
-      rail.classList.toggle('w-20');
-      rail.classList.toggle('w-56');
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const icon = document.getElementById('theme-icon');
-      if (html.classList.contains('dark')) {
-        html.classList.remove('dark');
-        icon.className = 'fa-solid fa-moon text-base';
-      } else {
-        html.classList.add('dark');
-        icon.className = 'fa-solid fa-sun text-base';
-      }
-    }
-
-    function toggleUserDropdown() {
-      document.getElementById('user-dropdown').classList.toggle('hidden');
-    }
-
-    function switchUserRole() {
-      if (currentUser.role === 'technician') {
-        currentUser = { name: 'ผู้ดูแลระบบ (Admin)', role: 'admin' };
-      } else {
-        currentUser = { name: 'นายช่างติดตั้ง A', role: 'technician' };
-      }
-      document.getElementById('user-name-display').textContent = currentUser.name;
-      document.getElementById('user-dropdown-name').textContent = currentUser.name;
-      document.getElementById('user-dropdown-role').textContent = currentUser.role;
-      toggleUserDropdown();
-      showToast(`สลับสิทธิ์เป็น ${currentUser.role}`, 'info');
-    }
-
-    function openSyncDialog() {
-      document.getElementById('sync-modal').classList.remove('hidden');
-    }
-
-    function closeSyncDialog() {
-      document.getElementById('sync-modal').classList.add('hidden');
-    }
-
-    function saveSyncSettings() {
-      showToast('บันทึกการตั้งค่า Sync แล้ว', 'success');
-      closeSyncDialog();
-    }
-
-    /* ==========================================================================
-       M3 TOAST NOTIFICATION SYSTEM
-       ========================================================================== */
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      
-      const colors = {
-        success: 'bg-m3-tertiary-container text-m3-tertiary-onContainer border-m3-tertiary/30',
-        warning: 'bg-m3-warning-container text-m3-warning-onContainer border-m3-warning/30',
-        error: 'bg-m3-error-container text-m3-error-onContainer border-m3-error/30',
-        info: 'bg-m3-surface-bright dark:bg-m3-surface-darkBright text-slate-800 dark:text-slate-100 border-m3-outline-variant/40'
-      };
-
-      toast.className = `px-4 py-2.5 rounded-m3-full text-xs font-medium border shadow-m3-3 flex items-center gap-2 transform transition-all duration-300 pointer-events-auto ${colors[type] || colors.info}`;
-      toast.innerHTML = `<span>${message}</span>`;
-
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(10px)';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-
-    function showToastWithUndo(message, trashId) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      
-      toast.className = `px-4 py-2.5 rounded-m3-full text-xs font-medium bg-slate-900 text-white shadow-m3-4 flex items-center gap-3 pointer-events-auto`;
-      toast.innerHTML = `
-        <span>${message}</span>
-        <button onclick="restoreFromTrash('${trashId}'); this.parentElement.remove();" class="text-m3-primary-dark font-bold hover:underline">
-          เลิกทำ (Undo)
-        </button>
-      `;
-
-      container.appendChild(toast);
-      setTimeout(() => {
-        if (toast.parentElement) toast.remove();
-      }, 5000);
-    }
-
-    /* ==========================================================================
-       APP INITIALIZATION ENTRY POINT
-       ========================================================================== */
-    window.onload = function() {
-      loadAllData();
-    };
-  </script>
-</body>
-</html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ระบบเบิกของติดตั้ง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script>try{const t=localStorage.getItem("theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.classList.toggle("dark",t==="dark")}catch(e){}</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['"Noto Sans Thai"','system-ui','sans-serif']},
+colors:{indigo:{50:'#F6EEFF',100:'#EADDFF',200:'#D0BCFF',300:'#B69DF8',400:'#9A82DB',500:'#7F67BE',600:'#6750A4',700:'#4F378B',800:'#381E72',900:'#21005D'},
+violet:{50:'#FFF0F6',100:'#FFD8E4',200:'#EFB8C8',300:'#E08CA8',400:'#C26B8A',500:'#A8527A',600:'#7D5260',700:'#633B48',800:'#492532',900:'#31111D'},
+slate:{50:'#FEF7FF',100:'#F7F2FA',200:'#ECE6F0',300:'#CAC4D0',400:'#938F96',500:'#79747E',600:'#625B71',700:'#49454F',800:'#2B2930',900:'#1D1B20',950:'#141218'}},
+borderRadius:{lg:'12px',xl:'16px','2xl':'20px','3xl':'28px'},
+boxShadow:{sm:'0 1px 3px 1px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.2)',md:'0 2px 6px 2px rgba(0,0,0,.14),0 1px 2px rgba(0,0,0,.25)',lg:'0 4px 8px 3px rgba(0,0,0,.14),0 1px 3px rgba(0,0,0,.25)'}}}}</script>
+<style type="text/tailwindcss">
+@layer base{
+ body{@apply bg-slate-50 font-sans text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100}
+ label{@apply mb-1 mt-3 block text-xs font-medium text-slate-600 dark:text-slate-400}
+ input,select,textarea{@apply w-full rounded-xl border border-slate-300 bg-slate-100 px-3.5 py-2.5 text-sm outline-none transition focus:border-indigo-600 focus:bg-white focus:ring-1 focus:ring-indigo-600 dark:border-slate-700 dark:bg-slate-800 dark:focus:bg-slate-900 dark:focus:border-indigo-200 dark:focus:ring-indigo-200}
+ table{@apply w-full text-sm}
+ th{@apply whitespace-nowrap bg-slate-200/60 px-4 py-3 text-left text-xs font-semibold text-slate-700 dark:bg-slate-800/70 dark:text-slate-300}
+ td{@apply border-t border-slate-300/30 px-4 py-3 dark:border-slate-700/60}
+ tr:hover>td{@apply bg-slate-100/70 dark:bg-slate-800/50}
+ dialog{@apply rounded-3xl bg-slate-100 p-6 text-slate-900 shadow-lg dark:bg-slate-800 dark:text-slate-100;width:min(460px,92vw)}
+ dialog::backdrop{background:rgba(20,18,24,.55)}
+ ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(121,116,126,.3);border-radius:9999px}::-webkit-scrollbar-thumb:hover{background:rgba(121,116,126,.5)}
+}
+@layer components{
+ button{@apply relative inline-flex cursor-pointer items-center justify-center gap-1.5 overflow-hidden rounded-full border border-slate-400/60 bg-transparent px-4 py-2 text-sm font-medium text-indigo-700 transition hover:bg-indigo-50 active:scale-[.98] disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:text-indigo-200 dark:hover:bg-indigo-900/30}
+ button.p{@apply border-indigo-600 bg-indigo-600 text-white shadow-md hover:bg-indigo-700 hover:shadow-lg dark:border-indigo-200 dark:bg-indigo-200 dark:text-indigo-800 dark:hover:bg-indigo-100}
+ button.d{@apply border-red-300 text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950}
+ button.s{@apply px-3 py-1 text-xs}
+ .iconbtn{@apply relative grid h-10 w-10 shrink-0 place-items-center overflow-visible rounded-full border-0 p-0 text-slate-700 shadow-none hover:bg-slate-200 dark:text-slate-200 dark:hover:bg-slate-700}
+ #st{@apply inline-block rounded-full bg-slate-200 px-2.5 py-0.5 text-[11px] text-slate-600 dark:bg-slate-700 dark:text-slate-300}
+ #st.ok{@apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200}
+ #st.wa{@apply bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200}
+ .appbar{@apply z-20 flex h-16 shrink-0 items-center justify-between gap-2 border-b border-slate-300/40 bg-slate-100/85 px-3 backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/85 sm:px-4}
+ .rail{@apply z-10 flex w-20 shrink-0 flex-col justify-between overflow-y-auto border-r border-slate-300/40 bg-slate-100 py-4 transition-all duration-300 dark:border-slate-700/50 dark:bg-slate-900}
+ .rail.open{@apply w-60}
+ .ni{@apply flex w-full cursor-pointer flex-col items-center justify-center rounded-3xl border-0 bg-transparent px-1 py-2 text-slate-700 shadow-none hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800}
+ .ni .ib{@apply grid h-8 w-14 place-items-center rounded-full transition-all}
+ .ni.on .ib{@apply bg-indigo-100 text-indigo-900 dark:bg-indigo-900/60 dark:text-indigo-100}
+ .ni .lb{@apply mt-1 text-center text-[11px] font-medium leading-tight}
+ .ni.on .lb{@apply font-bold text-indigo-700 dark:text-indigo-200}
+ .rail.open .ni{@apply flex-row justify-start gap-3 px-3 py-1.5}
+ .rail.open .ni .ib{@apply w-12}.rail.open .ni .lb{@apply mt-0 text-left text-sm}
+ .fab{@apply relative flex w-full flex-col items-center justify-center gap-1 rounded-3xl border-0 bg-indigo-600 py-3.5 text-white shadow-md hover:bg-indigo-700 hover:shadow-lg dark:bg-indigo-200 dark:text-indigo-800 dark:hover:bg-indigo-100}
+ .rail.open .fab{@apply flex-row gap-3}
+ .chip{@apply rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200}
+ .chip.on{@apply border-transparent bg-indigo-100 text-indigo-900 dark:bg-indigo-900/50 dark:text-indigo-100}
+ .seg{@apply inline-flex rounded-full bg-slate-200/70 p-1 dark:bg-slate-800}.seg button{@apply rounded-full border-0 bg-transparent px-3 py-1 text-xs text-slate-700 dark:bg-transparent dark:text-slate-300}
+ .seg button.on{@apply bg-indigo-100 text-indigo-900 shadow-sm dark:bg-indigo-900/60 dark:text-indigo-100}
+ .pc{@apply flex flex-col gap-3 rounded-2xl border border-slate-300/50 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-600/50 dark:bg-slate-800}
+ .pills{@apply mb-5 flex flex-wrap gap-2}.bar{@apply mb-4 flex flex-wrap items-center gap-2}.bar input{@apply max-w-xs}
+ .card{@apply overflow-auto rounded-3xl border border-slate-300/50 bg-white shadow-sm dark:border-slate-600/50 dark:bg-slate-800}
+ td.n,th.n{@apply text-right}td.ac{@apply whitespace-nowrap text-right}
+ .b{@apply inline-block min-w-[2.5rem] rounded-full px-2.5 py-0.5 text-center text-xs font-semibold}
+ .b.ok{@apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200}
+ .b.wa{@apply bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200}
+ .b.er{@apply bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200}
+ .sum{@apply mt-3 text-xs text-slate-500 dark:text-slate-400}.empty{@apply py-12 text-center text-slate-400}
+ .row{@apply flex gap-3}.row>*{@apply flex-1}.act{@apply mt-6 flex justify-end gap-2}.hint{@apply mt-1 text-xs text-slate-400}
+ .lf{@apply mb-4 flex flex-wrap items-end gap-3}.lf>div{@apply min-w-[9rem]}.lf label{@apply mt-0}
+ .menu{@apply absolute left-0 z-40 mt-2 hidden w-64 rounded-2xl border border-slate-300/50 bg-slate-50 p-1.5 shadow-lg dark:border-slate-600/50 dark:bg-slate-800}
+ .menu.right{@apply left-auto right-0}.menu.open{@apply block}
+ .mh{@apply px-3 pb-1 pt-3 text-[11px] font-semibold tracking-wide text-slate-500}
+ .mi{@apply flex w-full cursor-pointer items-center justify-start gap-2 rounded-xl border-0 bg-transparent px-3 py-2 text-left text-sm font-normal text-slate-800 shadow-none hover:bg-slate-200 dark:bg-transparent dark:text-slate-200 dark:hover:bg-slate-700}
+ .kpi{@apply flex items-center gap-4 rounded-2xl border border-slate-300/50 bg-white p-4 transition hover:shadow-md dark:border-slate-600/50 dark:bg-slate-800}
+ #scrim{@apply pointer-events-none fixed inset-0 z-40 bg-black/40 opacity-0 transition-opacity}
+ #scrim.open{@apply pointer-events-auto opacity-100}
+ #drawer{@apply fixed inset-y-0 right-0 z-50 flex w-[min(26rem,100vw)] translate-x-full flex-col rounded-l-3xl bg-slate-50 shadow-lg transition-transform duration-300 dark:bg-slate-900}
+ #drawer.open{@apply translate-x-0}
+}
+#pr{display:none}
+@media print{body{background:#fff;color:#000}#app,dialog,#drawer,#scrim,#toast{display:none!important}#pr{display:block;font-size:13px}
+#pr h2{font-size:20px;font-weight:700;text-align:center;margin:0 0 4px}#pr .m{display:flex;justify-content:space-between;margin:10px 0}
+#pr table{border:1px solid #000}#pr th,#pr td{border:1px solid #000;padding:5px 7px;color:#000;background:#fff;font-size:13px}
+#pr .sg{display:flex;justify-content:space-around;margin-top:60px;text-align:center}#pr .sg div{width:30%}#pr .sg i{display:block;border-top:1px dotted #000;margin-top:40px;padding-top:4px;font-style:normal}}
+</style></head><body>
+<div id="app"></div><div id="pr"></div><div id="scrim" data-act="drawer-close"></div><div id="drawer"></div><div id="toast" class="pointer-events-none fixed right-4 top-20 z-[60] flex flex-col gap-2"></div>
+<dialog id="dlg"><form method="dialog" id="frm"></form></dialog>
+<script>
+/* ================= helpers ================= */
+const $=s=>document.querySelector(s),v=id=>$("#"+id).value;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10),today=()=>new Date().toISOString().slice(0,10);
+const fa=(n,x="")=>`<i class="fa-solid fa-${n} ${x}"></i>`;
+const ICONS=["bolt","lightbulb","plug","screwdriver-wrench","tv","video","satellite-dish","network-wired","battery-full","toolbox","box","helmet-safety","camera","door-open","snowflake","faucet","shield-halved","location-dot","wifi","hammer","microchip","fan","lock","server"];
+const isFa=s=>/^[a-z0-9-]+$/.test(s||"");
+const cico=c=>`<span class="inline-block w-5 text-center">${isFa(c.icon)?fa(c.icon):c.icon?esc(c.icon):fa("box")}</span>`;
+const dmy=x=>x.split("-").reverse().join("/");
+const stamp=()=>{const n=new Date(),p=x=>String(x).padStart(2,"0");return`${n.getFullYear()}${p(n.getMonth()+1)}${p(n.getDate())}-${p(n.getHours())}${p(n.getMinutes())}`};
+let stat={t:"กำลังโหลด…",c:""};
+function setStatus(t,c){stat={t,c:c||""};const e=$("#st");if(e){e.textContent=t;e.className=c||""}const ch=$("#chip");if(ch)ch.className=chipCls(c||"");const d=$("#chip-dot");if(d)d.className="h-2 w-2 rounded-full "+(c==="ok"?"bg-emerald-500 animate-pulse":c==="wa"?"bg-amber-500":"bg-slate-400");const ct=$("#chip-text");if(ct)ct.textContent=modeLabel()}
+function toast(m,c){const t=document.createElement("div");t.className="pointer-events-auto rounded-xl px-4 py-2.5 text-sm font-medium text-white shadow-xl "+(c==="er"?"bg-red-600":"bg-emerald-600");t.textContent=m;$("#toast").append(t);setTimeout(()=>t.remove(),3800)}
+function ask(title,html,ok,w,extra){$("#dlg").style.width=w||"";$("#frm").innerHTML=`<h3 class="mb-1 text-lg font-bold">${title}</h3>${html}<div class="act">${extra||""}<button type="button" id="cn">ยกเลิก</button><button class="p" id="ok" type="button">ตกลง</button></div>`;
+  if(!$("#dlg").open)$("#dlg").showModal();$("#cn").onclick=()=>$("#dlg").close();$("#ok").onclick=()=>{if(ok()!==false)$("#dlg").close()};$("#frm input,#frm select")?.focus()}
+const pick=acc=>new Promise(r=>{const i=document.createElement("input");i.type="file";i.accept=acc;i.onchange=()=>r(i.files[0]||null);i.click()});
+function dl(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
+/* CSV */
+function csvParse(t){t=t.replace(/^\ufeff/,"");const f1=t.split(/\r?\n/,1)[0],cnt=c=>(f1.match(new RegExp(c==="\t"?"\t":"\\"+c,"g"))||[]).length;
+  const d=cnt("\t")>cnt(",")?"\t":cnt(";")>cnt(",")?";":",",rows=[];let r=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===d){r.push(f);f=""}
+    else if(c==="\n"||c==="\r"){if(c==="\r"&&t[i+1]==="\n")i++;r.push(f);f="";if(r.some(x=>x.trim()!==""))rows.push(r);r=[]}else f+=c}
+  r.push(f);if(r.some(x=>x.trim()!==""))rows.push(r);return rows}
+const csvOut=rows=>"\ufeff"+rows.map(r=>r.map(x=>'"'+String(x??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+/* ================= state ================= */
+let S={cats:[],log:[],users:[],seq:0},loaded=false,src=null,fh=null,lastH=null,admin=false,user=null,cart=[],ci={},tab=null,bcat=null,q="",lf={who:"",slip:"",from:"",to:""};
+let ghSha=null,ghBusy=false,ghMissing=false,ghWarned=false,ghQ=Promise.resolve(),fails=0,lockUntil=0,tA,tU;
+const find=id=>{for(const c of S.cats){const i=c.items.find(x=>x.id===id);if(i)return{c,i}}};
+const used=id=>S.log.reduce((a,l)=>l.item===id?a+l.amt:a,0),rem=i=>i.qty-used(i.id);
+const me=()=>S.users.find(u=>u.id===user&&u.active!==false);
+const whoList=()=>[...new Set(S.log.map(l=>l.who).filter(Boolean))];
+const R=()=>{const h=location.hash.replace(/^#\/?/,"").split("/");return h[0]==="admin"?{area:"back",page:h[1]||"dash"}:{area:"front",page:h[0]||"stock"}};
+function norm(d){if(!d||!Array.isArray(d.cats))throw Error("รูปแบบไฟล์ไม่ถูกต้อง (ไม่พบข้อมูลหมวด)");d.log||=[];d.users||=[];d.trash||=[];d.seq||=0;
+  d.cats.forEach(c=>{c.id||=uid();c.items||=[];c.items.forEach(i=>{i.id||=uid();i.qty=+i.qty||0;i.unit||="";i.code||=""})});d.users.forEach(u=>{u.id||=uid()});d.log.forEach(l=>{l.id||=uid();l.amt=+l.amt||0});return d}
+/* ================= storage: file / local ================= */
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("stock-app",1);r.onupgradeneeded=()=>r.result.createObjectStore("h");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const idbSet=async h=>{try{(await idb()).transaction("h","readwrite").objectStore("h").put(h,"fh")}catch(e){}};
+const idbGet=async()=>{try{const d=await idb();return await new Promise(r=>{const x=d.transaction("h").objectStore("h").get("fh");x.onsuccess=()=>r(x.result);x.onerror=()=>r(null)})}catch(e){return null}};
+const FP={types:[{description:"stock-data.json",accept:{"application/json":[".json"]}}]};
+async function persist(){
+  if(!loaded)return;try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  if(src==="gh")return ghQueue();
+  if(fh){try{const w=await fh.createWritable();await w.write(JSON.stringify(S,null,1));await w.close();setStatus("ออฟไลน์ · บันทึกลงไฟล์ "+fh.name+" แล้ว","ok")}catch(e){setStatus("บันทึกไฟล์ไม่สำเร็จ: "+e.message,"wa")}return}
+  setStatus("ออฟไลน์ · เก็บในเบราว์เซอร์นี้เท่านั้น — ควรสำรองข้อมูลเป็นระยะ","wa")}
+const change=()=>{persist();render()};
+async function useData(txt,h,sr,keep){
+  const d=norm(JSON.parse(txt)),k={tab,admin,cart,ci};S=d;fh=h||null;src=sr||(h?"file":null);loaded=true;
+  user=sessionStorage.getItem("uid");if(!S.users.some(u=>u.id===user))user=null;
+  tab=S.cats[0]?.id;bcat=S.cats[0]?.id;cart=[];ci={};admin=false;
+  if(keep){if(S.cats.some(c=>c.id===k.tab))tab=k.tab;admin=k.admin;cart=k.cart;ci=k.ci}
+  try{localStorage.setItem("stock-v1",JSON.stringify(S))}catch(e){}
+  if(fh){idbSet(fh);setStatus("ออฟไลน์ · เชื่อมไฟล์ "+fh.name+" (บันทึกอัตโนมัติ)","ok")}else if(src!=="gh")setStatus("ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์ — ไปที่หลังบ้าน > ข้อมูลและสำรอง","wa");
+  render()}
+async function openFile(){try{let f,h=null;if(window.showOpenFilePicker){[h]=await showOpenFilePicker(FP);f=await h.getFile()}else f=await pick(".json");if(f)await useData(await f.text(),h)}catch(e){if(e.name!=="AbortError")toast("เปิดไฟล์ไม่สำเร็จ: "+e.message,"er")}}
+async function dbHandle(){const d=await showDirectoryPicker({mode:"readwrite"}),db=d.name==="database"?d:await d.getDirectoryHandle("database",{create:true});return db.getFileHandle("stock-data.json",{create:true})}
+async function connectDir(){
+  if(!window.showDirectoryPicker)return toast("เบราว์เซอร์นี้ไม่รองรับการเชื่อมโฟลเดอร์ (ใช้ Chrome / Edge) — ใช้ “เปิดไฟล์ข้อมูล” แทน","er");
+  try{const h=await dbHandle(),txt=await(await h.getFile()).text();
+    if(txt.trim()){await useData(txt,h);toast("เชื่อมต่อ database/stock-data.json แล้ว")}
+    else{ensureLoaded();fh=h;src="file";idbSet(h);await persist();render();toast("สร้าง database/stock-data.json และบันทึกข้อมูลปัจจุบันลงไฟล์แล้ว")}}
+  catch(e){if(e.name!=="AbortError")toast("เชื่อมต่อไม่สำเร็จ: "+e.message,"er")}}
+async function saveAs(){if(!window.showSaveFilePicker)return dl("stock-data.json",JSON.stringify(S,null,1),"application/json");try{fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render()}catch(e){}}
+/* ================= storage: online (GitHub) ================= */
+const DB_PATH="database/stock-data.json";
+const ghCfg=()=>{let sv={};try{sv=JSON.parse(localStorage.getItem("gh-cfg")||"{}")}catch(e){}const c={owner:"",repo:"",path:DB_PATH,token:""};for(const k in sv)if(sv[k]&&!(k==="path"&&sv[k]==="stock.json"))c[k]=sv[k];return c};
+const online=()=>!localStorage.getItem("gh-off")&&!!localStorage.getItem("gh-cfg")&&!!ghCfg().owner&&!!ghCfg().repo;
+const b64e=t=>btoa(unescape(encodeURIComponent(t))),b64d=b=>decodeURIComponent(escape(atob(b.replace(/\s/g,""))));
+const ghUrl=c=>`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${c.path.split("/").map(encodeURIComponent).join("/")}`;
+const ghH=c=>({Accept:"application/vnd.github+json",...(c.token?{Authorization:"Bearer "+c.token}:{})});
+async function ghGet(){const c=ghCfg(),r=await fetch(ghUrl(c)+"?t="+Date.now(),{headers:ghH(c),cache:"no-store"});
+  if(r.status===404)return{sha:null,txt:null};
+  if(!r.ok)throw Error("GitHub "+r.status+(r.status===401?" (token ไม่ถูกต้อง)":r.status===403?" (เกินโควตา/ไม่มีสิทธิ์)":""));
+  const j=await r.json();return{sha:j.sha,txt:b64d(j.content)}}
+function ghStatus(){const t=ghCfg().token;setStatus(t?"ออนไลน์ · ซิงก์ล่าสุด "+new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"}):"ออนไลน์ · อ่านอย่างเดียว (ยังไม่ได้ตั้ง token)",t?"ok":"wa")}
+async function ghLoad(keep){
+  const g=await ghGet(),same=g.sha===ghSha;ghSha=g.sha;ghMissing=g.txt===null;
+  if(ghMissing){if(loaded&&ghCfg().token){src="gh";return ghQueue()}setStatus("ออนไลน์ · ยังไม่พบไฟล์ "+ghCfg().path+" ในรีโป","wa");render();return}
+  if(keep&&same)return;
+  await useData(g.txt,null,"gh",keep);ghStatus()}
+function ghQueue(){ghBusy=true;setStatus("ออนไลน์ · กำลังบันทึก…");ghQ=ghQ.then(()=>ghPush(true)).catch(e=>setStatus("บันทึกออนไลน์ไม่สำเร็จ: "+e.message,"wa")).finally(()=>{ghBusy=false});return ghQ}
+async function ghPush(retry){
+  const c=ghCfg();if(!c.token){setStatus("ยังไม่ได้ตั้ง token — ข้อมูลไม่ถูกบันทึกออนไลน์","wa");if(!ghWarned){ghWarned=true;ghDlg()}return}
+  const r=await fetch(ghUrl(c),{method:"PUT",headers:{...ghH(c),"Content-Type":"application/json"},body:JSON.stringify({message:"update stock "+new Date().toISOString(),content:b64e(JSON.stringify(S,null,1)),...(ghSha?{sha:ghSha}:{})})});
+  if(r.status===409||r.status===422){if(!retry)throw Error("ข้อมูลชนกัน กดรีเฟรชแล้วลองใหม่");await ghMerge();return ghPush(false)}
+  if(!r.ok)throw Error("GitHub "+r.status+(r.status===401?" (token ไม่ถูกต้อง)":r.status===403||r.status===404?" (token ไม่มีสิทธิ์เขียน repo นี้)":""));
+  ghSha=(await r.json()).content.sha;ghStatus()}
+async function ghMerge(){const g=await ghGet();ghSha=g.sha;if(!g.txt)return;const Rm=JSON.parse(g.txt),ids=new Set(S.log.map(l=>l.id));
+  (Rm.log||[]).forEach(l=>{if(!ids.has(l.id))S.log.push(l)});S.seq=Math.max(S.seq||0,Rm.seq||0);
+  if(!admin){S.cats=Rm.cats;if(Rm.admin)S.admin=Rm.admin;if(Rm.users)S.users=Rm.users}render()}
+async function ghBackup(){const c=ghCfg();if(!c.token)throw Error("ต้องตั้งค่า token ก่อน");const name=`database/backups/stock-${stamp()}.json`;
+  const r=await fetch(ghUrl({...c,path:name}),{method:"PUT",headers:{...ghH(c),"Content-Type":"application/json"},body:JSON.stringify({message:"backup "+name,content:b64e(JSON.stringify(S,null,1))})});
+  if(!r.ok)throw Error("GitHub "+r.status);toast("สำรองไปที่ "+name+" ใน repo แล้ว")}
+function ghDlg(){const c=ghCfg();
+  ask("ตั้งค่าออนไลน์ (GitHub)",`<label>เจ้าของ (owner)</label><input id="g1" value="${esc(c.owner)}" placeholder="ชื่อบัญชี GitHub"><label>ชื่อ repository</label><input id="g2" value="${esc(c.repo)}" placeholder="ชื่อ repository"><label>ไฟล์ข้อมูล (ค่าเริ่มต้น database/stock-data.json)</label><input id="g3" value="${esc(c.path)}"><label>Personal Access Token (เก็บในเครื่องนี้เท่านั้น)</label><input id="g4" type="password" value="${esc(c.token)}" placeholder="github_pat_…"><div class="hint mt-2">ใช้ Fine-grained token สิทธิ์ <b>Contents: Read and write</b> เฉพาะ repo นี้ · ไม่ใส่ token = อ่านอย่างเดียว (ต้องเป็น repo public)<br>repo แบบ public ทุกคนอ่านข้อมูลได้ แนะนำ private + ใส่ token</div>`,
+  ()=>{if(!v("g1").trim()||!v("g2").trim()){toast("กรุณากรอก owner และชื่อ repository","er");return false}if(loaded&&src!=="gh"&&!confirm("การเชื่อมต่อออนไลน์จะโหลดข้อมูลจาก GitHub มาแทนข้อมูลที่เปิดอยู่ ต้องการดำเนินการต่อหรือไม่?"))return false;
+    localStorage.removeItem("gh-off");localStorage.setItem("gh-cfg",JSON.stringify({owner:v("g1").trim(),repo:v("g2").trim(),path:v("g3").trim()||DB_PATH,token:v("g4").trim()}));ghWarned=true;ghLoad(loaded).catch(e=>{setStatus("ออนไลน์ · "+e.message,"wa");toast(e.message,"er")})},
+  undefined,`<button type="button" class="d mr-auto" data-act="gh-off">${fa("link-slash")} ยกเลิกการเชื่อมต่อ</button>`)}
+const ghTick=()=>{if(src==="gh"&&!ghBusy&&!$("#dlg").open&&!document.hidden)ghLoad(true).catch(()=>{})};
+/* ================= auth ================= */
+const enc=s=>new TextEncoder().encode(s),hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+async function legacyHash(p,salt){const d=enc(salt+p);if(window.crypto&&crypto.subtle)return hex(await crypto.subtle.digest("SHA-256",d));let h=5381;for(const b of d)h=(h*33^b)>>>0;return"f"+h}
+async function hashPw(p,salt){if(window.crypto&&crypto.subtle){const k=await crypto.subtle.importKey("raw",enc(p),"PBKDF2",false,["deriveBits"]);return"p1$"+hex(await crypto.subtle.deriveBits({name:"PBKDF2",salt:enc(salt),iterations:100000,hash:"SHA-256"},k,256))}return legacyHash(p,salt)}
+const chk=async(p,salt,hash)=>!!hash&&(hash.startsWith("p1$")?await hashPw(p,salt)===hash:await legacyHash(p,salt)===hash);
+const locked=()=>{if(Date.now()<lockUntil){toast("ลองผิดหลายครั้ง กรุณารอ 30 วินาที","er");return true}return false};
+const failed=()=>{if(++fails>=5){lockUntil=Date.now()+30000;fails=0}toast("รหัสผ่านหรือชื่อผู้ใช้ไม่ถูกต้อง","er")};
+const bumpA=()=>{clearTimeout(tA);if(admin)tA=setTimeout(()=>{admin=false;toast("ออกจากหลังบ้านอัตโนมัติ (ไม่มีการใช้งาน 10 นาที)");render()},600000)};
+const bumpU=()=>{clearTimeout(tU);if(user)tU=setTimeout(logout,900000)};
+function logout(){user=null;sessionStorage.removeItem("uid");cart=[];ci={};render()}
+function loginDlg(){
+  if(!S.users.some(u=>u.active!==false))return toast("ยังไม่มีผู้เบิกในระบบ ให้ผู้ดูแลเพิ่มในหลังบ้านก่อน","er");
+  ask("เข้าสู่ระบบเพื่อเบิกของ",'<label>ชื่อผู้ใช้</label><input id="f1" autocomplete="username"><label>รหัสผ่าน</label><input id="f2" type="password" autocomplete="current-password">',()=>{(async()=>{
+    if(locked())return;const u=S.users.find(x=>x.username===v("f1").trim().toLowerCase()&&x.active!==false);
+    if(u&&await chk(v("f2"),u.salt,u.hash)){fails=0;user=u.id;sessionStorage.setItem("uid",u.id);$("#dlg").close();bumpU();render()}else failed()})();return false})}
+/* ================= views: shared ================= */
+const card="rounded-3xl border border-slate-300/50 bg-white shadow-sm dark:border-slate-600/50 dark:bg-slate-800";
+const title=(ic,t,sub="")=>`<div class="mb-4 flex items-center gap-3"><span class="grid h-12 w-12 place-items-center rounded-2xl bg-indigo-100 text-xl text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300">${ic}</span><div><h2 class="text-xl font-bold leading-tight">${t}</h2>${sub?`<div class="text-xs text-slate-500">${sub}</div>`:""}</div></div>`;
+const kpi=(ic,t,x,c)=>`<div class="kpi"><span class="grid h-11 w-11 place-items-center rounded-xl ${c} text-lg">${ic}</span><div><div class="text-xs text-slate-500 dark:text-slate-400">${t}</div><div class="text-2xl font-bold leading-tight">${x}</div></div></div>`;
+const bar=(r,qty)=>qty>0?`<div class="ml-auto mt-1 h-1.5 w-20 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full ${r<=0?"bg-red-500":r/qty<=.1?"bg-amber-500":"bg-emerald-500"}" style="width:${Math.max(0,Math.min(100,r/qty*100))}%"></div></div>`:"";
+const allItems=()=>S.cats.flatMap(c=>c.items.map(i=>({...i,cat:c.name,cid:c.id,cc:c})));
+const thDate=()=>new Date().toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+let flt="all",bq="",rpm=today().slice(0,7),qtys={};
+function vWelcome(){return`<div class="grid min-h-screen place-items-center p-4"><div class="w-full max-w-md ${card} p-8 text-center shadow-xl">
+<div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-3xl text-white shadow-lg shadow-indigo-500/30">${fa("boxes-stacked")}</div>
+<h2 class="mt-4 text-xl font-bold">ระบบเบิกของติดตั้ง</h2><p class="mt-1 text-sm text-slate-500">เลือกแหล่งข้อมูลเพื่อเริ่มใช้งาน ข้อมูลทั้งหมดเก็บในไฟล์ database/stock-data.json ไม่ได้ฝังอยู่ในหน้านี้</p>
+<div class="mt-6 flex flex-col gap-2 text-left"><div class="mh !px-0 !pt-0">ออฟไลน์ · ไฟล์ในเครื่อง</div>
+${lastH?`<button class="p" data-act="reconnect">${fa("link")} เชื่อมต่อ ${esc(lastH.name)} ต่อ</button>`:""}
+<button class="${lastH?"":"p"}" data-act="f-dir">${fa("folder-tree")} เชื่อมโฟลเดอร์ข้อมูล (database/stock-data.json)</button><button data-act="f-open">${fa("folder-open")} เปิดไฟล์ข้อมูล .json</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ข้อมูลใหม่</button>
+<div class="mh !px-0">ออนไลน์ · GitHub</div><button data-act="gh-set">${fa("cloud")} ตั้งค่า / เชื่อมต่อ GitHub</button>
+<div class="mh !px-0">นำเข้าข้อมูล</div><button data-act="im-restore">${fa("file-import")} กู้คืนจากไฟล์สำรอง (.json)</button><button data-act="im-any">${fa("file-csv")} นำเข้าข้อมูล (.json / .csv)</button>
+${localStorage.getItem("stock-v1")?`<button data-act="usebackup">${fa("clock-rotate-left")} ใช้ข้อมูลสำรองในเบราว์เซอร์</button>`:""}
+<button data-act="blank">${fa("wand-magic-sparkles")} เริ่มใช้งานแบบว่าง (ยังไม่ผูกไฟล์)</button></div>
+<div class="mt-4 text-xs text-slate-400">${esc(stat.t)}</div></div></div>`}
+/* ================= shell: app bar / rail / menus (Material 3) ================= */
+let railOpen=localStorage.getItem("rail")==="1";
+const isDark=()=>document.documentElement.classList.contains("dark");
+const modeLabel=()=>src==="gh"?"ออนไลน์ · GitHub":fh?"ออฟไลน์ · "+fh.name:"ออฟไลน์ · เบราว์เซอร์";
+function connMenu(){const lk=()=>admin?"":fa("lock","ml-auto text-[10px] text-slate-400"),mi=(act,ic,l,g)=>`<button class="mi" data-act="${act}">${fa(ic,"w-4 text-center text-slate-500")} ${l}${g?lk():""}</button>`;
+  return`<div class="relative"><button id="chip" data-m="cm" class="${chipCls(stat.c)}" aria-label="การเชื่อมต่อและข้อมูล"><span id="chip-dot" class="h-2 w-2 rounded-full ${stat.c==="ok"?"bg-emerald-500 animate-pulse":stat.c==="wa"?"bg-amber-500":"bg-slate-400"}"></span><span id="chip-text" class="hidden sm:inline">${esc(modeLabel())}</span>${fa("chevron-down","text-[9px] opacity-60")}</button>
+<div id="m-cm" class="menu right !w-72"><div class="px-3 py-2"><div class="text-[11px] text-slate-500">แหล่งข้อมูลปัจจุบัน</div><div class="text-sm font-semibold">${esc(modeLabel())}</div><div id="st" class="mt-1 ${stat.c}">${esc(stat.t)}</div></div>
+<div class="mh">ออฟไลน์ · ไฟล์ในเครื่อง</div>${mi("f-dir","folder-tree","เชื่อมโฟลเดอร์ข้อมูล (database/stock-data.json)")}${mi("f-open","folder-open","เปิดไฟล์ข้อมูล .json")}${mi("f-new","file-circle-plus","สร้างไฟล์ข้อมูลใหม่",1)}
+<div class="mh">ออนไลน์ · GitHub</div>${mi("gh-set","cloud","ตั้งค่า / เชื่อมต่อ GitHub")}${mi("gh-rf","rotate","ซิงก์ข้อมูลตอนนี้")}
+<div class="mh">สำรองและนำเข้าข้อมูล</div>${mi("bk-json","file-zipper","สำรองข้อมูล (.json)",1)}${mi("im-restore","clock-rotate-left","กู้คืนจากไฟล์สำรอง",1)}${mi("im-any","file-import","นำเข้าข้อมูล (.json / .csv)",1)}${mi("ex-items","file-csv","ส่งออกรายการ (.csv)",1)}</div></div>`}
+const chipCls=c=>"!gap-2 !border-0 !px-3 !py-1.5 !text-xs "+(c==="ok"?"!bg-emerald-100 !text-emerald-900 dark:!bg-emerald-900/40 dark:!text-emerald-100":c==="wa"?"!bg-amber-100 !text-amber-900 dark:!bg-amber-900/40 dark:!text-amber-100":"!bg-slate-200 !text-slate-800 dark:!bg-slate-700 dark:!text-slate-100");
+function umenu(back){const u=me(),item=(a,ic,l)=>`<button class="mi" data-act="${a}">${fa(ic,"w-4 text-center text-slate-500")} ${l}</button>`,lnk=(h,ic,l)=>`<a href="${h}" class="mi">${fa(ic,"w-4 text-center text-slate-500")} ${l}</a>`;
+  return`<div class="relative"><button data-m="um" class="!gap-2 !border-slate-400/50 !py-1 !pl-1 !pr-3 !text-slate-800 dark:!text-slate-100" aria-label="เมนูผู้ใช้"><span class="grid h-7 w-7 place-items-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-900 dark:bg-indigo-900/60 dark:text-indigo-100">${back?fa("user-shield","text-[10px]"):u?esc(u.name.trim()[0]||"?"):fa("user","text-[10px]")}</span><span class="hidden max-w-[8rem] truncate text-xs md:inline">${back?"ผู้ดูแลระบบ":u?esc(u.name):"ผู้เยี่ยมชม"}</span>${fa("chevron-down","text-[10px] text-slate-400")}</button>
+<div id="m-um" class="menu right !w-60"><div class="border-b border-slate-300/40 px-3 py-2 dark:border-slate-600/40"><div class="text-sm font-semibold">${back?"ผู้ดูแลระบบ":u?esc(u.name):"ผู้เยี่ยมชม"}</div><div class="text-xs font-medium text-indigo-700 dark:text-indigo-200">${back?"Administrator":u?"ผู้เบิก":"ยังไม่ได้เข้าสู่ระบบ"}</div></div>
+${back?lnk("#/","house","กลับหน้าแรก")+item("adm-out","right-from-bracket","ออกจากหลังบ้าน"):(u?item("logout","right-from-bracket","ออกจากระบบ"):item("login","right-to-bracket","เข้าสู่ระบบเพื่อเบิกของ"))+lnk("#/admin","user-shield",admin?"ไปหลังบ้าน":"เข้าหลังบ้าน")}</div></div>`}
+function appbar(back){const dark=isDark();
+  return`<header class="appbar"><div class="flex min-w-0 items-center gap-2"><button class="iconbtn" data-act="rail" aria-label="ย่อ/ขยายเมนู">${fa("bars","text-lg")}</button><div class="flex min-w-0 items-center gap-2.5"><div class="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-indigo-600 text-white shadow-md dark:bg-indigo-200 dark:text-indigo-800">${fa(back?"user-shield":"boxes-packing")}</div><div class="min-w-0"><h1 class="truncate text-base font-semibold leading-tight">${back?"หลังบ้าน":"ระบบเบิกของติดตั้ง"}</h1><p class="hidden truncate text-xs text-slate-500 dark:text-slate-400 sm:block">${back?"จัดการคลัง ผู้เบิก และข้อมูล":"Equipment Withdrawal System"}</p></div></div></div>
+<div class="flex items-center gap-1 sm:gap-2">${connMenu()}<button class="iconbtn" data-act="theme" aria-label="เปลี่ยนธีม" title="เปลี่ยนธีม">${fa(dark?"sun":"moon")}</button>${back?"":`<button class="iconbtn !text-indigo-600 dark:!text-indigo-200" data-act="cart" aria-label="ใบเบิก" title="ใบเบิกของฉัน">${fa("cart-flatbed","text-lg")}<span class="cart-badge absolute -right-0.5 -top-0.5 grid h-5 min-w-[1.25rem] place-items-center rounded-full bg-red-600 px-1 text-[11px] font-bold text-white ${cart.length?"":"hidden"}">${cart.length}</span></button>`}${umenu(back)}</div></header>`}
+function rail(items,cur,extra="",fab=""){return`<aside class="rail ${railOpen?"open":""}"><nav class="flex flex-col gap-1 px-2">${items.map(([h,ic,l,k,n])=>`<a href="${h}" class="ni ${k===cur?"on":""}" title="${l}"><span class="ib relative">${fa(ic,"text-base")}${n?`<span class="absolute -right-1 -top-1 grid h-4 min-w-[1rem] place-items-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">${n}</span>`:""}</span><span class="lb">${l}</span></a>`).join("")}</nav><div class="flex flex-col gap-1 px-2 pt-3">${extra}${fab}</div></aside>`}
+function shellFront(page,content){
+  const fab=`<button class="fab" data-act="cart" aria-label="ส่งใบเบิก">${fa("paper-plane","text-lg")}<span class="text-[10px] font-semibold">ส่งใบเบิก</span><span class="cart-badge absolute right-2 top-1.5 grid h-5 min-w-[1.25rem] place-items-center rounded-full bg-red-600 px-1 text-[11px] font-bold text-white ${cart.length?"":"hidden"}">${cart.length}</span></button>`;
+  return`<div class="flex h-screen flex-col overflow-hidden">${appbar(false)}<div class="relative flex flex-1 overflow-hidden">${rail([["#/","boxes-stacked","เบิกของ","stock"],["#/log","clock-rotate-left","ประวัติการเบิก","log"],["#/admin","user-shield","หลังบ้าน",""]],page,"",fab)}<main id="main" class="flex-1 overflow-y-auto bg-slate-50 p-4 dark:bg-slate-950 sm:p-6"><div class="mx-auto max-w-7xl">${content}</div></main></div></div>`}
+function cartForm(){
+  ci.who=me()?.name||"";ci.date||=today();ci.site??=localStorage.getItem("lastsite")||"";ci.note??="";
+  const rows=cart.map((x,n)=>{const f=find(x.item);if(!f)return"";const r=rem(f.i);return`<div class="flex items-center gap-2 border-b border-slate-100 py-2 dark:border-slate-700"><div class="min-w-0 flex-1"><div class="truncate text-sm font-medium">${esc(f.i.name)}</div><div class="text-xs ${x.amt>r?"text-red-500":"text-slate-400"}">คงเหลือ ${r} ${esc(f.i.unit)}${x.amt>r?" · เกินคงเหลือ":""}</div></div><input type="number" min="0" step="any" value="${x.amt}" data-ci="${n}" class="!w-20 text-center" aria-label="จำนวนที่เบิก"><button class="s d" data-act="rm" data-id="${n}" aria-label="เอาออก">${fa("xmark")}</button></div>`}).join("");
+  return`<div class="row"><div><label>ผู้เบิก</label><input value="${esc(ci.who)}" readonly class="opacity-70"></div><div><label>วันที่เบิก</label><input type="date" data-f="date" value="${ci.date}"></div></div>
+<label>โครงการ / สถานที่</label><input data-f="site" value="${esc(ci.site)}" placeholder="เช่น ไซต์งานลูกค้า…"><label>หมายเหตุ</label><input data-f="note" value="${esc(ci.note)}">
+<div class="mt-3 max-h-[40vh] overflow-auto">${rows}</div><div class="sum"><b>สรุป: รวม ${cart.length} รายการ</b></div>
+<div class="mt-3 grid gap-2"><button class="p !py-2.5" data-act="commit">${fa("check")} ยืนยันเบิก</button><button data-act="commit-pr">${fa("print")} ยืนยัน + พิมพ์ / PDF</button><button class="d" data-act="cart-clear">${fa("trash-can")} ล้างใบเบิก</button></div>`}
+const barFull=(r,qty)=>qty>0?`<div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"><div class="h-full rounded-full ${r<=0?"bg-red-500":r/qty<=.1?"bg-amber-500":"bg-emerald-500"}" style="width:${Math.max(0,Math.min(100,r/qty*100))}%"></div></div>`:`<div class="h-1.5 w-full rounded-full bg-slate-200 dark:bg-slate-700"></div>`;
+function productCard(i){const r=rem(i),st=r<=0?["หมด","er"]:i.qty>0&&r/i.qty<=.1?["ใกล้หมด","wa"]:["พร้อมเบิก","ok"],ex=cart.find(x=>x.item===i.id),off=r<=0?"disabled":"";
+  return`<div class="pc"><div class="flex items-start gap-3"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-200">${isFa(i.cc.icon)?fa(i.cc.icon):esc(i.cc.icon||"")||fa("box")}</span><div class="min-w-0 flex-1"><h3 class="line-clamp-2 text-sm font-semibold leading-snug">${esc(i.name)}</h3><div class="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">${esc(i.cat)}${i.code?" · "+esc(i.code):""}</div></div><span class="b ${st[1]} !min-w-0 shrink-0">${st[0]}</span></div>
+<div><div class="mb-1 flex items-baseline justify-between text-xs text-slate-500 dark:text-slate-400"><span>คงเหลือ</span><span><b class="text-base ${r<=0?"text-red-600":i.qty>0&&r/i.qty<=.1?"text-amber-600":"text-slate-900 dark:text-slate-100"}">${r}</b> / ${i.qty} ${esc(i.unit)}</span></div>${barFull(r,i.qty)}</div>
+${ex?`<div class="text-xs font-medium text-indigo-700 dark:text-indigo-200">${fa("check")} อยู่ในใบเบิกแล้ว ${ex.amt}</div>`:""}
+<div class="mt-auto flex items-center gap-2"><div class="flex items-center rounded-full border border-slate-400/50"><button class="iconbtn !h-9 !w-9" data-act="dec" data-id="${i.id}" aria-label="ลดจำนวน" ${off}>${fa("minus","text-xs")}</button><input id="qty-${i.id}" data-q="${i.id}" type="number" min="1" step="any" value="${qtys[i.id]||1}" class="!w-12 !border-0 !bg-transparent !px-0 !py-1 text-center focus:!ring-0" aria-label="จำนวน" ${off}><button class="iconbtn !h-9 !w-9" data-act="inc" data-id="${i.id}" aria-label="เพิ่มจำนวน" ${off}>${fa("plus","text-xs")}</button></div><button class="p flex-1" data-act="add" data-id="${i.id}" ${off}>${fa(r<=0?"ban":"cart-plus")} ${r<=0?"หมด":"เพิ่มลงใบเบิก"}</button></div></div>`}
+function vHome(){
+  const all=allItems(),u=me(),nIn=all.filter(i=>rem(i)>0).length,nOut=all.filter(i=>i.qty>0&&rem(i)<=0).length;
+  if(tab!=="all"&&!S.cats.some(c=>c.id===tab))tab="all";
+  let L=all.filter(i=>(tab==="all"||i.cid===tab)&&(i.name+" "+i.code).toLowerCase().includes(q.toLowerCase()));
+  if(flt==="in")L=L.filter(i=>rem(i)>0);if(flt==="out")L=L.filter(i=>i.qty>0&&(rem(i)<=0||rem(i)/i.qty<=.1));
+  const hero=`<section class="mb-5 rounded-3xl bg-indigo-100 p-5 text-indigo-900 dark:bg-indigo-900/40 dark:text-indigo-100 md:p-6"><div class="flex flex-wrap items-center gap-5"><div class="min-w-0 flex-1 basis-64"><div class="text-xs opacity-70">${thDate()}</div><h2 class="mt-0.5 text-xl font-bold md:text-2xl">${u?"สวัสดี คุณ"+esc(u.name):"เบิกวัสดุอุปกรณ์ ง่ายและรวดเร็ว"}</h2><p class="mt-1 text-sm opacity-80">${u?"ค้นหาหรือเลือกหมวด กำหนดจำนวน แล้วกด “เพิ่มลงใบเบิก”":"เข้าสู่ระบบ → เลือกรายการ → ยืนยันใบเบิก"}</p>
+${u?"":`<div class="mt-4 flex flex-wrap items-center gap-2 text-xs">${["เข้าสู่ระบบ","เลือกรายการ","ยืนยันใบเบิก"].map((s,n)=>`<span class="inline-flex items-center gap-2 rounded-full bg-white/60 px-3 py-1.5 dark:bg-white/10"><b class="grid h-5 w-5 place-items-center rounded-full bg-indigo-600 text-white dark:bg-indigo-200 dark:text-indigo-800">${n+1}</b>${s}</span>`).join("")}</div><button class="p mt-4" data-act="login">${fa("right-to-bracket")} เข้าสู่ระบบเพื่อเริ่มเบิก</button>`}</div>
+<div class="grid grid-cols-3 gap-2 text-center">${[[all.length,"รายการทั้งหมด"],[nIn,"พร้อมเบิก"],[nOut,"ของหมด"]].map(([n,t])=>`<div class="rounded-2xl bg-white/60 px-4 py-3 dark:bg-white/10"><div class="text-2xl font-bold">${n}</div><div class="text-[11px] opacity-70">${t}</div></div>`).join("")}</div></div></section>`;
+  if(!S.cats.length)return hero+`<div class="${card}"><div class="empty">${fa("box-open","text-3xl")}<div class="mt-2 font-medium">ยังไม่มีรายการในระบบ</div><div class="mt-1 text-xs">ผู้ดูแลระบบต้องเพิ่มหรือนำเข้าข้อมูลในหลังบ้านก่อน</div><a href="#/admin" class="mt-4 inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white dark:bg-indigo-200 dark:text-indigo-800">${fa("user-shield")} ไปหลังบ้าน</a></div></div>`;
+  const chip=(id,ic,n,cnt)=>`<button class="chip ${tab===id?"on":""}" data-act="cat" data-id="${id}">${tab===id?fa("check","text-[10px]"):ic} ${n} <span class="opacity-60">${cnt}</span></button>`;
+  const chips=chip("all",fa("layer-group","text-[11px]"),"ทั้งหมด",all.length)+S.cats.map(c=>chip(c.id,isFa(c.icon)?fa(c.icon,"text-[11px]"):esc(c.icon||"")||fa("box","text-[11px]"),esc(c.name),c.items.length)).join("");
+  return hero+`<div class="space-y-4"><div class="relative"><i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i><input id="q" class="!rounded-full !border-transparent !bg-slate-200/70 !py-3 !pl-11 !pr-4 dark:!bg-slate-800" placeholder="ค้นหารหัสสินค้า ชื่ออุปกรณ์ หรือหมวดหมู่ (ทุกหมวด)   กด / เพื่อค้นหา" value="${esc(q)}" aria-label="ค้นหา"></div>
+<div class="-mx-1 flex items-center gap-2 overflow-x-auto px-1 pb-1">${chips}</div>
+<div class="flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-slate-500 dark:text-slate-400"><span>แสดงทั้งหมด <b class="text-slate-900 dark:text-slate-100">${L.length}</b> รายการ</span><div class="seg" role="group" aria-label="กรองสถานะ">${[["all","ทั้งหมด"],["in","มีของ"],["out","หมด / ใกล้หมด"]].map(([k,l])=>`<button class="${flt===k?"on":""}" data-act="flt" data-id="${k}">${l}</button>`).join("")}</div></div>
+${L.length?`<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">${L.slice(0,120).map(productCard).join("")}</div>${L.length>120?`<div class="p-3 text-center text-xs text-slate-400">แสดง 120 รายการแรก — พิมพ์ค้นหาเพื่อกรองเพิ่ม</div>`:""}`:`<div class="py-16 text-center"><div class="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-slate-200 text-2xl text-slate-400 dark:bg-slate-800">${fa("box-open")}</div><h3 class="font-semibold">ไม่พบรายการอุปกรณ์</h3><p class="mt-1 text-xs text-slate-500">ลองเปลี่ยนคำค้นหา หรือเลือกหมวดใหม่อีกครั้ง</p><button class="mt-4" data-act="reset-f">ล้างตัวกรอง</button></div>`}</div>`}
+const logF=()=>S.log.filter(l=>(!lf.who||l.who===lf.who)&&(!lf.slip||l.slip===lf.slip)&&(!lf.from||l.date>=lf.from)&&(!lf.to||l.date<=lf.to)).sort((a,b)=>b.date.localeCompare(a.date));
+function vLog(manage){const L=logF(),slips=[...new Set(S.log.map(l=>l.slip).filter(Boolean))].reverse();
+  return title(fa("clock-rotate-left"),"ประวัติการเบิก",`${S.log.length} รายการทั้งหมด`)+`<div class="lf"><div><label>ผู้เบิก</label><select id="lf-who"><option value="">ทั้งหมด</option>${whoList().map(w=>`<option ${w===lf.who?"selected":""}>${esc(w)}</option>`).join("")}</select></div><div><label>เลขที่ใบเบิก</label><select id="lf-slip"><option value="">ทั้งหมด</option>${slips.map(w=>`<option ${w===lf.slip?"selected":""}>${w}</option>`).join("")}</select></div><div><label>ตั้งแต่วันที่</label><input type="date" id="lf-from" value="${lf.from}"></div><div><label>ถึงวันที่</label><input type="date" id="lf-to" value="${lf.to}"></div><button class="p" data-act="print">${fa("print")} พิมพ์ / PDF (${L.length})</button></div>
+<div class="${card}"><table><tr><th>วันที่</th><th>ใบเบิก</th><th>หมวด</th><th>รายการ</th><th class="n">จำนวน</th><th>ผู้เบิก</th><th>หมายเหตุ</th>${manage?"<th></th>":""}</tr>${L.map(l=>{const f=find(l.item);return`<tr><td>${dmy(l.date)}</td><td>${esc(l.slip||"-")}</td><td>${esc(f?.c.name||"-")}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"-")}</td><td>${esc(l.note)}</td>${manage?`<td class="ac"><button class="s d" data-act="dellog" data-id="${l.id}">${fa("rotate-left")} ยกเลิก</button></td>`:""}</tr>`}).join("")||`<tr><td colspan="8" class="empty">ไม่พบประวัติการเบิก</td></tr>`}</table></div>${manage?`<div class="sum">การยกเลิกรายการเบิกจะคืนของเข้าคงเหลือ และย้ายรายการไปไว้ที่ “ถังขยะ” เพื่อกู้คืนได้</div>`:""}`}
+/* ================= back office ================= */
+function vGate(){const first=!S.admin,un=!!S.admin?.uhash||first;return`<div class="grid min-h-screen place-items-center p-4"><div class="w-full max-w-sm ${card} p-8 shadow-xl"><div class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-slate-700 to-slate-900 text-2xl text-white">${fa("user-shield")}</div>
+<h2 class="mt-4 text-center text-xl font-bold">${first?"ตั้งบัญชีผู้ดูแลระบบ":"เข้าสู่ระบบหลังบ้าน"}</h2><p class="mt-1 text-center text-xs text-slate-500">${first?"ยังไม่เคยตั้งบัญชี กรุณากำหนด Username และ Password (อย่างน้อย 4 ตัว)":"สำหรับผู้ดูแลระบบเท่านั้น"}</p>
+${un?`<label>Username</label><input id="au" autocomplete="username">`:""}<label>${un?"Password":"รหัสผ่านผู้ดูแล"}</label><input id="ap1" type="password" autocomplete="current-password">${first?`<label>ยืนยัน Password</label><input id="ap2" type="password">`:""}
+<button class="p mt-5 w-full !py-2.5" data-act="adm-go">${fa("right-to-bracket")} ${first?"ตั้งบัญชีและเข้าสู่ระบบ":"เข้าสู่ระบบ"}</button><a href="#/" class="mt-4 block text-center text-sm text-slate-500 hover:underline">${fa("arrow-left")} กลับหน้าแรก</a></div></div>`}
+const PAGES={dash:["gauge-high","ภาพรวม"],items:["boxes-stacked","หมวดและรายการ"],users:["users","ผู้เบิก"],log:["clock-rotate-left","ประวัติการเบิก"],report:["chart-column","รายงาน"],trash:["trash-can-arrow-up","ถังขยะ"],data:["database","ข้อมูลและสำรอง"],sec:["key","บัญชีผู้ดูแล"]};
+const SUB={dash:"ภาพรวมคลังและการเบิกล่าสุด",items:"เพิ่ม แก้ไข หรือปรับปรุงจำนวนอุปกรณ์คงเหลือ",users:"จัดการบัญชีผู้เบิกและสิทธิ์การเข้าใช้",report:"สรุปการเบิกรายเดือน พิมพ์เป็น PDF หรือส่งออก CSV",trash:"รายการที่ลบชั่วคราว กู้คืนหรือลบถาวรได้ที่นี่",data:"แหล่งเก็บข้อมูล สำรอง และนำเข้า/ส่งออก",sec:"บัญชีผู้ดูแลระบบและความปลอดภัย"};
+function shellBack(page){if(!PAGES[page])page="dash";const V={dash:vDash,items:vItems,users:vUsers,log:()=>vLog(true),report:vReport,trash:vTrash,data:vData,sec:vSec};
+  const items=Object.entries(PAGES).map(([k,[ic,l]])=>[`#/admin/${k}`,ic,l,k,k==="trash"?S.trash.length:0]);
+  const extra=`<a href="#/" class="ni" title="กลับหน้าแรก"><span class="ib">${fa("house","text-base")}</span><span class="lb">กลับหน้าแรก</span></a><button class="ni" data-act="adm-out" title="ออกจากหลังบ้าน"><span class="ib">${fa("right-from-bracket","text-base")}</span><span class="lb">ออกจากหลังบ้าน</span></button>`;
+  const head=page==="log"?"":`<div class="mb-5"><h2 class="text-lg font-bold">${PAGES[page][1]}</h2><p class="text-xs text-slate-500 dark:text-slate-400">${SUB[page]||""}</p></div>`;
+  return`<div class="flex h-screen flex-col overflow-hidden">${appbar(true)}<div class="relative flex flex-1 overflow-hidden">${rail(items,page,extra)}<main id="main" class="flex-1 overflow-y-auto bg-slate-50 p-4 dark:bg-slate-950 sm:p-6"><div class="mx-auto max-w-7xl">${head}${V[page]()}</div></main></div></div>`}
+function vDash(){const all=allItems().map(i=>({...i,r:rem(i)})),out=all.filter(i=>i.qty>0&&i.r<=0),low=all.filter(i=>i.qty>0&&i.r>0&&i.r/i.qty<=.1),rec=[...S.log].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  return`<div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">${kpi(fa("list"),"รายการทั้งหมด",all.length,"bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40")}${kpi(fa("triangle-exclamation"),"ของหมด / ใกล้หมด",out.length+" / "+low.length,"bg-amber-100 text-amber-600 dark:bg-amber-900/40")}${kpi(fa("cart-flatbed"),"เบิกวันนี้ (ครั้ง)",S.log.filter(l=>l.date===today()).length,"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40")}${kpi(fa("users"),"ผู้เบิกที่ใช้งาน",S.users.filter(u=>u.active!==false).length,"bg-violet-100 text-violet-600 dark:bg-violet-900/40")}</div>
+${!S.cats.length?`<div class="${card} mb-4 p-8 text-center"><div class="text-3xl text-slate-400">${fa("file-import")}</div><div class="mt-2 font-semibold">ยังไม่มีข้อมูลรายการ</div><div class="mt-1 text-sm text-slate-500">เริ่มต้นโดยนำเข้าไฟล์ CSV / JSON หรือเพิ่มหมวดด้วยตนเอง</div><div class="mt-4 flex justify-center gap-2"><a href="#/admin/data" class="nav on">${fa("database")} ข้อมูลและสำรอง</a><a href="#/admin/items" class="nav">${fa("boxes-stacked")} เพิ่มหมวด</a></div></div>`:""}
+<div class="grid gap-4 lg:grid-cols-2"><div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">${fa("triangle-exclamation","text-amber-500")} ของหมด / ใกล้หมด</div><table>${[...out,...low].slice(0,8).map(i=>`<tr><td>${esc(i.name)}<div class="text-xs text-slate-400">${esc(i.cat)}</div></td><td class="n"><span class="b ${i.r<=0?"er":"wa"}">${i.r} ${esc(i.unit)}</span></td></tr>`).join("")||`<tr><td class="empty">ไม่มีรายการที่ต้องเติมของ</td></tr>`}</table></div>
+<div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">${fa("clock-rotate-left","text-indigo-500")} เบิกล่าสุด</div><table>${rec.map(l=>{const f=find(l.item);return`<tr><td>${esc(f?.i.name||"(ลบแล้ว)")}<div class="text-xs text-slate-400">${esc(l.who||"-")} · ${dmy(l.date)}</div></td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td></tr>`}).join("")||`<tr><td class="empty">ยังไม่มีการเบิก</td></tr>`}</table></div></div>`}
+function vItems(){const c=S.cats.find(x=>x.id===bcat)||S.cats[0];if(c)bcat=c.id;const its=c?c.items.map((i,n)=>({...i,n:n+1})).filter(i=>(i.name+i.code).toLowerCase().includes(bq.toLowerCase())):[];
+  return`<div class="grid gap-5 lg:grid-cols-[16rem_1fr]"><div class="${card} h-fit p-2"><div class="px-3 py-2 text-xs font-semibold text-slate-400">หมวดหมู่ (${S.cats.length})</div>${S.cats.map(x=>`<button data-act="bcat" data-id="${x.id}" class="mi ${x.id===bcat?"!bg-indigo-50 !text-indigo-700 dark:!bg-indigo-900/40 dark:!text-indigo-200":""}">${cico(x)}<span class="truncate">${esc(x.name)}</span><span class="ml-auto text-xs text-slate-400">${x.items.length}</span></button>`).join("")}<button class="mi mt-1 !text-indigo-600" data-act="addcat">${fa("plus")} เพิ่มหมวดใหม่</button></div>
+<div class="min-w-0">${c?`<div class="mb-4 flex flex-wrap items-center gap-2"><div class="mr-auto flex items-center gap-3"><span class="grid h-11 w-11 place-items-center rounded-xl bg-indigo-100 text-lg text-indigo-600 dark:bg-indigo-900/40">${isFa(c.icon)?fa(c.icon):esc(c.icon||"")||fa("box")}</span><h2 class="text-lg font-bold">${esc(c.name)}</h2></div><button data-act="rencat">${fa("pen")} แก้ไขหมวด</button><button class="d" data-act="delcat">${fa("trash")} ลบหมวด</button><button class="p" data-act="additem">${fa("plus")} เพิ่มรายการ</button></div>
+<div class="relative mb-3 max-w-xs"><i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i><input id="bq" class="!pl-9" placeholder="ค้นหาในหมวดนี้" value="${esc(bq)}"></div>
+<div class="${card}"><table><tr><th>#</th><th>ชื่อรายการ</th><th>รหัสสินค้า</th><th>หน่วย</th><th class="n">จำนวนทั้งหมด</th><th class="n">คงเหลือ</th><th></th></tr>${its.map(i=>`<tr><td class="text-slate-400">${i.n}</td><td class="font-medium">${esc(i.name)}</td><td>${esc(i.code)}</td><td>${esc(i.unit)}</td><td class="n">${i.qty}</td><td class="n"><span class="b ${rem(i)<0?"er":rem(i)===0?"wa":"ok"}">${rem(i)}</span></td><td class="ac"><button class="s" data-act="edititem" data-id="${i.id}">${fa("pen")} แก้ไข</button> <button class="s d" data-act="delitem" data-id="${i.id}" aria-label="ลบ">${fa("trash")}</button></td></tr>`).join("")||`<tr><td colspan="7" class="empty">${c.items.length?"ไม่พบรายการที่ค้นหา":"ยังไม่มีรายการในหมวดนี้"}</td></tr>`}</table></div><div class="sum">รายการที่ลบจะถูกย้ายไป “ถังขยะ” และกู้คืนได้</div>`
+:`<div class="${card}"><div class="empty">${fa("folder-open","text-3xl")}<div class="mt-2">ยังไม่มีหมวด — กด “เพิ่มหมวดใหม่” หรือนำเข้าข้อมูลที่เมนู “ข้อมูลและสำรอง”</div></div></div>`}</div></div>`}
+function vUsers(){return`<div class="bar"><button class="p" data-act="adduser">${fa("user-plus")} เพิ่มผู้เบิก</button></div><div class="${card}"><table><tr><th>ชื่อผู้เบิก</th><th>ชื่อผู้ใช้</th><th>สถานะ</th><th class="n">เบิกแล้ว (ครั้ง)</th><th></th></tr>${S.users.map(u=>`<tr><td class="font-medium">${esc(u.name)}</td><td>${esc(u.username)}</td><td><span class="b ${u.active===false?"wa":"ok"}">${u.active===false?"ระงับ":"ใช้งาน"}</span></td><td class="n">${S.log.filter(l=>l.uid===u.id).length}</td><td class="ac"><button class="s" data-act="edituser" data-id="${u.id}">${fa("pen")} แก้ไข</button> <button class="s d" data-act="deluser" data-id="${u.id}" aria-label="ลบ">${fa("trash")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="empty">ยังไม่มีผู้เบิก — กด “เพิ่มผู้เบิก”</td></tr>`}</table></div><div class="sum">ผู้เบิกต้องเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่านจึงจะเบิกของได้ · การเปลี่ยนชื่อจะอัปเดตประวัติการเบิกเดิมให้ด้วย</div>`}
+function reportData(){const L=S.log.filter(l=>l.date.startsWith(rpm)),bi={},bu={};
+  L.forEach(l=>{const f=find(l.item),o=bi[l.item]||(bi[l.item]={name:f?.i.name||"(ลบแล้ว)",cat:f?.c.name||"-",unit:f?.i.unit||"",amt:0,n:0});o.amt+=l.amt;o.n++;const w=l.who||"-",p=bu[w]||(bu[w]={amt:0,n:0});p.amt+=l.amt;p.n++});
+  return{L,items:Object.values(bi).sort((a,b)=>b.amt-a.amt),users:Object.entries(bu).sort((a,b)=>b[1].n-a[1].n)}}
+const thMonth=()=>new Date(rpm+"-01").toLocaleDateString("th-TH",{month:"long",year:"numeric"});
+function vReport(){const D=reportData();
+  return`<div class="lf"><div><label>เดือน</label><input type="month" id="rp-m" value="${rpm}"></div><button class="p" data-act="rp-print" ${D.L.length?"":"disabled"}>${fa("print")} พิมพ์ / PDF</button><button data-act="rp-csv" ${D.L.length?"":"disabled"}>${fa("file-csv")} ส่งออก CSV</button></div>
+<div class="mb-4 grid grid-cols-3 gap-3">${kpi(fa("receipt"),"จำนวนใบเบิก",new Set(D.L.map(l=>l.slip||l.id)).size,"bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40")}${kpi(fa("list"),"จำนวนรายการ",D.items.length,"bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40")}${kpi(fa("users"),"ผู้เบิก",D.users.length,"bg-violet-100 text-violet-600 dark:bg-violet-900/40")}</div>
+<div class="grid gap-4 lg:grid-cols-[2fr_1fr]"><div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">สรุปการเบิกรายการ · ${thMonth()}</div><table><tr><th>รายการ</th><th>หมวด</th><th class="n">จำนวนที่เบิก</th><th class="n">ครั้ง</th></tr>${D.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.cat)}</td><td class="n font-semibold">${i.amt} ${esc(i.unit)}</td><td class="n">${i.n}</td></tr>`).join("")||`<tr><td colspan="4" class="empty">ไม่มีการเบิกในเดือนนี้</td></tr>`}</table></div>
+<div class="${card}"><div class="border-b border-slate-100 px-4 py-3 font-semibold dark:border-slate-700">แยกตามผู้เบิก</div><table>${D.users.map(([w,o])=>`<tr><td>${esc(w)}</td><td class="n">${o.n} ครั้ง</td></tr>`).join("")||`<tr><td class="empty">-</td></tr>`}</table></div></div>`}
+function vTrash(){const T=[...S.trash].reverse(),K={cat:"หมวด",item:"รายการ",log:"รายการเบิก",user:"ผู้เบิก"},nm=t=>t.kind==="log"?`${esc(find(t.data.item)?.i.name||"(รายการถูกลบ)")} × ${t.data.amt} · ${esc(t.data.who||"-")}`:esc(t.data.name)+(t.kind==="cat"?` (${t.data.items.length} รายการ)`:t.kind==="item"?` <span class="text-xs text-slate-400">จากหมวด ${esc(t.catName||"")}</span>`:"");
+  return`<div class="bar"><button class="d" data-act="tr-empty" ${T.length?"":"disabled"}>${fa("fire")} ล้างถังขยะ</button></div><div class="${card}"><table><tr><th>ประเภท</th><th>รายละเอียด</th><th>ลบเมื่อ</th><th></th></tr>${T.map(t=>`<tr><td><span class="b wa !min-w-0">${K[t.kind]}</span></td><td>${nm(t)}</td><td>${dmy(t.at)}</td><td class="ac"><button class="s p" data-act="tr-restore" data-id="${t.id}">${fa("rotate-left")} กู้คืน</button> <button class="s d" data-act="tr-del" data-id="${t.id}" aria-label="ลบถาวร">${fa("xmark")}</button></td></tr>`).join("")||`<tr><td colspan="4" class="empty">${fa("trash-can","text-3xl")}<div class="mt-2">ถังขยะว่างเปล่า</div></td></tr>`}</table></div><div class="sum">รายการที่ลบหรือยกเลิกจะอยู่ที่นี่ กู้คืนได้จนกว่าจะลบถาวร</div>`}
+function vData(){const c=ghCfg(),mode=src==="gh"?"ออนไลน์ (GitHub)":fh?"ออฟไลน์ · ไฟล์ "+fh.name:"ออฟไลน์ · เบราว์เซอร์นี้",sec=(ic,t,d,b)=>`<div class="${card} p-5"><div class="mb-1 flex items-center gap-2 font-semibold">${fa(ic,"text-indigo-500")} ${t}</div><div class="mb-3 text-xs text-slate-500">${d}</div><div class="flex flex-wrap gap-2">${b}</div></div>`;
+  return`<div class="mb-5 flex flex-wrap items-center gap-3 ${card} p-4"><span class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40">${fa(src==="gh"?"cloud":"hard-drive")}</span><div class="mr-auto"><div class="text-xs text-slate-500">แหล่งเก็บข้อมูลปัจจุบัน</div><div class="font-semibold">${mode}</div></div><span class="${stat.c==="ok"?"b ok":"b wa"} !min-w-0">${esc(stat.t)}</span></div>
+<div class="grid gap-4 md:grid-cols-2">
+${sec("hard-drive","ออฟไลน์ · ไฟล์ในเครื่อง","เก็บข้อมูลที่ database/stock-data.json ในโฟลเดอร์ที่เลือก (Chrome / Edge) บันทึกอัตโนมัติทุกครั้งที่มีการเปลี่ยนแปลง",`<button class="p" data-act="f-dir">${fa("folder-tree")} เชื่อมโฟลเดอร์</button><button data-act="f-open">${fa("folder-open")} เปิดไฟล์</button><button data-act="f-new">${fa("file-circle-plus")} สร้างไฟล์ใหม่</button><button data-act="f-save">${fa("floppy-disk")} บันทึกเป็น…</button>`)}
+${sec("cloud","ออนไลน์ · GitHub",`${esc(c.owner)}/${esc(c.repo)} · ${esc(c.path)} · token ${c.token?"ตั้งค่าแล้ว":"ยังไม่ได้ตั้ง"}`,`<button data-act="gh-set">${fa("gear")} ตั้งค่า / เชื่อมต่อ</button><button data-act="gh-rf">${fa("rotate")} ซิงก์ตอนนี้</button><button data-act="bk-gh">${fa("cloud-arrow-up")} สำรองไป repo</button>`)}
+${sec("download","สำรองและส่งออก","ดาวน์โหลดสำเนาข้อมูลเก็บไว้ ใช้ได้ทั้งโหมดออนไลน์และออฟไลน์",`<button class="p" data-act="bk-json">${fa("file-zipper")} สำรองข้อมูล (.json)</button><button data-act="ex-items">${fa("file-csv")} รายการคงเหลือ (.csv)</button><button data-act="ex-log">${fa("file-csv")} ประวัติการเบิก (.csv)</button>`)}
+${sec("file-import","กู้คืนและนำเข้า","กู้คืน = แทนที่ข้อมูลทั้งหมดด้วยไฟล์สำรอง · นำเข้า = เพิ่มเข้าไป เลือกได้ว่าจะข้ามหรืออัปเดตรายการซ้ำ ก่อนทำรายการระบบสำรองข้อมูลเดิมให้อัตโนมัติ",`<button class="p" data-act="im-restore">${fa("clock-rotate-left")} กู้คืนจากไฟล์สำรอง</button><button data-act="im-any">${fa("file-import")} นำเข้า (.json / .csv)</button><button data-act="tpl">${fa("table")} แม่แบบ CSV</button><button data-act="undo" ${localStorage.getItem("stock-undo")?"":"disabled"}>${fa("rotate-left")} ย้อนกลับล่าสุด</button>`)}</div>
+<div class="sum">หัวคอลัมน์ CSV: <b>หมวด, ชื่อรายการ, รหัสสินค้า, หน่วย, จำนวน</b> (ต้องมีอย่างน้อย “ชื่อรายการ”) · ไฟล์ที่ส่งออกจากระบบนำกลับเข้ามาได้</div>`}
+function vSec(){const a=S.admin;return`<div class="${card} max-w-lg p-5"><div class="mb-1 flex items-center gap-2 font-semibold">${fa("user-shield","text-indigo-500")} บัญชีผู้ดูแลระบบ</div><div class="mb-3 text-xs text-slate-500">${a?.uhash?"ใช้ Username + Password":"ปัจจุบันใช้เฉพาะรหัสผ่าน — ตั้ง Username เพิ่มได้"} · เก็บแบบเข้ารหัสทางเดียว (PBKDF2 / SHA-256) ดูย้อนหลังไม่ได้ · ออกจากหลังบ้านอัตโนมัติเมื่อไม่ใช้งาน 10 นาที</div><button class="p" data-act="acct">${fa("key")} เปลี่ยน Username / Password</button></div>
+<div class="sum max-w-lg">หมายเหตุ: ระบบนี้ทำงานในเบราว์เซอร์ทั้งหมด รหัสผ่านป้องกันการใช้งานผิดพลาด แต่ไม่ใช่ความปลอดภัยระดับเซิร์ฟเวอร์ — คนที่เข้าถึงไฟล์ข้อมูลหรือ GitHub token ได้ยังแก้ข้อมูลโดยตรงได้ ถ้าลืมรหัสให้ลบบล็อก "admin" ในไฟล์ข้อมูลแล้วตั้งใหม่</div>`}
+/* ================= render ================= */
+let lastRoute="",drawerOn=false;
+function render(){
+  const app=$("#app"),sc=$("#main")?.scrollTop||0;
+  if(!loaded){app.innerHTML=vWelcome();cartBar();return}
+  const r=R(),key=r.area+r.page;
+  if(r.area==="back"){app.innerHTML=admin?shellBack(r.page):vGate();document.title="หลังบ้าน · ระบบเบิกของ"}
+  else{if(!["stock","log"].includes(r.page)){location.hash="#/";return}
+    app.innerHTML=shellFront(r.page,r.page==="log"?vLog(false):vHome());document.title="ระบบเบิกของติดตั้ง"}
+  const m=$("#main");if(m)m.scrollTop=key===lastRoute?sc:0;lastRoute=key;cartBar()}
+function cartBar(){const n=cart.length;document.querySelectorAll(".cart-badge").forEach(b=>{b.textContent=n;b.classList.toggle("hidden",!n)})}
+function setDrawer(on){drawerOn=on;$("#drawer").classList.toggle("open",on);$("#scrim").classList.toggle("open",on)}
+/* ================= cart / withdraw (drawer) ================= */
+function openCart(){
+  cart=cart.filter(x=>find(x.item));cartBar();
+  $("#drawer").innerHTML=`<div class="flex items-center gap-2 border-b border-slate-300/40 px-5 py-4 dark:border-slate-700/50"><h3 class="mr-auto text-lg font-bold">${fa("receipt","text-indigo-600 dark:text-indigo-200")} ใบเบิกของฉัน <span class="b ok ml-1">${cart.length}</span></h3><button class="iconbtn" data-act="drawer-close" aria-label="ปิด">${fa("xmark","text-lg")}</button></div><div class="flex-1 overflow-y-auto px-5 pb-5">${cart.length?cartForm():`<div class="py-20 text-center text-sm text-slate-400"><div class="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-slate-200 text-2xl text-slate-400 dark:bg-slate-800">${fa("cart-shopping")}</div>ยังไม่มีรายการในใบเบิก<div class="mt-1 text-xs">เลือกอุปกรณ์ กำหนดจำนวน แล้วกด “เพิ่มลงใบเบิก”</div></div>`}</div>`;
+  setDrawer(true)}
+function refreshCart(){cartBar();render();if(drawerOn)openCart()}
+function commit(pr){
+  if(!me())return toast("กรุณาเข้าสู่ระบบก่อน","er");
+  if(!cart.length)return;
+  if(cart.some(x=>!(x.amt>0)))return toast("มีรายการที่จำนวนเป็น 0 กรุณาแก้ไขหรือลบออก","er");
+  const over=cart.filter(x=>x.amt>rem(find(x.item).i));
+  if(over.length&&!confirm(`มี ${over.length} รายการที่เบิกเกินคงเหลือ ยอดคงเหลือจะติดลบ ต้องการดำเนินการต่อ?`))return;
+  const slip="W"+String(S.seq=(S.seq||0)+1).padStart(4,"0"),who=me().name,site=(ci.site||"").trim(),dt=ci.date||today();
+  const rows=cart.map(x=>({id:uid(),item:x.item,amt:x.amt,date:dt,who,uid:me().id,note:(ci.note||"").trim(),site,slip}));
+  S.log.push(...rows);localStorage.setItem("lastsite",site);cart=[];ci.note="";setDrawer(false);change();cartBar();toast("บันทึกใบเบิก "+slip+" เรียบร้อย");
+  if(pr)printSheet(who,site,rows,slip,dt)}
+function printSheet(who,site,rows,no,dt){
+  const L=rows||logF().slice().reverse();
+  $("#pr").innerHTML=`<h2>ใบเบิกวัสดุอุปกรณ์</h2><div class="m"><span>ผู้เบิก: <b>${esc(who||"-")}</b>${site?`<br>โครงการ/สถานที่: ${esc(site)}`:""}</span><span>${no?`เลขที่: <b>${esc(no)}</b><br>`:""}${dt?`วันที่เบิก: ${dmy(dt)}`:`วันที่พิมพ์: ${dmy(today())}`}${!rows&&(lf.from||lf.to)?`<br>ช่วงวันที่: ${lf.from?dmy(lf.from):"…"} - ${lf.to?dmy(lf.to):"…"}`:""}</span></div>
+  <table><tr><th>ลำดับ</th><th>วันที่</th><th>รายการ</th><th>รหัส</th><th class="n">จำนวน</th><th>ผู้เบิก</th><th>หมายเหตุ</th></tr>${L.map((l,n)=>{const f=find(l.item);return`<tr><td>${n+1}</td><td>${dmy(l.date)}</td><td>${esc(f?.i.name||"(ลบแล้ว)")}</td><td>${esc(f?.i.code||"")}</td><td class="n">${l.amt} ${esc(f?.i.unit||"")}</td><td>${esc(l.who||"")}</td><td>${esc(l.note)}</td></tr>`}).join("")}<tr><td colspan="7" style="text-align:right"><b>สรุป: รวม ${L.length} รายการ</b></td></tr></table>
+  <div class="sg"><div><i>(${esc(who||"............................")})<br>ผู้เบิก</i></div><div><i>(............................)<br>ผู้จ่ายของ</i></div><div><i>(............................)<br>ผู้อนุมัติ</i></div></div>`;
+  doPrint((no||"ใบเบิก")+(who?"_"+who:""))}
+function doPrint(t){const old=document.title;document.title=t;window.onafterprint=()=>{document.title=old};setTimeout(()=>window.print(),100)}
+function printReport(){const D=reportData();
+  $("#pr").innerHTML=`<h2>รายงานการเบิกวัสดุอุปกรณ์ ประจำเดือน${thMonth()}</h2><div class="m"><span>จำนวนใบเบิก: <b>${new Set(D.L.map(l=>l.slip||l.id)).size}</b> · ผู้เบิก ${D.users.length} คน</span><span>วันที่พิมพ์: ${dmy(today())}</span></div>
+  <table><tr><th>ลำดับ</th><th>รายการ</th><th>หมวด</th><th class="n">จำนวนที่เบิก</th><th class="n">ครั้ง</th></tr>${D.items.map((i,n)=>`<tr><td>${n+1}</td><td>${esc(i.name)}</td><td>${esc(i.cat)}</td><td class="n">${i.amt} ${esc(i.unit)}</td><td class="n">${i.n}</td></tr>`).join("")}<tr><td colspan="5" style="text-align:right"><b>สรุป: รวม ${D.items.length} รายการ</b></td></tr></table>
+  <div class="sg"><div><i>(............................)<br>ผู้จัดทำรายงาน</i></div><div><i>(............................)<br>ผู้อนุมัติ</i></div></div>`;doPrint("รายงานการเบิก_"+rpm)}
+/* ================= back-office dialogs ================= */
+const iconPicker=cur=>`<label>ไอคอนหมวด (Font Awesome)</label><div class="flex items-center gap-3"><span id="icp" class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-indigo-100 text-xl text-indigo-600 dark:bg-indigo-900/40">${isFa(cur)?fa(cur):esc(cur)}</span><input id="f2" value="${esc(cur)}" placeholder="ชื่อไอคอน เช่น bolt"></div><div class="mt-2 grid grid-cols-8 gap-1.5">${ICONS.map(x=>`<button type="button" data-ic="${x}" class="!px-0 !py-2 ${x===cur?"ring-2 ring-indigo-500":""}">${fa(x)}</button>`).join("")}</div>`;
+function catDlg(c){const n=!c;ask(n?"เพิ่มหมวดใหม่":"แก้ไขหมวด",`<label>ชื่อหมวด</label><input id="f1" value="${esc(c?.name||"")}">`+iconPicker(c?.icon||"box"),()=>{const name=v("f1").trim();if(!name)return false;const ic=v("f2").trim()||"box";
+  if(n){c={id:uid(),name,icon:ic,items:[]};S.cats.push(c);bcat=c.id}else{c.name=name;c.icon=ic}change()})}
+function itemDlg(c,i){const n=!i;i=i||{name:"",code:"",unit:"",qty:0};
+  ask(n?"เพิ่มรายการ":"แก้ไขรายการ",`<label>ชื่อรายการ</label><input id="f1" value="${esc(i.name)}"><div class="row"><div><label>รหัสสินค้า</label><input id="f2" value="${esc(i.code)}"></div><div><label>หน่วย</label><input id="f3" value="${esc(i.unit)}" placeholder="ชิ้น / เมตร"></div></div><label>จำนวนทั้งหมด</label><input id="f4" type="number" min="0" step="any" value="${i.qty}"><div class="hint">คงเหลือ = จำนวนทั้งหมด − ยอดเบิกใช้รวม</div>`,
+  ()=>{if(!v("f1").trim())return false;Object.assign(i,{name:v("f1").trim(),code:v("f2").trim(),unit:v("f3").trim(),qty:+v("f4")||0});if(n)c.items.push({id:uid(),...i});change()})}
+function userDlg(u){const n=!u;u=u||{name:"",username:"",active:true};
+  ask(n?"เพิ่มผู้เบิก":"แก้ไขผู้เบิก",`<label>ชื่อผู้เบิก (แสดงในใบเบิก)</label><input id="f1" value="${esc(u.name)}"><label>ชื่อผู้ใช้สำหรับเข้าสู่ระบบ</label><input id="f2" value="${esc(u.username)}" placeholder="เช่น somchai"><label>${n?"รหัสผ่าน (อย่างน้อย 4 ตัว)":"รหัสผ่านใหม่ (เว้นว่าง = ไม่เปลี่ยน)"}</label><input id="f3" autocomplete="off"><label>สถานะ</label><select id="f4"><option value="1" ${u.active!==false?"selected":""}>ใช้งาน</option><option value="0" ${u.active===false?"selected":""}>ระงับ</option></select>`,
+  ()=>{(async()=>{const name=v("f1").trim(),un=v("f2").trim().toLowerCase().replace(/\s+/g,""),pw=v("f3");
+    if(!name||!un)return toast("กรุณากรอกชื่อและชื่อผู้ใช้","er");if(S.users.some(x=>x.username===un&&x!==u))return toast("ชื่อผู้ใช้นี้ถูกใช้แล้ว","er");
+    if((n||pw)&&pw.length<4)return toast("รหัสผ่านอย่างน้อย 4 ตัว","er");
+    if(n){u.id=uid();S.users.push(u)}Object.assign(u,{name,username:un,active:v("f4")==="1"});
+    if(pw){u.salt=uid()+uid();u.hash=await hashPw(pw,u.salt)}S.log.forEach(l=>{if(l.uid===u.id)l.who=name});$("#dlg").close();change()})();return false})}
+/* ================= import / export ================= */
+const snapshot=()=>{try{localStorage.setItem("stock-undo",JSON.stringify(S))}catch(e){}};
+const toTrash=(kind,data,x={})=>S.trash.push({id:uid(),kind,at:today(),data,...x});
+function ensureLoaded(){if(!loaded){S=norm({cats:[]});loaded=true;src=ghMissing?"gh":null;fh=null;setStatus("ออฟไลน์ · ยังไม่ได้เชื่อมไฟล์","wa")}}
+function importItemsCsv(txt,upd){
+  const rows=csvParse(txt);if(rows.length<2)throw Error("ไฟล์ว่างหรือไม่มีแถวข้อมูล");
+  const H=rows[0].map(h=>h.trim().toLowerCase()),col=(...n)=>H.findIndex(h=>n.includes(h));
+  const X={cat:col("หมวด","หมวดหมู่","category","cat"),name:col("ชื่อรายการ","รายการ","name","item"),code:col("รหัสสินค้า","รหัส","code","sku"),unit:col("หน่วย","unit"),qty:col("จำนวน","จำนวนทั้งหมด","qty","quantity")};
+  if(X.name<0)throw Error("ไม่พบคอลัมน์ “ชื่อรายการ” (หัวคอลัมน์: หมวด, ชื่อรายการ, รหัสสินค้า, หน่วย, จำนวน)");
+  ensureLoaded();snapshot();let add=0,up=0,skip=0;
+  rows.slice(1).forEach(r=>{const g=k=>X[k]>=0?(r[X[k]]||"").trim():"",name=g("name");if(!name)return;
+    const cn=g("cat")||"ทั่วไป";let c=S.cats.find(x=>x.name===cn);if(!c){c={id:uid(),name:cn,icon:"box",items:[]};S.cats.push(c)}
+    const code=g("code"),it=c.items.find(x=>x.name===name||(code&&x.code===code)),qty=parseFloat(g("qty").replace(/,/g,""));
+    if(it){if(!upd){skip++;return}if(X.code>=0)it.code=code;if(X.unit>=0)it.unit=g("unit");if(!isNaN(qty))it.qty=qty;up++}
+    else{c.items.push({id:uid(),name,code,unit:g("unit"),qty:isNaN(qty)?0:qty});add++}});
+  return{add,up,skip}}
+function mergeJson(txt,upd){
+  const d=norm(JSON.parse(txt));ensureLoaded();snapshot();let add=0,up=0,skip=0;const map={};
+  d.cats.forEach(dc=>{const c=S.cats.find(x=>x.id===dc.id||x.name===dc.name);if(!c){S.cats.push(dc);add+=dc.items.length;return}
+    dc.items.forEach(di=>{const it=c.items.find(x=>x.id===di.id||x.name===di.name||(di.code&&x.code===di.code));
+      if(!it){c.items.push(di);add++}else{map[di.id]=it.id;if(upd){Object.assign(it,{code:di.code,unit:di.unit,qty:di.qty});up++}else skip++}})});
+  d.users.forEach(u=>{if(!S.users.some(x=>x.id===u.id||x.username===u.username))S.users.push(u)});
+  const ids=new Set(S.log.map(l=>l.id));d.log.forEach(l=>{if(!ids.has(l.id)){l.item=map[l.item]||l.item;S.log.push(l)}});S.seq=Math.max(S.seq||0,d.seq||0);
+  if(!S.admin&&d.admin)S.admin=d.admin;return{add,up,skip}}
+async function newFile(){
+  const prev={S,loaded,src,fh};if(loaded&&!confirm("สร้างไฟล์ข้อมูลใหม่ (ว่าง)?\nข้อมูลที่เปิดอยู่ในหน้านี้จะถูกแทนที่ (บัญชีผู้ดูแลยังคงอยู่) — ควรสำรองข้อมูลก่อน"))return;
+  S=norm({cats:[],admin:S.admin});loaded=true;fh=null;tab="all";bcat=undefined;
+  try{
+    if(window.showDirectoryPicker){const h=await dbHandle(),old=await(await h.getFile()).text();
+      if(old.trim()&&!confirm("พบ database/stock-data.json ที่มีข้อมูลอยู่แล้ว การสร้างใหม่จะเขียนทับข้อมูลเดิม ต้องการดำเนินการต่อ?"))throw{name:"AbortError"};
+      fh=h;idbSet(h);src="file";await persist();render();toast("สร้าง database/stock-data.json ใหม่แล้ว");return}
+    if(!window.showSaveFilePicker){dl("stock-data.json",JSON.stringify(S,null,1),"application/json");src=null;render();toast("ดาวน์โหลดไฟล์ข้อมูลใหม่แล้ว — นำไปไว้ที่ database/stock-data.json แล้วใช้ “เปิดไฟล์ข้อมูล”");return}
+    fh=await showSaveFilePicker({...FP,suggestedName:"stock-data.json"});idbSet(fh);src="file";await persist();render();toast("สร้างไฟล์ข้อมูลใหม่แล้ว")}
+  catch(e){({S,loaded,src,fh}=prev);render();if(e.name!=="AbortError")toast("สร้างไฟล์ไม่สำเร็จ: "+e.message,"er")}}
+/* ================= actions ================= */
+const ADM=new Set(["addcat","rencat","delcat","additem","edititem","delitem","adduser","edituser","deluser","dellog","bk-json","bk-gh","ex-items","ex-log","tpl","acct","undo","f-save","f-new","im-restore","im-any","tr-restore","tr-del","tr-empty","rp-print","rp-csv"]);
+const BOOT=new Set(["f-new","im-restore","im-any"]);
+const A={
+  cat:id=>{tab=id;q="";render()},bcat:id=>{bcat=id;bq="";render()},flt:id=>{flt=id;render()},"reset-f":()=>{q="";flt="all";tab="all";render()},
+  login:()=>loginDlg(),logout:()=>{if(cart.length&&!confirm("ใบเบิกที่ยังไม่ยืนยันจะถูกล้าง ออกจากระบบหรือไม่?"))return;logout()},
+  inc:id=>{const e=$("#qty-"+id);if(e){e.value=(+e.value||0)+1;qtys[id]=+e.value}},dec:id=>{const e=$("#qty-"+id);if(e){e.value=Math.max(1,(+e.value||1)-1);qtys[id]=+e.value}},
+  add:id=>{if(!me())return loginDlg();const f=find(id),r=rem(f.i),n=+($("#qty-"+id)?.value)||0;if(!(n>0))return toast("กรุณาระบุจำนวน","er");
+    const ex=cart.find(x=>x.item===id),tot=(ex?ex.amt:0)+n;if(tot>r)return toast(`เบิกได้สูงสุด ${r} ${f.i.unit} (อยู่ในใบเบิกแล้ว ${ex?ex.amt:0})`,"er");
+    if(ex)ex.amt=tot;else cart.push({item:id,amt:n});qtys[id]=1;toast(`เพิ่ม “${f.i.name}” × ${n} ลงใบเบิกแล้ว`);cartBar();render()},
+  rm:id=>{cart.splice(+id,1);refreshCart()},"cart-clear":()=>{if(confirm("ล้างรายการทั้งหมดในใบเบิก?")){cart=[];setDrawer(false);cartBar();render()}},"drawer-close":()=>setDrawer(false),rail:()=>{railOpen=!railOpen;localStorage.setItem("rail",railOpen?"1":"");render()},theme:()=>{const d=document.documentElement.classList.toggle("dark");localStorage.setItem("theme",d?"dark":"light");render()},
+  cart:()=>me()?openCart():loginDlg(),commit:()=>commit(false),"commit-pr":()=>commit(true),
+  print:()=>{if(!logF().length)return toast("ไม่มีรายการเบิกให้พิมพ์","er");
+    ask("พิมพ์ใบเบิก / บันทึก PDF",`<label>ชื่อผู้เบิก (แสดงบนใบเบิกและช่องลงชื่อ)</label><input id="f1" list="whos" value="${esc(lf.who)}"><datalist id="whos">${whoList().map(w=>`<option value="${esc(w)}">`).join("")}</datalist><label>โครงการ / สถานที่ (ถ้ามี)</label><input id="f2" value="${esc(localStorage.getItem("lastsite")||"")}"><div class="hint">พิมพ์ตามรายการที่กรองอยู่ · ต้องการไฟล์ PDF ให้เลือกปลายทางเป็น “บันทึกเป็น PDF” ในหน้าต่างพิมพ์</div>`,()=>{if(!v("f1").trim()){toast("กรุณาระบุชื่อผู้เบิก","er");return false}localStorage.setItem("lastsite",v("f2").trim());const w=v("f1").trim(),st=v("f2").trim();setTimeout(()=>printSheet(w,st,null,lf.slip),50)})},
+  "adm-go":async()=>{if(locked())return;const p=$("#ap1").value,un=($("#au")?.value||"").trim().toLowerCase();
+    if(!S.admin){if(!un)return toast("กรุณากรอก Username","er");if(p.length<4)return toast("รหัสผ่านอย่างน้อย 4 ตัว","er");if(p!==$("#ap2").value)return toast("รหัสยืนยันไม่ตรงกัน","er");
+      const us=uid()+uid(),ps=uid()+uid();S.admin={usalt:us,uhash:await hashPw(un,us),salt:ps,hash:await hashPw(p,ps)};persist()}
+    else{if(S.admin.uhash&&!await chk(un,S.admin.usalt,S.admin.uhash))return failed();if(!await chk(p,S.admin.salt,S.admin.hash))return failed()}
+    fails=0;admin=true;bumpA();render()},
+  "adm-out":()=>{admin=false;location.hash="#/";render()},
+  acct:()=>ask("เปลี่ยน Username / Password",`<label>รหัสผ่านปัจจุบัน</label><input id="f0" type="password"><label>Username ใหม่ (เว้นว่าง = ไม่เปลี่ยน)</label><input id="f1" autocomplete="off"><label>Password ใหม่ (เว้นว่าง = ไม่เปลี่ยน)</label><input id="f2" type="password"><label>ยืนยัน Password ใหม่</label><input id="f3" type="password"><div class="hint">Username และ Password ถูกเข้ารหัสก่อนเก็บ (PBKDF2 / SHA-256) ดูย้อนหลังไม่ได้</div>`,()=>{(async()=>{
+    if(!await chk(v("f0"),S.admin.salt,S.admin.hash))return toast("รหัสผ่านปัจจุบันไม่ถูกต้อง","er");const un=v("f1").trim().toLowerCase(),pw=v("f2");
+    if(!un&&!pw)return toast("ยังไม่ได้กรอกค่าใหม่","er");if(pw&&pw.length<4)return toast("รหัสผ่านอย่างน้อย 4 ตัว","er");if(pw&&pw!==v("f3"))return toast("รหัสยืนยันไม่ตรงกัน","er");
+    if(un){S.admin.usalt=uid()+uid();S.admin.uhash=await hashPw(un,S.admin.usalt)}if(pw){S.admin.salt=uid()+uid();S.admin.hash=await hashPw(pw,S.admin.salt)}
+    $("#dlg").close();change();toast("บันทึกบัญชีผู้ดูแลแล้ว")})();return false}),
+  addcat:()=>catDlg(),rencat:()=>catDlg(S.cats.find(c=>c.id===bcat)),
+  delcat:()=>{const c=S.cats.find(x=>x.id===bcat);if(c&&confirm(`ลบหมวด “${c.name}” พร้อมรายการทั้งหมด?\n(ย้ายไปถังขยะ กู้คืนได้)`)){const ids=c.items.map(i=>i.id);toTrash("cat",c,{logs:S.log.filter(l=>ids.includes(l.item))});S.log=S.log.filter(l=>!ids.includes(l.item));S.cats=S.cats.filter(x=>x!==c);bcat=S.cats[0]?.id;change();toast("ย้ายหมวดไปถังขยะแล้ว")}},
+  additem:()=>itemDlg(S.cats.find(c=>c.id===bcat)),edititem:id=>{const f=find(id);itemDlg(f.c,f.i)},
+  delitem:id=>{const{c,i}=find(id);if(confirm(`ลบ “${i.name}” ?\n(ย้ายไปถังขยะ กู้คืนได้)`)){toTrash("item",i,{catId:c.id,catName:c.name,logs:S.log.filter(l=>l.item===id)});c.items=c.items.filter(x=>x!==i);S.log=S.log.filter(l=>l.item!==id);change();toast("ย้ายรายการไปถังขยะแล้ว")}},
+  adduser:()=>userDlg(),edituser:id=>userDlg(S.users.find(x=>x.id===id)),
+  deluser:id=>{const u=S.users.find(x=>x.id===id);if(confirm(`ลบผู้เบิก “${u.name}”? (ประวัติการเบิกเดิมยังอยู่)`)){toTrash("user",u);S.users=S.users.filter(x=>x!==u);if(user===u.id)user=null;change()}},
+  dellog:id=>{const l=S.log.find(x=>x.id===id);if(l&&confirm("ยกเลิกรายการเบิกนี้? ของจะถูกคืนเข้าคงเหลือ")){toTrash("log",l);S.log=S.log.filter(x=>x!==l);change()}},
+  "tr-restore":id=>{const t=S.trash.find(x=>x.id===id);if(!t)return;
+    if(t.kind==="cat"){if(S.cats.some(c=>c.id===t.data.id||c.name===t.data.name))return toast("มีหมวดชื่อ/รหัสเดียวกันอยู่แล้ว","er");S.cats.push(t.data);S.log.push(...(t.logs||[]))}
+    else if(t.kind==="item"){let c=S.cats.find(x=>x.id===t.catId)||S.cats.find(x=>x.name===t.catName);if(!c){c={id:t.catId||uid(),name:t.catName||"กู้คืน",icon:"box",items:[]};S.cats.push(c)}c.items.push(t.data);S.log.push(...(t.logs||[]))}
+    else if(t.kind==="log"){if(!find(t.data.item))return toast("ไม่พบรายการสินค้าของใบเบิกนี้ — กู้คืนรายการสินค้าก่อน","er");S.log.push(t.data)}
+    else if(t.kind==="user"){if(S.users.some(u=>u.username===t.data.username))return toast("ชื่อผู้ใช้นี้ถูกใช้แล้ว","er");S.users.push(t.data)}
+    S.trash=S.trash.filter(x=>x!==t);change();toast("กู้คืนเรียบร้อย")},
+  "tr-del":id=>{if(confirm("ลบถาวร? กู้คืนไม่ได้อีก")){S.trash=S.trash.filter(x=>x.id!==id);change()}},
+  "tr-empty":()=>{if(confirm(`ล้างถังขยะ ${S.trash.length} รายการ? กู้คืนไม่ได้อีก`)){S.trash=[];change()}},
+  "rp-print":printReport,
+  "rp-csv":()=>{const D=reportData(),r=[["หมวด","รายการ","หน่วย","จำนวนที่เบิก","จำนวนครั้ง"]];D.items.forEach(i=>r.push([i.cat,i.name,i.unit,i.amt,i.n]));dl(`report-${rpm}.csv`,csvOut(r),"text/csv")},
+  "f-open":openFile,"f-dir":connectDir,"f-save":saveAs,"f-new":newFile,"gh-set":ghDlg,
+  "gh-off":()=>{localStorage.removeItem("gh-cfg");localStorage.setItem("gh-off","1");ghSha=null;if(src==="gh"){src=null;fh=null}if($("#dlg").open)$("#dlg").close();setStatus("ออฟไลน์ · ยกเลิกการเชื่อมต่อออนไลน์แล้ว (ข้อมูลในหน้านี้ยังอยู่)","wa");render();toast("ยกเลิกการเชื่อมต่อ GitHub แล้ว")},
+  "gh-rf":()=>online()?ghLoad(true).then(()=>toast("ซิงก์ข้อมูลแล้ว")).catch(e=>toast(e.message,"er")):toast("ยังไม่ได้เชื่อมต่อออนไลน์ — เลือก “ตั้งค่า / เชื่อมต่อ GitHub”","er"),
+  "bk-gh":()=>ghBackup().catch(e=>toast("สำรองไม่สำเร็จ: "+e.message,"er")),
+  "bk-json":()=>{dl(`stock-backup-${stamp()}.json`,JSON.stringify(S,null,1),"application/json");toast("ดาวน์โหลดไฟล์สำรองแล้ว")},
+  "ex-items":()=>{const r=[["หมวด","ชื่อรายการ","รหัสสินค้า","หน่วย","จำนวน","เบิกใช้แล้ว","คงเหลือ"]];S.cats.forEach(c=>c.items.forEach(i=>r.push([c.name,i.name,i.code,i.unit,i.qty,used(i.id),rem(i)])));dl(`stock-items-${stamp()}.csv`,csvOut(r),"text/csv")},
+  "ex-log":()=>{const r=[["เลขที่ใบเบิก","วันที่","หมวด","ชื่อรายการ","รหัสสินค้า","จำนวนเบิก","หน่วย","ผู้เบิก","โครงการ/สถานที่","หมายเหตุ"]];[...S.log].sort((a,b)=>a.date.localeCompare(b.date)).forEach(l=>{const f=find(l.item);r.push([l.slip||"",l.date,f?.c.name||"",f?.i.name||"(ลบแล้ว)",f?.i.code||"",l.amt,f?.i.unit||"",l.who||"",l.site||"",l.note||""])});dl(`stock-log-${stamp()}.csv`,csvOut(r),"text/csv")},
+  tpl:()=>dl("แม่แบบนำเข้ารายการ.csv",csvOut([["หมวด","ชื่อรายการ","รหัสสินค้า","หน่วย","จำนวน"]]),"text/csv"),
+  "im-restore":async()=>{const f=await pick(".json,application/json");if(!f)return;
+    try{const txt=await f.text(),d=norm(JSON.parse(txt));
+      if(loaded){if(!confirm(`กู้คืนจากไฟล์ ${f.name}\n${d.cats.length} หมวด · ${d.cats.reduce((a,c)=>a+c.items.length,0)} รายการ · ${d.log.length} ประวัติ\n\nข้อมูลปัจจุบันจะถูกแทนที่ (ระบบสำรองข้อมูลเดิมไว้ให้ย้อนกลับได้ 1 ครั้ง) ต้องการดำเนินการต่อ?`))return;
+        snapshot();if(!d.admin&&S.admin)d.admin=S.admin;S=d;tab="all";bcat=S.cats[0]?.id;cart=[];if(!S.users.some(u=>u.id===user))user=null;change()}
+      else{await useData(txt,null,ghMissing?"gh":null);persist()}toast("กู้คืนข้อมูลเรียบร้อย")}catch(e){toast("กู้คืนไม่สำเร็จ: "+e.message,"er")}},
+  "im-any":async()=>{const f=await pick(".json,.csv,application/json,text/csv");if(!f)return;const txt=await f.text(),csv=/\.csv$/i.test(f.name)||!txt.trim().startsWith("{");
+    ask("นำเข้าข้อมูลจาก "+esc(f.name),`<label>เมื่อพบรายการซ้ำ</label><select id="f1"><option value="skip">ข้าม (ไม่แก้ข้อมูลเดิม)</option><option value="upd">อัปเดตด้วยข้อมูลจากไฟล์</option></select><div class="hint">นำเข้าแบบเพิ่มเข้าไป ไม่ลบข้อมูลเดิม · ระบบสำรองข้อมูลเดิมไว้ให้ย้อนกลับได้</div>`,
+    ()=>{try{const r=(csv?importItemsCsv:mergeJson)(txt,v("f1")==="upd");tab=tab||"all";bcat=bcat||S.cats[0]?.id;change();toast(`นำเข้าแล้ว: เพิ่มใหม่ ${r.add} · อัปเดต ${r.up} · ข้าม ${r.skip} รายการ`)}catch(e){toast("นำเข้าไม่สำเร็จ: "+e.message,"er");return false}})},
+  undo:()=>{const t=localStorage.getItem("stock-undo");if(!t)return;if(!confirm("ย้อนกลับไปก่อนการนำเข้า/กู้คืนครั้งล่าสุด?"))return;S=norm(JSON.parse(t));localStorage.removeItem("stock-undo");tab="all";bcat=S.cats[0]?.id;change();toast("ย้อนกลับแล้ว")},
+  reconnect:async()=>{try{if(await lastH.requestPermission({mode:"readwrite"})!=="granted")return;await useData(await(await lastH.getFile()).text(),lastH)}catch(e){toast("เชื่อมต่อไม่สำเร็จ: "+e.message,"er")}},
+  usebackup:()=>useData(localStorage.getItem("stock-v1"),null,ghMissing?"gh":null).catch(e=>toast(e.message,"er")),
+  blank:()=>useData('{"cats":[]}',null,ghMissing?"gh":null).then(persist)
+};
+/* ================= events ================= */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-m]");document.querySelectorAll(".menu").forEach(m=>{if(!t||m.id!=="m-"+t.dataset.m)m.classList.remove("open")});if(t)$("#m-"+t.dataset.m).classList.toggle("open");
+  bumpU();if(admin)bumpA();
+  const b=e.target.closest("[data-act]");if(!b||b.disabled)return;const a=b.dataset.act;
+  if(ADM.has(a)&&!admin&&!(BOOT.has(a)&&!loaded))return toast("ฟังก์ชันนี้ใช้ได้เฉพาะผู้ดูแลระบบ — กรุณาเข้าสู่ระบบหลังบ้านก่อน","er");
+  A[a]?.(b.dataset.id)});
+document.addEventListener("input",e=>{const t=e.target;
+  if(t.id==="q"||t.id==="bq"){const p=t.selectionStart,id=t.id;if(id==="q")q=t.value;else bq=t.value;render();const n=$("#"+id);n.focus();n.setSelectionRange(p,p);return}
+  if(t.dataset.q)qtys[t.dataset.q]=+t.value||1;if(t.dataset.f)ci[t.dataset.f]=t.value;if(t.dataset.ci!=null&&cart[+t.dataset.ci])cart[+t.dataset.ci].amt=+t.value||0;
+  if(t.id==="f2"&&$("#icp"))$("#icp").innerHTML=isFa(t.value.trim())?fa(t.value.trim()):esc(t.value)});
+document.addEventListener("change",e=>{const id=e.target.id||"";if(id.startsWith("lf-")){lf[id.slice(3)]=e.target.value;render()}if(id==="rp-m"&&e.target.value){rpm=e.target.value;render()}});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&["ap1","ap2","au"].includes(e.target.id))A["adm-go"]();
+  if(e.key==="Escape"&&drawerOn)setDrawer(false);
+  if(e.key==="/"&&!["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName)&&$("#q")){e.preventDefault();$("#q").focus()}});
+$("#frm").onkeydown=e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"&&$("#ok")){e.preventDefault();$("#ok").click()}};
+$("#frm").onclick=e=>{const ic=e.target.closest("[data-ic]");if(ic){$("#f2").value=ic.dataset.ic;$("#icp").innerHTML=fa(ic.dataset.ic);document.querySelectorAll("[data-ic]").forEach(b=>b.classList.toggle("ring-2",b===ic))}};
+window.addEventListener("hashchange",render);window.addEventListener("resize",cartBar);
+setInterval(ghTick,60000);document.addEventListener("visibilitychange",ghTick);
+window.onbeforeunload=e=>{if(loaded&&!src&&!fh){e.preventDefault();e.returnValue=""}};
+async function init(){
+  if(online()){try{await ghLoad(false)}catch(e){setStatus("โหลดออนไลน์ไม่สำเร็จ: "+e.message,"wa")}if(loaded)return}
+  try{const r=await fetch(DB_PATH,{cache:"no-store"});if(r.ok){await useData(await r.text(),null);setStatus("ออฟไลน์ · โหลดจาก database/stock-data.json (ยังไม่เชื่อมโฟลเดอร์สำหรับบันทึก)","wa");return}}catch(e){}
+  setStatus("ยังไม่ได้โหลดข้อมูล","wa");lastH=await idbGet();render()}
+render();init();
+</script></body></html>
