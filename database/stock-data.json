@@ -13,13 +13,6 @@
      "qty": 0
     },
     {
-     "id": "socketduplex",
-     "name": "เต้ารับคู่มีกราวด์ 16A",
-     "code": "SOCKET-DUPLEX-16A",
-     "unit": "ตัว",
-     "qty": 0
-    },
-    {
      "id": "ledbulb9w",
      "name": "หลอดไฟ LED Bulb 9W แสงขาว",
      "code": "LED-BULB-9W-DL",
@@ -698,6 +691,21 @@
     "name": "กล่องพักสายไฟ PVC ขนาด 4 x 4 นิ้ว",
     "code": "JUNCTION-BOX-4X4",
     "unit": "ใบ",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "7v0tr8fb",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "socketduplex",
+    "name": "เต้ารับคู่มีกราวด์ 16A",
+    "code": "SOCKET-DUPLEX-16A",
+    "unit": "ตัว",
     "qty": 0
    },
    "catId": "electrical",
