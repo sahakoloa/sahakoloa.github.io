@@ -13,13 +13,6 @@
      "qty": 0
     },
     {
-     "id": "ledpanel6060",
-     "name": "โคม LED Panel 60 x 60 ซม. 36W",
-     "code": "LED-PANEL-6060-36W",
-     "unit": "โคม",
-     "qty": 0
-    },
-    {
      "id": "ledstrip12v",
      "name": "ไฟเส้น LED 12V แสงขาว",
      "code": "LED-STRIP-12V-WH",
@@ -714,6 +707,21 @@
     "name": "หลอดไฟ LED Bulb 9W แสงขาว",
     "code": "LED-BULB-9W-DL",
     "unit": "หลอด",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "893p8p8x",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "ledpanel6060",
+    "name": "โคม LED Panel 60 x 60 ซม. 36W",
+    "code": "LED-PANEL-6060-36W",
+    "unit": "โคม",
     "qty": 0
    },
    "catId": "electrical",
