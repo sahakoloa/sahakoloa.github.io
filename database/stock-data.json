@@ -116,13 +116,6 @@
      "code": "PSU-12V-5A",
      "unit": "ตัว",
      "qty": 0
-    },
-    {
-     "id": "surge6outlet",
-     "name": "ปลั๊กพ่วง 6 ช่อง พร้อมสวิตช์และระบบป้องกันไฟกระชาก",
-     "code": "POWER-STRIP-6OUTLET",
-     "unit": "ตัว",
-     "qty": 0
     }
    ]
   },
@@ -610,6 +603,21 @@
     "name": "แท่งหลักดินทองแดง 5/8 นิ้ว ยาว 1.5 เมตร",
     "code": "GROUND-ROD-5/8-1.5M",
     "unit": "แท่ง",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "3uz6kuxo",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "surge6outlet",
+    "name": "ปลั๊กพ่วง 6 ช่อง พร้อมสวิตช์และระบบป้องกันไฟกระชาก",
+    "code": "POWER-STRIP-6OUTLET",
+    "unit": "ตัว",
     "qty": 0
    },
    "catId": "electrical",
