@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "thw25bk100",
-     "name": "สายไฟ NNN IEC 01 THW 1 x 2.5 ตร.มม. ยาว 100 เมตร สีดำ",
-     "code": "NNN-IEC01-2.5-BK-100M",
-     "unit": "ม้วน",
-     "qty": 0
-    },
-    {
      "id": "hacosb20a",
      "name": "เซฟตี้เบรกเกอร์พร้อมกล่อง HACO SB 20 แอมป์ 1 เฟส",
      "code": "HACO-SB-20A",
@@ -591,7 +584,23 @@
  ],
  "log": [],
  "users": [],
- "trash": [],
+ "trash": [
+  {
+   "id": "0i4ppocf",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "thw25bk100",
+    "name": "สายไฟ NNN IEC 01 THW 1 x 2.5 ตร.มม. ยาว 100 เมตร สีดำ",
+    "code": "NNN-IEC01-2.5-BK-100M",
+    "unit": "ม้วน",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  }
+ ],
  "seq": 0,
  "admin": {
   "salt": "5km2vvp88hi8bn73",
