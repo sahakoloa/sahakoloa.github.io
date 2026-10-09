@@ -4,15 +4,7 @@
    "id": "electrical",
    "name": "ไฟฟ้า",
    "icon": "bolt",
-   "items": [
-    {
-     "id": "powersupply12v",
-     "name": "อะแดปเตอร์จ่ายไฟ 12V 5A",
-     "code": "PSU-12V-5A",
-     "unit": "ตัว",
-     "qty": 0
-    }
-   ]
+   "items": []
   },
   {
    "id": "cctv",
@@ -738,6 +730,21 @@
     "name": "ไฟเส้น LED 12V แสงขาว",
     "code": "LED-STRIP-12V-WH",
     "unit": "ม้วน",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "z015ya4o",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "powersupply12v",
+    "name": "อะแดปเตอร์จ่ายไฟ 12V 5A",
+    "code": "PSU-12V-5A",
+    "unit": "ตัว",
     "qty": 0
    },
    "catId": "electrical",
