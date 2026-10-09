@@ -159,13 +159,6 @@
    "icon": "network-wired",
    "items": [
     {
-     "id": "wifi6router",
-     "name": "เราเตอร์ Wi-Fi 6 AX3000 แบบ Dual-Band",
-     "code": "WIFI6-ROUTER-AX3000",
-     "unit": "ตัว",
-     "qty": 0
-    },
-    {
      "id": "gigabitrouter",
      "name": "เราเตอร์ Gigabit Dual-Band AC1200",
      "code": "ROUTER-AC1200-GE",
@@ -752,6 +745,21 @@
     "id": "tplinkmr100",
     "name": "เราเตอร์ 4G LTE TP-Link TL-MR100 พร้อม Wi-Fi 300 Mbps",
     "code": "TP-LINK-TL-MR100",
+    "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "network",
+   "catName": "network",
+   "logs": []
+  },
+  {
+   "id": "0wgmrn9k",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "wifi6router",
+    "name": "เราเตอร์ Wi-Fi 6 AX3000 แบบ Dual-Band",
+    "code": "WIFI6-ROUTER-AX3000",
     "unit": "ตัว",
     "qty": 0
    },
