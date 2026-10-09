@@ -159,13 +159,6 @@
    "icon": "network-wired",
    "items": [
     {
-     "id": "tplinkmr100",
-     "name": "เราเตอร์ 4G LTE TP-Link TL-MR100 พร้อม Wi-Fi 300 Mbps",
-     "code": "TP-LINK-TL-MR100",
-     "unit": "ตัว",
-     "qty": 0
-    },
-    {
      "id": "wifi6router",
      "name": "เราเตอร์ Wi-Fi 6 AX3000 แบบ Dual-Band",
      "code": "WIFI6-ROUTER-AX3000",
@@ -749,6 +742,21 @@
    },
    "catId": "electrical",
    "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "ecrv2ns0",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "tplinkmr100",
+    "name": "เราเตอร์ 4G LTE TP-Link TL-MR100 พร้อม Wi-Fi 300 Mbps",
+    "code": "TP-LINK-TL-MR100",
+    "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "network",
+   "catName": "network",
    "logs": []
   }
  ],
