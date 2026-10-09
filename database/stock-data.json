@@ -13,13 +13,6 @@
      "qty": 0
     },
     {
-     "id": "ledbulb9w",
-     "name": "หลอดไฟ LED Bulb 9W แสงขาว",
-     "code": "LED-BULB-9W-DL",
-     "unit": "หลอด",
-     "qty": 0
-    },
-    {
      "id": "ledpanel6060",
      "name": "โคม LED Panel 60 x 60 ซม. 36W",
      "code": "LED-PANEL-6060-36W",
@@ -706,6 +699,21 @@
     "name": "เต้ารับคู่มีกราวด์ 16A",
     "code": "SOCKET-DUPLEX-16A",
     "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "q45me5q7",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "ledbulb9w",
+    "name": "หลอดไฟ LED Bulb 9W แสงขาว",
+    "code": "LED-BULB-9W-DL",
+    "unit": "หลอด",
     "qty": 0
    },
    "catId": "electrical",
