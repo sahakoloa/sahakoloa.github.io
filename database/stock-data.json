@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "junctionbox4x4",
-     "name": "กล่องพักสายไฟ PVC ขนาด 4 x 4 นิ้ว",
-     "code": "JUNCTION-BOX-4X4",
-     "unit": "ใบ",
-     "qty": 0
-    },
-    {
      "id": "switch1gang",
      "name": "สวิตช์ไฟ 1 ทาง 1 ช่อง",
      "code": "SWITCH-1G-1WAY",
@@ -690,6 +683,21 @@
     "name": "ท่ออ่อนร้อยสายไฟ ขนาด 20 มม.",
     "code": "FLEX-CONDUIT-20MM",
     "unit": "เมตร",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "y6t8b46w",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "junctionbox4x4",
+    "name": "กล่องพักสายไฟ PVC ขนาด 4 x 4 นิ้ว",
+    "code": "JUNCTION-BOX-4X4",
+    "unit": "ใบ",
     "qty": 0
    },
    "catId": "electrical",
