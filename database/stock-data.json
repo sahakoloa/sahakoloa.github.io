@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "pvcconduit20",
-     "name": "ท่อร้อยสายไฟ PVC สีขาว ขนาด 20 มม.",
-     "code": "PVC-CONDUIT-20MM",
-     "unit": "เส้น",
-     "qty": 0
-    },
-    {
      "id": "flexconduit20",
      "name": "ท่ออ่อนร้อยสายไฟ ขนาด 20 มม.",
      "code": "FLEX-CONDUIT-20MM",
@@ -674,6 +667,21 @@
     "name": "สายไฟ VAF 2 x 2.5 ตร.มม.",
     "code": "VAF-2X2.5",
     "unit": "เมตร",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "brjurl38",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "pvcconduit20",
+    "name": "ท่อร้อยสายไฟ PVC สีขาว ขนาด 20 มม.",
+    "code": "PVC-CONDUIT-20MM",
+    "unit": "เส้น",
     "qty": 0
    },
    "catId": "electrical",
