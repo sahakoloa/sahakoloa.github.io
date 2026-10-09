@@ -34,13 +34,6 @@
      "qty": 0
     },
     {
-     "id": "thw25gr100",
-     "name": "สายไฟ THW 1 x 2.5 ตร.มม. สีเขียว/เหลือง 100 เมตร",
-     "code": "THW-2.5-GY-100M",
-     "unit": "ม้วน",
-     "qty": 0
-    },
-    {
      "id": "vaf2x25",
      "name": "สายไฟ VAF 2 x 2.5 ตร.มม.",
      "code": "VAF-2X2.5",
@@ -626,6 +619,21 @@
     "name": "หลอด LED T8 18W ยาว 120 ซม.",
     "code": "LED-T8-18W-120CM",
     "unit": "หลอด",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "10mz3xhw",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "thw25gr100",
+    "name": "สายไฟ THW 1 x 2.5 ตร.มม. สีเขียว/เหลือง 100 เมตร",
+    "code": "THW-2.5-GY-100M",
+    "unit": "ม้วน",
     "qty": 0
    },
    "catId": "electrical",
