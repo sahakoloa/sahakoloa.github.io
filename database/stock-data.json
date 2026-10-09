@@ -90,13 +90,6 @@
      "qty": 0
     },
     {
-     "id": "ledtube18w",
-     "name": "หลอด LED T8 18W ยาว 120 ซม.",
-     "code": "LED-T8-18W-120CM",
-     "unit": "หลอด",
-     "qty": 0
-    },
-    {
      "id": "ledpanel6060",
      "name": "โคม LED Panel 60 x 60 ซม. 36W",
      "code": "LED-PANEL-6060-36W",
@@ -618,6 +611,21 @@
     "name": "ปลั๊กพ่วง 6 ช่อง พร้อมสวิตช์และระบบป้องกันไฟกระชาก",
     "code": "POWER-STRIP-6OUTLET",
     "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "o75j9sst",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "ledtube18w",
+    "name": "หลอด LED T8 18W ยาว 120 ซม.",
+    "code": "LED-T8-18W-120CM",
+    "unit": "หลอด",
     "qty": 0
    },
    "catId": "electrical",
