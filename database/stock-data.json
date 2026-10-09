@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "hacosb20a",
-     "name": "เซฟตี้เบรกเกอร์พร้อมกล่อง HACO SB 20 แอมป์ 1 เฟส",
-     "code": "HACO-SB-20A",
-     "unit": "ชุด",
-     "qty": 0
-    },
-    {
      "id": "mcb1p16a",
      "name": "เซอร์กิตเบรกเกอร์ MCB 1P 16A",
      "code": "MCB-1P-16A",
@@ -594,6 +587,21 @@
     "name": "สายไฟ NNN IEC 01 THW 1 x 2.5 ตร.มม. ยาว 100 เมตร สีดำ",
     "code": "NNN-IEC01-2.5-BK-100M",
     "unit": "ม้วน",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "oh8616k5",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "hacosb20a",
+    "name": "เซฟตี้เบรกเกอร์พร้อมกล่อง HACO SB 20 แอมป์ 1 เฟส",
+    "code": "HACO-SB-20A",
+    "unit": "ชุด",
     "qty": 0
    },
    "catId": "electrical",
