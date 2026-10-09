@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "vaf2x25",
-     "name": "สายไฟ VAF 2 x 2.5 ตร.มม.",
-     "code": "VAF-2X2.5",
-     "unit": "เมตร",
-     "qty": 0
-    },
-    {
      "id": "pvcconduit20",
      "name": "ท่อร้อยสายไฟ PVC สีขาว ขนาด 20 มม.",
      "code": "PVC-CONDUIT-20MM",
@@ -666,6 +659,21 @@
     "name": "สายไฟ THW 1 x 1.5 ตร.มม. สีแดง 100 เมตร",
     "code": "THW-1.5-RD-100M",
     "unit": "ม้วน",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "gp254c10",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "vaf2x25",
+    "name": "สายไฟ VAF 2 x 2.5 ตร.มม.",
+    "code": "VAF-2X2.5",
+    "unit": "เมตร",
     "qty": 0
    },
    "catId": "electrical",
