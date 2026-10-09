@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "ledstrip12v",
-     "name": "ไฟเส้น LED 12V แสงขาว",
-     "code": "LED-STRIP-12V-WH",
-     "unit": "ม้วน",
-     "qty": 0
-    },
-    {
      "id": "powersupply12v",
      "name": "อะแดปเตอร์จ่ายไฟ 12V 5A",
      "code": "PSU-12V-5A",
@@ -730,6 +723,21 @@
     "name": "สวิตช์ไฟ 1 ทาง 1 ช่อง",
     "code": "SWITCH-1G-1WAY",
     "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "d9dtunsz",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "ledstrip12v",
+    "name": "ไฟเส้น LED 12V แสงขาว",
+    "code": "LED-STRIP-12V-WH",
+    "unit": "ม้วน",
     "qty": 0
    },
    "catId": "electrical",
