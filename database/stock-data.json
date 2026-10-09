@@ -11,6 +11,146 @@
      "code": "NNPW18",
      "unit": "กล่อง",
      "qty": 20
+    },
+    {
+     "id": "g37wtljp",
+     "name": "สายไฟ NNN IEC 01 THW 1 x 2.5 ตร.มม. ยาว 100 เมตร สีดำ",
+     "code": "NNN-IEC01-2.5-BK-100M",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "azckdu07",
+     "name": "เซฟตี้เบรกเกอร์พร้อมกล่อง HACO SB 20 แอมป์ 1 เฟส",
+     "code": "HACO-SB-20A",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "ofwyuva7",
+     "name": "เซอร์กิตเบรกเกอร์ MCB 1P 16A",
+     "code": "MCB-1P-16A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "x8kj78bm",
+     "name": "เซอร์กิตเบรกเกอร์ MCB 2P 32A",
+     "code": "MCB-2P-32A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "nxkuaysq",
+     "name": "เบรกเกอร์กันดูด RCBO 1P 20A 30mA",
+     "code": "RCBO-1P-20A-30MA",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "3lbpwoid",
+     "name": "สายไฟ THW 1 x 1.5 ตร.มม. สีแดง 100 เมตร",
+     "code": "THW-1.5-RD-100M",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "r4bbz87n",
+     "name": "สายไฟ THW 1 x 2.5 ตร.มม. สีเขียว/เหลือง 100 เมตร",
+     "code": "THW-2.5-GY-100M",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "bimb8wmw",
+     "name": "สายไฟ VAF 2 x 2.5 ตร.มม.",
+     "code": "VAF-2X2.5",
+     "unit": "เมตร",
+     "qty": 0
+    },
+    {
+     "id": "ys8v7jjf",
+     "name": "ท่อร้อยสายไฟ PVC สีขาว ขนาด 20 มม.",
+     "code": "PVC-CONDUIT-20MM",
+     "unit": "เส้น",
+     "qty": 0
+    },
+    {
+     "id": "ja5f7osv",
+     "name": "ท่ออ่อนร้อยสายไฟ ขนาด 20 มม.",
+     "code": "FLEX-CONDUIT-20MM",
+     "unit": "เมตร",
+     "qty": 0
+    },
+    {
+     "id": "e96k3s5c",
+     "name": "กล่องพักสายไฟ PVC ขนาด 4 x 4 นิ้ว",
+     "code": "JUNCTION-BOX-4X4",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "2yqoito3",
+     "name": "สวิตช์ไฟ 1 ทาง 1 ช่อง",
+     "code": "SWITCH-1G-1WAY",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "i4eadk1t",
+     "name": "เต้ารับคู่มีกราวด์ 16A",
+     "code": "SOCKET-DUPLEX-16A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "w8gvfcly",
+     "name": "หลอดไฟ LED Bulb 9W แสงขาว",
+     "code": "LED-BULB-9W-DL",
+     "unit": "หลอด",
+     "qty": 0
+    },
+    {
+     "id": "msz9crav",
+     "name": "หลอด LED T8 18W ยาว 120 ซม.",
+     "code": "LED-T8-18W-120CM",
+     "unit": "หลอด",
+     "qty": 0
+    },
+    {
+     "id": "jjqbddf6",
+     "name": "โคม LED Panel 60 x 60 ซม. 36W",
+     "code": "LED-PANEL-6060-36W",
+     "unit": "โคม",
+     "qty": 0
+    },
+    {
+     "id": "bcyo8fkp",
+     "name": "ไฟเส้น LED 12V แสงขาว",
+     "code": "LED-STRIP-12V-WH",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "3a8v407f",
+     "name": "อะแดปเตอร์จ่ายไฟ 12V 5A",
+     "code": "PSU-12V-5A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "428m1ygg",
+     "name": "ปลั๊กพ่วง 6 ช่อง พร้อมสวิตช์และระบบป้องกันไฟกระชาก",
+     "code": "POWER-STRIP-6OUTLET",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "flyjzmf0",
+     "name": "แท่งหลักดินทองแดง 5/8 นิ้ว ยาว 1.5 เมตร",
+     "code": "GROUND-ROD-5/8-1.5M",
+     "unit": "แท่ง",
+     "qty": 0
     }
    ]
   },
@@ -18,19 +158,442 @@
    "id": "7s6569at",
    "name": "cctv",
    "icon": "video",
-   "items": []
+   "items": [
+    {
+     "id": "ppmb2cu5",
+     "name": "กล้องวงจรปิด DAHUA PICOO B1 3MP แบบ Wi-Fi",
+     "code": "DAHUA-PICOO-B1-3MP",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "18ozpwa6",
+     "name": "กล้องวงจรปิดภายนอก WATASHI WIOT1061LED-S4-Ei 4MP",
+     "code": "WATASHI-WIOT1061LED-S4-EI",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "4nj8r2ku",
+     "name": "กล้องโดม IP 4MP อินฟราเรด",
+     "code": "IP-DOME-4MP-IR",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ej9y2r78",
+     "name": "กล้อง Bullet IP 4MP อินฟราเรด สำหรับภายนอก",
+     "code": "IP-BULLET-4MP-IR",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "j0zkjj4d",
+     "name": "กล้อง Turret IP 5MP อินฟราเรด",
+     "code": "IP-TURRET-5MP-IR",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "6diu1g1o",
+     "name": "กล้อง IP PTZ 4MP ซูมออปติคอล",
+     "code": "IP-PTZ-4MP",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "11wi2smg",
+     "name": "กล้อง HDCVI/HDTVI 2MP แบบ Bullet",
+     "code": "HD-CAMERA-BULLET-2MP",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "a9nuffwz",
+     "name": "เครื่องบันทึก NVR 8 ช่อง รองรับกล้อง IP",
+     "code": "NVR-8CH",
+     "unit": "เครื่อง",
+     "qty": 0
+    },
+    {
+     "id": "e63ehspn",
+     "name": "เครื่องบันทึก NVR 16 ช่อง รองรับกล้อง IP",
+     "code": "NVR-16CH",
+     "unit": "เครื่อง",
+     "qty": 0
+    },
+    {
+     "id": "y9mi35wn",
+     "name": "เครื่องบันทึก XVR/DVR 8 ช่อง",
+     "code": "XVR-8CH",
+     "unit": "เครื่อง",
+     "qty": 0
+    },
+    {
+     "id": "6xdyyfb8",
+     "name": "ฮาร์ดดิสก์สำหรับบันทึกกล้องวงจรปิด 2TB",
+     "code": "SURVEILLANCE-HDD-2TB",
+     "unit": "ลูก",
+     "qty": 0
+    },
+    {
+     "id": "b06e8i81",
+     "name": "ฮาร์ดดิสก์สำหรับบันทึกกล้องวงจรปิด 4TB",
+     "code": "SURVEILLANCE-HDD-4TB",
+     "unit": "ลูก",
+     "qty": 0
+    },
+    {
+     "id": "6tx1ynp3",
+     "name": "การ์ด microSD 128GB สำหรับกล้องวงจรปิด",
+     "code": "MICROSD-128GB",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "luekw8k6",
+     "name": "สวิตช์ PoE 8 พอร์ต Gigabit",
+     "code": "POE-SWITCH-8PORT-GE",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "wl8z3nd7",
+     "name": "สวิตช์ PoE 16 พอร์ต Gigabit",
+     "code": "POE-SWITCH-16PORT-GE",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "4gyqcosb",
+     "name": "ชุด Video Balun สำหรับกล้องระบบ HD จำนวน 1 คู่",
+     "code": "HD-VIDEO-BALUN-PAIR",
+     "unit": "คู่",
+     "qty": 0
+    },
+    {
+     "id": "t1piu4kv",
+     "name": "อะแดปเตอร์จ่ายไฟกล้อง 12V 2A",
+     "code": "CCTV-POWER-12V-2A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "zhj9xetm",
+     "name": "กล่องกันน้ำพักสายกล้องวงจรปิด",
+     "code": "CCTV-WATERPROOF-BOX",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "pm14q52y",
+     "name": "หัว BNC แบบเกลียวสำหรับสาย RG59",
+     "code": "BNC-RG59-SCREW",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "72obwjjd",
+     "name": "สายสัญญาณ RG59 พร้อมสายไฟ",
+     "code": "RG59-COMBO-CABLE",
+     "unit": "เมตร",
+     "qty": 0
+    }
+   ]
   },
   {
    "id": "5rq0zgzr",
    "name": "network",
    "icon": "network-wired",
-   "items": []
+   "items": [
+    {
+     "id": "a6uk8y57",
+     "name": "เราเตอร์ 4G LTE TP-Link TL-MR100 พร้อม Wi-Fi 300 Mbps",
+     "code": "TP-LINK-TL-MR100",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ekvjmlxp",
+     "name": "เราเตอร์ Wi-Fi 6 AX3000 แบบ Dual-Band",
+     "code": "WIFI6-ROUTER-AX3000",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "473opjlq",
+     "name": "เราเตอร์ Gigabit Dual-Band AC1200",
+     "code": "ROUTER-AC1200-GE",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "pqgejlbg",
+     "name": "ชุด Mesh Wi-Fi Dual-Band จำนวน 2 เครื่อง",
+     "code": "MESH-WIFI-2PACK",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "s8yeu5en",
+     "name": "Access Point Wi-Fi 6 AX1800 แบบติดเพดาน",
+     "code": "AP-WIFI6-AX1800",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "o5woglte",
+     "name": "สวิตช์เครือข่าย Gigabit 5 พอร์ต",
+     "code": "SWITCH-5PORT-GE",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "9cchnkek",
+     "name": "สวิตช์เครือข่าย Gigabit 8 พอร์ต",
+     "code": "SWITCH-8PORT-GE",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "1aoca1x2",
+     "name": "สวิตช์เครือข่าย Gigabit 16 พอร์ต",
+     "code": "SWITCH-16PORT-GE",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "maedwfxr",
+     "name": "สวิตช์ PoE+ Gigabit 8 พอร์ต",
+     "code": "NETWORK-POE-SWITCH-8P",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "bd42mmd4",
+     "name": "โมดูล SFP 1Gbps แบบ Single-Mode",
+     "code": "SFP-1G-SM",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "r81gahby",
+     "name": "สาย LAN UTP Cat6 สีเทา",
+     "code": "UTP-CAT6-GY",
+     "unit": "เมตร",
+     "qty": 0
+    },
+    {
+     "id": "v4pixwxc",
+     "name": "สาย LAN UTP Cat6 ยาว 305 เมตร",
+     "code": "UTP-CAT6-305M",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "sv3e0e3k",
+     "name": "สาย Patch Cord Cat6 ยาว 2 เมตร",
+     "code": "PATCH-CAT6-2M",
+     "unit": "เส้น",
+     "qty": 0
+    },
+    {
+     "id": "nnsufofx",
+     "name": "หัว RJ45 Cat6 แบบไม่เข้าหัว",
+     "code": "RJ45-CAT6-UNSHIELDED",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "oag3q8ac",
+     "name": "เต้ารับ Keystone Jack Cat6",
+     "code": "KEYSTONE-CAT6",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "r9ib6yz2",
+     "name": "Patch Panel Cat6 24 พอร์ต",
+     "code": "PATCH-PANEL-CAT6-24P",
+     "unit": "แผง",
+     "qty": 0
+    },
+    {
+     "id": "gqcdi70g",
+     "name": "ตู้แร็คติดผนัง 6U",
+     "code": "WALL-RACK-6U",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "75ldq8zm",
+     "name": "ตู้แร็ค 12U",
+     "code": "NETWORK-RACK-12U",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "0r55glup",
+     "name": "สาย Fiber Optic Patch Cord แบบ Single-Mode",
+     "code": "FIBER-PATCH-SM",
+     "unit": "เส้น",
+     "qty": 0
+    },
+    {
+     "id": "t0aiocou",
+     "name": "เราเตอร์ไฟเบอร์ ONT GPON พร้อม Wi-Fi",
+     "code": "ONT-GPON-WIFI",
+     "unit": "ตัว",
+     "qty": 0
+    }
+   ]
   },
   {
    "id": "zaah0hmn",
    "name": "led wall",
    "icon": "tv",
-   "items": []
+   "items": [
+    {
+     "id": "qqs86yyq",
+     "name": "โมดูลจอ LED Indoor P2.5 ขนาด 320 x 160 มม.",
+     "code": "LSIN-FI-P2_5-SQM",
+     "unit": "โมดูล",
+     "qty": 0
+    },
+    {
+     "id": "x16pm99k",
+     "name": "โมดูลจอ LED Indoor P2.0",
+     "code": "LED-MODULE-IN-P2.0",
+     "unit": "โมดูล",
+     "qty": 0
+    },
+    {
+     "id": "zayeyhw4",
+     "name": "โมดูลจอ LED Indoor P3.0",
+     "code": "LED-MODULE-IN-P3.0",
+     "unit": "โมดูล",
+     "qty": 0
+    },
+    {
+     "id": "b6g3rqgc",
+     "name": "โมดูลจอ LED Outdoor P4.0",
+     "code": "LED-MODULE-OUT-P4.0",
+     "unit": "โมดูล",
+     "qty": 0
+    },
+    {
+     "id": "d5kqa9aj",
+     "name": "โมดูลจอ LED Outdoor P5.0",
+     "code": "LED-MODULE-OUT-P5.0",
+     "unit": "โมดูล",
+     "qty": 0
+    },
+    {
+     "id": "k4xyaa62",
+     "name": "ตู้จอ LED Indoor P2.5 ขนาด 640 x 480 มม.",
+     "code": "LED-CABINET-IN-P2.5",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "chgqy715",
+     "name": "ตู้จอ LED Outdoor P4 ขนาด 640 x 640 มม.",
+     "code": "LED-CABINET-OUT-P4",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "p7hvrhu3",
+     "name": "การ์ดส่งสัญญาณ LED NovaStar MSD300",
+     "code": "NOVASTAR-MSD300",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "0q656a7u",
+     "name": "การ์ดรับสัญญาณสำหรับจอ LED",
+     "code": "LED-RECEIVING-CARD",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "kptu39yc",
+     "name": "การ์ดส่งสัญญาณสำหรับจอ LED",
+     "code": "LED-SENDING-CARD",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "2spyxe45",
+     "name": "เพาเวอร์ซัพพลายจอ LED 5V 40A",
+     "code": "LED-PSU-5V-40A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "wb61ipoe",
+     "name": "เพาเวอร์ซัพพลายจอ LED 5V 60A",
+     "code": "LED-PSU-5V-60A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "bgwo1n1h",
+     "name": "Video Processor สำหรับจอ LED",
+     "code": "LED-VIDEO-PROCESSOR",
+     "unit": "เครื่อง",
+     "qty": 0
+    },
+    {
+     "id": "pprgu6r6",
+     "name": "สายแพเชื่อมต่อโมดูลจอ LED",
+     "code": "LED-FLAT-CABLE",
+     "unit": "เส้น",
+     "qty": 0
+    },
+    {
+     "id": "y6o57fex",
+     "name": "สายไฟจ่ายไฟภายในตู้จอ LED",
+     "code": "LED-POWER-CABLE",
+     "unit": "เส้น",
+     "qty": 0
+    },
+    {
+     "id": "3f30tn6v",
+     "name": "ชุดแม่เหล็กยึดโมดูลจอ LED",
+     "code": "LED-MODULE-MAGNET-SET",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "nd09psjb",
+     "name": "ชุดล็อกตู้จอ LED",
+     "code": "LED-CABINET-LOCK-SET",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "07rfrert",
+     "name": "โมดูลสำรองสำหรับจอ LED Indoor P2.5",
+     "code": "LED-SPARE-MODULE-P2.5",
+     "unit": "โมดูล",
+     "qty": 0
+    },
+    {
+     "id": "efgehtsg",
+     "name": "โครงสร้างติดตั้งจอ LED Wall",
+     "code": "LED-WALL-STRUCTURE",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "l76s8gzx",
+     "name": "ชุดอุปกรณ์บำรุงรักษาและปรับเทียบจอ LED",
+     "code": "LED-MAINTENANCE-KIT",
+     "unit": "ชุด",
+     "qty": 0
+    }
+   ]
   }
  ],
  "log": [],
