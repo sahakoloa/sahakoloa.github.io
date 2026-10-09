@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "8w7ugh0s",
-     "name": "ข้อต่อกล่องหุน 22 mm. (1/2\") สีขาว NANO",
-     "code": "NNPW18",
-     "unit": "กล่อง",
-     "qty": 20
-    },
-    {
      "id": "g37wtljp",
      "name": "สายไฟ NNN IEC 01 THW 1 x 2.5 ตร.มม. ยาว 100 เมตร สีดำ",
      "code": "NNN-IEC01-2.5-BK-100M",
@@ -1643,5 +1636,21 @@
   "usalt": "xof514tl2qheaohb",
   "uhash": "p1$991edb6568cdc137ccf0ff4443bf0e8f4143ec585cd7761169a643e1c1172025"
  },
- "trash": []
+ "trash": [
+  {
+   "id": "7wg6wavz",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "8w7ugh0s",
+    "name": "ข้อต่อกล่องหุน 22 mm. (1/2\") สีขาว NANO",
+    "code": "NNPW18",
+    "unit": "กล่อง",
+    "qty": 20
+   },
+   "catId": "26j3ncto",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  }
+ ]
 }
