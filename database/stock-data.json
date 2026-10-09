@@ -1467,6 +1467,174 @@
      "code": "ONT-GPON-WIFI",
      "unit": "ตัว",
      "qty": 0
+    },
+    {
+     "id": "h8mpf73p",
+     "name": "CAT 5E UTP Enhanced Cable 350 MHz, LSZH สีขาว 305 ม. Pull Box",
+     "code": "US-9015LSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "ekwr5gss",
+     "name": "CAT 5E Stranded Patch Cord, LSZH สีขาว 305 ม. Reelex",
+     "code": "US-9025LSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "2wsejb9o",
+     "name": "CAT 5E UTP 25 Pairs Power Sum Cable, CMR, UL สีขาว 305 ม. Roll",
+     "code": "US-9055E",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "jfpeee1d",
+     "name": "CAT 5E F/UTP Enhanced Cable 350 MHz, CMR, UL สีขาว 305 ม. Reelex",
+     "code": "US-9035",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "rfy41uch",
+     "name": "CAT 5E UTP PE Outdoor Double Jacket สีดำ 305 ม. Reelex",
+     "code": "US-9045",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "jzjz86k3",
+     "name": "CAT 5E UTP PE Outdoor พร้อม Drop Wire Single Jacket สีดำ 305 ม.",
+     "code": "US-9015M",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "yiz06s03",
+     "name": "CAT 5E UTP PE Outdoor พร้อม Power Wire สีดำ 305 ม.",
+     "code": "US-9015PW",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "are938ea",
+     "name": "CAT 5E UTP PE Outdoor พร้อม Drop Wire และ Power Wire สีดำ 305 ม.",
+     "code": "US-9015MW",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "u70lmhgf",
+     "name": "CAT 5E F/UTP PE Outdoor Single Jacket สีดำ 305 ม.",
+     "code": "US-9035PE",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "5007tj0x",
+     "name": "CAT 5E UTP Enhanced Cable 350 MHz, LSZH สีขาว 100 ม.",
+     "code": "US-9015LSZH-1",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "thl9pg9l",
+     "name": "CAT 5E UTP PE Outdoor Double Jacket สีดำ 100 ม.",
+     "code": "US-9045-1",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "798fpjtx",
+     "name": "CAT 5E UTP PE Outdoor พร้อม Drop Wire Single Jacket สีดำ 100 ม.",
+     "code": "US-9015M-1",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "mmxim867",
+     "name": "CAT 5E UTP PE Outdoor พร้อม Power Wire สีดำ 100 ม.",
+     "code": "US-9015PW-1",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "dybvla2m",
+     "name": "CAT 5E UTP PE Outdoor พร้อม Drop Wire และ Power Wire สีดำ 100 ม.",
+     "code": "US-9015MW-1",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "xtl5gy18",
+     "name": "CAT 6 UTP 250 MHz Cross Filler 24 AWG CM UL สีน้ำเงิน 305 ม.",
+     "code": "US-9106A",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "36qw2tt2",
+     "name": "CAT 6 UTP 250 MHz Cross Filler 23 AWG LSZH สีขาว 305 ม.",
+     "code": "US-9106LSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "ph0muatf",
+     "name": "CAT 6 UTP 250 MHz Cross Filler 23 AWG LSZH สีน้ำเงิน 305 ม.",
+     "code": "US-9106BLSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "dabopmfn",
+     "name": "CAT 6 UTP ULTRA 600 MHz Cross Filler 23 AWG LSZH สีขาว 305 ม.",
+     "code": "US-9116LSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "luwzfl89",
+     "name": "CAT 6 UTP Stranded 600 MHz Patch Cord 24 AWG LSZH สีน้ำเงิน 305 ม.",
+     "code": "US-9126LSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "w6wue4zo",
+     "name": "CAT 6 F/UTP ULTRA Shielded Cross Filler 23 AWG LSZH สีขาว 305 ม.",
+     "code": "US-9136LSZH",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "5kf6p5vb",
+     "name": "CAT 6 UTP ULTRA PE Outdoor พร้อม Filler 23 AWG Double Jacket สีดำ 305 ม.",
+     "code": "US-9106OUT",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "6rf5iw19",
+     "name": "CAT 6 UTP ULTRA PE Outdoor 23 AWG พร้อม Drop Wire Double Jacket สีดำ 305 ม.",
+     "code": "US-9106MD",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "pvqoxnb9",
+     "name": "CAT 6 UTP ULTRA PE Outdoor พร้อม Power Wire สีดำ 305 ม.",
+     "code": "US-9106PW",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "1ws09wjt",
+     "name": "CAT 6 UTP ULTRA PE Outdoor พร้อม Drop Wire และ Power Wire สีดำ 305 ม.",
+     "code": "US-9106MW",
+     "unit": "กล่อง",
+     "qty": 0
     }
    ]
   },
