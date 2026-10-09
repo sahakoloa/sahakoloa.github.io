@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "switch1gang",
-     "name": "สวิตช์ไฟ 1 ทาง 1 ช่อง",
-     "code": "SWITCH-1G-1WAY",
-     "unit": "ตัว",
-     "qty": 0
-    },
-    {
      "id": "ledstrip12v",
      "name": "ไฟเส้น LED 12V แสงขาว",
      "code": "LED-STRIP-12V-WH",
@@ -722,6 +715,21 @@
     "name": "โคม LED Panel 60 x 60 ซม. 36W",
     "code": "LED-PANEL-6060-36W",
     "unit": "โคม",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "c6d56g2v",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "switch1gang",
+    "name": "สวิตช์ไฟ 1 ทาง 1 ช่อง",
+    "code": "SWITCH-1G-1WAY",
+    "unit": "ตัว",
     "qty": 0
    },
    "catId": "electrical",
