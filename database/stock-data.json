@@ -4,7 +4,1177 @@
    "id": "electrical",
    "name": "ไฟฟ้า",
    "icon": "bolt",
-   "items": []
+   "items": [
+    {
+     "id": "0c0bemhz",
+     "name": "สายไฟ NNN IEC 01 THW 1 x 2.5 ตร.มม. ยาว 100 เมตร สีดำ",
+     "code": "NNN-IEC01-2.5-BK-100M",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "fpp7oe95",
+     "name": "เซฟตี้เบรกเกอร์พร้อมกล่อง HACO SB 20 แอมป์ 1 เฟส",
+     "code": "HACO-SB-20A",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "5wmvdppr",
+     "name": "เซอร์กิตเบรกเกอร์ MCB 1P 16A",
+     "code": "MCB-1P-16A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ctvselce",
+     "name": "เซอร์กิตเบรกเกอร์ MCB 2P 32A",
+     "code": "MCB-2P-32A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "l63dr9jd",
+     "name": "เบรกเกอร์กันดูด RCBO 1P 20A 30mA",
+     "code": "RCBO-1P-20A-30MA",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "rqvbcm0w",
+     "name": "สายไฟ THW 1 x 1.5 ตร.มม. สีแดง 100 เมตร",
+     "code": "THW-1.5-RD-100M",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "8l5ogde2",
+     "name": "สายไฟ THW 1 x 2.5 ตร.มม. สีเขียว/เหลือง 100 เมตร",
+     "code": "THW-2.5-GY-100M",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "3ubwb0b4",
+     "name": "สายไฟ VAF 2 x 2.5 ตร.มม.",
+     "code": "VAF-2X2.5",
+     "unit": "เมตร",
+     "qty": 0
+    },
+    {
+     "id": "48kp4upx",
+     "name": "ท่อร้อยสายไฟ PVC สีขาว ขนาด 20 มม.",
+     "code": "PVC-CONDUIT-20MM",
+     "unit": "เส้น",
+     "qty": 0
+    },
+    {
+     "id": "nxl1g5e6",
+     "name": "ท่ออ่อนร้อยสายไฟ ขนาด 20 มม.",
+     "code": "FLEX-CONDUIT-20MM",
+     "unit": "เมตร",
+     "qty": 0
+    },
+    {
+     "id": "46fx3ijl",
+     "name": "กล่องพักสายไฟ PVC ขนาด 4 x 4 นิ้ว",
+     "code": "JUNCTION-BOX-4X4",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "8sh7s5jp",
+     "name": "สวิตช์ไฟ 1 ทาง 1 ช่อง",
+     "code": "SWITCH-1G-1WAY",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "6ly6nz6v",
+     "name": "เต้ารับคู่มีกราวด์ 16A",
+     "code": "SOCKET-DUPLEX-16A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "t9o3hqh4",
+     "name": "หลอดไฟ LED Bulb 9W แสงขาว",
+     "code": "LED-BULB-9W-DL",
+     "unit": "หลอด",
+     "qty": 0
+    },
+    {
+     "id": "vx2naprm",
+     "name": "หลอด LED T8 18W ยาว 120 ซม.",
+     "code": "LED-T8-18W-120CM",
+     "unit": "หลอด",
+     "qty": 0
+    },
+    {
+     "id": "ro67eq0g",
+     "name": "โคม LED Panel 60 x 60 ซม. 36W",
+     "code": "LED-PANEL-6060-36W",
+     "unit": "โคม",
+     "qty": 0
+    },
+    {
+     "id": "k7bynpd4",
+     "name": "ไฟเส้น LED 12V แสงขาว",
+     "code": "LED-STRIP-12V-WH",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "ez6f0hy4",
+     "name": "อะแดปเตอร์จ่ายไฟ 12V 5A",
+     "code": "PSU-12V-5A",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ad7rwhh8",
+     "name": "ปลั๊กพ่วง 6 ช่อง พร้อมสวิตช์และระบบป้องกันไฟกระชาก",
+     "code": "POWER-STRIP-6OUTLET",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "isn7vccd",
+     "name": "แท่งหลักดินทองแดง 5/8 นิ้ว ยาว 1.5 เมตร",
+     "code": "GROUND-ROD-5/8-1.5M",
+     "unit": "แท่ง",
+     "qty": 0
+    },
+    {
+     "id": "gx83ie9c",
+     "name": "ท่ออ่อนลูกฟูก NANO สีดำ 16 มม. ยาว 10 ม.",
+     "code": "NNBB16(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "hheqr304",
+     "name": "ท่ออ่อนลูกฟูก NANO สีดำ 20 มม. ยาว 10 ม.",
+     "code": "NNBB20(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "2oxlevu6",
+     "name": "ท่ออ่อนลูกฟูก NANO สีดำ 25 มม. ยาว 10 ม.",
+     "code": "NNBB25(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "yyh9obm5",
+     "name": "ท่ออ่อนลูกฟูก NANO สีดำ 32 มม. ยาว 10 ม.",
+     "code": "NNBB32(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "gstubirp",
+     "name": "ท่ออ่อนลูกฟูก NANO สีขาว 16 มม. ยาว 10 ม.",
+     "code": "NNCC16(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "2z40ttv5",
+     "name": "ท่ออ่อนลูกฟูก NANO สีขาว 20 มม. ยาว 10 ม.",
+     "code": "NNCC20(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "hqzcns5q",
+     "name": "ท่ออ่อนลูกฟูก NANO สีขาว 25 มม. ยาว 10 ม.",
+     "code": "NNCC25(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "3aw8sc3u",
+     "name": "ท่ออ่อนลูกฟูก NANO สีขาว 32 มม. ยาว 10 ม.",
+     "code": "NNCC32(10M)",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "xqen22im",
+     "name": "ท่ออ่อน NANO สีดำ 16 มม. ยาว 50 ม.",
+     "code": "NNBB16",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "r39wxsw7",
+     "name": "ท่ออ่อน NANO สีดำ 20 มม. ยาว 50 ม.",
+     "code": "NNBB20",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "6reprolt",
+     "name": "ท่ออ่อน NANO สีดำ 25 มม. ยาว 40 ม.",
+     "code": "NNBB25",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "6frja6lb",
+     "name": "ท่ออ่อน NANO สีดำ 32 มม. ยาว 25 ม.",
+     "code": "NNBB32",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "0vgv9jsc",
+     "name": "ท่ออ่อน NANO สีขาว 16 มม. ยาว 50 ม.",
+     "code": "NNCC16",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "bpstmz2s",
+     "name": "ท่ออ่อน NANO สีขาว 20 มม. ยาว 50 ม.",
+     "code": "NNCC20",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "ht1dcwx3",
+     "name": "ท่ออ่อน NANO สีขาว 25 มม. ยาว 40 ม.",
+     "code": "NNCC25",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "r9nl8ihx",
+     "name": "ท่ออ่อน NANO สีขาว 32 มม. ยาว 25 ม.",
+     "code": "NNCC32",
+     "unit": "ม้วน",
+     "qty": 0
+    },
+    {
+     "id": "2kin9n7i",
+     "name": "ท่อร้อยสายไฟ NANO สีขาว 16 มม.",
+     "code": "NNPP16",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "ofwvihmv",
+     "name": "ท่อร้อยสายไฟ NANO สีขาว 20 มม.",
+     "code": "NNPP20",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "p295dqag",
+     "name": "ท่อร้อยสายไฟ NANO สีขาว 25 มม.",
+     "code": "NNPP25",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "hn499kye",
+     "name": "ท่อร้อยสายไฟ NANO สีขาว 32 มม.",
+     "code": "NNPP32",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "4vcud2ro",
+     "name": "ท่อร้อยสายไฟ NANO สีดำ 16 มม.",
+     "code": "NNPP16B",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "wle67ls7",
+     "name": "ท่อร้อยสายไฟ NANO สีดำ 20 มม.",
+     "code": "NNPP20B",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "p8a83nxu",
+     "name": "ท่อร้อยสายไฟ NANO สีดำ 25 มม.",
+     "code": "NNPP25B",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "olrvbqat",
+     "name": "ท่อร้อยสายไฟ NANO สีดำ 32 มม.",
+     "code": "NNPP32B",
+     "unit": "มัด",
+     "qty": 0
+    },
+    {
+     "id": "663tt2ne",
+     "name": "กิ๊ปจับท่อ NANO 3/8 นิ้ว สีเทา",
+     "code": "NNSC15G",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "bk9e9phj",
+     "name": "กิ๊ปจับท่อ NANO 3/8 นิ้ว สีขาว",
+     "code": "NNSC15W",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "dzbcdpn8",
+     "name": "กิ๊ปจับท่อ NANO 3/8 นิ้ว สีเหลือง",
+     "code": "NNSC15Y",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "45e5y4cn",
+     "name": "กิ๊ปจับท่อ NANO 3/8 นิ้ว สีดำ",
+     "code": "NNSC15B",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "dyzz0l5k",
+     "name": "กิ๊ปจับท่อ NANO 1/2 นิ้ว สีเทา",
+     "code": "NNSC18G",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "578k8su7",
+     "name": "กิ๊ปจับท่อ NANO 1/2 นิ้ว สีขาว",
+     "code": "NNSC18W",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "5ozjfa4p",
+     "name": "กิ๊ปจับท่อ NANO 1/2 นิ้ว สีเหลือง",
+     "code": "NNSC18Y",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "6vhfxdkx",
+     "name": "กิ๊ปจับท่อ NANO 1/2 นิ้ว สีดำ",
+     "code": "NNSC18B",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "86c7jann",
+     "name": "กิ๊ปจับท่อ NANO 3/4 นิ้ว สีเทา",
+     "code": "NNSC20G",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "qmcv4wij",
+     "name": "กิ๊ปจับท่อ NANO 3/4 นิ้ว สีขาว",
+     "code": "NNSC20W",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "jtyga2tr",
+     "name": "กิ๊ปจับท่อ NANO 3/4 นิ้ว สีเหลือง",
+     "code": "NNSC20Y",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "52pwprb0",
+     "name": "กิ๊ปจับท่อ NANO 3/4 นิ้ว สีดำ",
+     "code": "NNSC20B",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "om3py8m9",
+     "name": "กิ๊ปจับท่อ NANO 1 นิ้ว สีเทา",
+     "code": "NNSC25G",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "el85v78b",
+     "name": "กิ๊ปจับท่อ NANO 1 นิ้ว สีขาว",
+     "code": "NNSC25W",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "48kxy5l1",
+     "name": "กิ๊ปจับท่อ NANO 1 นิ้ว สีเหลือง",
+     "code": "NNSC25Y",
+     "unit": "กล่อง",
+     "qty": 0
+    },
+    {
+     "id": "bljkupk7",
+     "name": "ตู้กันน้ำพลาสติก NANO ขนาด 4.5 x 6.5 x 3.5 นิ้ว สีขาว",
+     "code": "NANO-11W",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "cf2fltdr",
+     "name": "ตู้กันน้ำพลาสติก NANO ขนาด 8.5 x 9.5 x 5 นิ้ว สีขาว",
+     "code": "NANO-22W",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "4i3o5ku9",
+     "name": "ตู้กันน้ำ NANO PLUS ขนาด 8.5 x 9.5 x 5 นิ้ว สีขาว",
+     "code": "22W-NNP",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "ggge5t5m",
+     "name": "ตู้กันน้ำ NANO PLUS ขนาด 4.5 x 6.5 x 3.5 นิ้ว สีขาว",
+     "code": "11W-NNP",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "xe0rihqv",
+     "name": "ตู้กันฝน NANO PLUS 15 x 21 x 8 นิ้ว สีขาว",
+     "code": "104W-NNP",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "qgi86896",
+     "name": "ตู้กันฝน NANO PLUS 12.5 x 16 x 6.5 นิ้ว สีขาว",
+     "code": "103W-NNP",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "08i2vh7b",
+     "name": "ตู้กันฝน NANO PLUS 11.5 x 13 x 6 นิ้ว สีขาว",
+     "code": "102W-NNP",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "x6k20dgk",
+     "name": "ตู้กันฝน NANO PLUS 8 x 12.5 x 6 นิ้ว สีขาว",
+     "code": "101W-NNP",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "pp8eiy72",
+     "name": "ตู้กันฝน NANO 8 x 12.5 x 6 นิ้ว สีขาว ฝาใส",
+     "code": "NANO-101CW",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "9puxvyyz",
+     "name": "ตู้กันฝน NANO 8 x 12.5 x 6 นิ้ว สีเทา ฝาใส",
+     "code": "NANO-101CG",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "46wejm7p",
+     "name": "ตู้กันฝน NANO 11.5 x 13 x 6 นิ้ว สีขาว ฝาใส",
+     "code": "NANO-102CW",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "ewk1stmk",
+     "name": "ตู้กันฝน NANO 11.5 x 13 x 6 นิ้ว สีเทา ฝาใส",
+     "code": "NANO-102CG",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "5fuocctm",
+     "name": "ตู้กันฝน NANO 12.5 x 16 x 6.5 นิ้ว สีขาว ฝาใส",
+     "code": "NANO-103CW",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "8jt1wmg0",
+     "name": "ตู้กันฝน NANO 12.5 x 16 x 6.5 นิ้ว สีเทา ฝาใส",
+     "code": "NANO-103CG",
+     "unit": "ใบ",
+     "qty": 0
+    },
+    {
+     "id": "rdfasiet",
+     "name": "กล่องเต้ารับ NANO กันน้ำกันฝุ่น IP66 ชนิด 2 เต้ารับ",
+     "code": "NN-WB4W",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "nfbdcjp1",
+     "name": "ฝาปิดกันน้ำ Classic Series NANO สีขาว",
+     "code": "NANO-416W",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "3vp73rvx",
+     "name": "ฝาปิดกันน้ำ Classic Series NANO สีเทา",
+     "code": "NANO-416G",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "7hnu6wb4",
+     "name": "ฝาปิดกันน้ำ Classic Series NANO สีดำ",
+     "code": "NANO-416B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "luf3mipl",
+     "name": "กล่องลอยรุ่นหนา Classic Series NANO สีดำ",
+     "code": "NANO-416B-BOX",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "danun1ls",
+     "name": "กล่องลอยรุ่นหนา Classic Series NANO สีเทา",
+     "code": "NANO-416G-BOX",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "1jtj0kte",
+     "name": "กล่องลอยรุ่นหนา Classic Series NANO สีขาว",
+     "code": "NANO-416W-BOX",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "i39ndvjd",
+     "name": "ฝาพลาสติกปิดช่องว่าง 4 x 4 นิ้ว Classic Series สีดำ",
+     "code": "NANO-400-00B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "cn59uvro",
+     "name": "ฝาพลาสติกปิดช่องว่าง 4 x 4 นิ้ว Classic Series สีขาว",
+     "code": "NANO-400-00",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "m8ivu9by",
+     "name": "แผงหน้ากากอะคริลิคพร้อมตะแกรง 3 ช่อง Classic Series สีดำ",
+     "code": "ACR-400-3B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "8t2yuyp5",
+     "name": "เต้ารับคอมพิวเตอร์ LAN CAT6 Classic Series สีดำ",
+     "code": "NN-LAN6B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "4x1mclqh",
+     "name": "เต้ารับคอมพิวเตอร์ LAN CAT6 Classic Series สีขาว",
+     "code": "NN-LAN6",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "r2zaoxg9",
+     "name": "เต้ารับเดี่ยวมีกราวด์และม่านนิรภัย พร้อม USB Type A + C สีดำ",
+     "code": "NN-P606UB",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "s8s823j0",
+     "name": "เต้ารับเดี่ยวมีกราวด์และม่านนิรภัย พร้อม USB Type A + C สีขาว",
+     "code": "NN-P606U",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "pm2b04eo",
+     "name": "เต้ารับคู่มีกราวด์และม่านนิรภัย พร้อม USB Type A + C สีดำ",
+     "code": "NN-P604UB",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "zrnmfo2t",
+     "name": "เต้ารับคู่มีกราวด์และม่านนิรภัย พร้อม USB Type A + C สีขาว",
+     "code": "NN-P604U",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "abj2mxko",
+     "name": "เต้ารับเดี่ยวมีกราวด์และม่านนิรภัย พร้อม USB 2.1A สีดำ",
+     "code": "NN-P603UB",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "502gi2sq",
+     "name": "เต้ารับเดี่ยวมีกราวด์และม่านนิรภัย พร้อม USB 2.1A สีขาว",
+     "code": "NN-P603U",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "n5tlok3j",
+     "name": "สวิตช์ 2 ทาง 16A 250V 1 ช่อง Urban Series สีดำ",
+     "code": "UR-SW201B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "yapsm50o",
+     "name": "สวิตช์กดกระดิ่ง 16A 250V 1 ช่อง Urban Series สีขาว",
+     "code": "UR-B01W",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "07zh1lvp",
+     "name": "เต้ารับ USB 2.1A 5V 1 ช่อง Urban Series สีดำ",
+     "code": "UR-USB01B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "2e65lsph",
+     "name": "เต้ารับคู่มีกราวด์และม่านนิรภัย พร้อม USB Type A + C Urban Series สีดำ",
+     "code": "UR-P605UB",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "2o8j36wk",
+     "name": "เต้ารับ USB ชาร์จเร็ว 3.0 + PD 20W Type A + C Urban Series สีดำ",
+     "code": "UR-USB03B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "v7nhc9vn",
+     "name": "เต้ารับ USB ชาร์จเร็ว 3.0 + PD 20W Type A + C Urban Series สีขาว",
+     "code": "UR-USB03W",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "y0q6zmx0",
+     "name": "กระดิ่งไร้สาย Kinetic NANO 1 ตัวรับ 1 ตัวส่ง สีขาว",
+     "code": "NN-KDB01W",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "cr2waehy",
+     "name": "ชุดสวิตช์ 1 ทาง ขนาดกลาง มีพรายน้ำ Urban Series สีดำ",
+     "code": "CP01-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "duxkizyt",
+     "name": "ชุดสวิตช์ 1 ทาง ขนาดเล็ก 2 ตัว มีพรายน้ำ Urban Series สีดำ",
+     "code": "CP101-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "cdg0ebte",
+     "name": "ชุดสวิตช์ 1 ทาง ขนาดเล็ก 3 ตัว มีพรายน้ำ Urban Series สีดำ",
+     "code": "CP111-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "c7hgn254",
+     "name": "ชุดสวิตช์ 1 ทาง ขนาดกลาง 2 ตัว มีพรายน้ำ Urban Series สีดำ",
+     "code": "CP11-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "o65azah7",
+     "name": "ชุดเต้ารับเดี่ยวมีกราวด์และม่านนิรภัยพร้อมสวิตช์ 1 ทาง Urban Series สีดำ",
+     "code": "CP15-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "4y27lqiw",
+     "name": "ชุดสวิตช์ 1 ทาง ขนาดใหญ่ มีพรายน้ำ Urban Series สีดำ",
+     "code": "CP1-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "e8hw0dc5",
+     "name": "ชุดเต้ารับคู่มีกราวด์และม่านนิรภัย Urban Series สีดำ",
+     "code": "CP55R-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "wo3i9jre",
+     "name": "ชุดสวิตช์หรี่ไฟหลอดไส้ 300W 250V Urban Series สีดำ",
+     "code": "CP-DM-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "xj9xyyfk",
+     "name": "ชุดเต้ารับโทรศัพท์และคอมพิวเตอร์ Urban Series สีดำ",
+     "code": "CP-PCTEL-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "o9cek7t0",
+     "name": "ชุดเต้ารับโทรศัพท์ Urban Series สีดำ",
+     "code": "CP-TEL4-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "k8au9z6c",
+     "name": "ชุดเต้ารับทีวีและคอมพิวเตอร์ Urban Series สีดำ",
+     "code": "CP-TVPC-B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "1jfjjv2b",
+     "name": "เต้ารับคู่มีกราวด์และม่านนิรภัย USB 3.1A 5V Urban Series สีดำ",
+     "code": "UR-P604UB",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "z7od7dra",
+     "name": "เต้ารับคู่มีกราวด์และม่านนิรภัย USB 3.1A 5V Urban Series สีขาว",
+     "code": "UR-P604UW",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "bk4f8680",
+     "name": "แผงหน้ากากอะคริลิค 3 ช่อง Urban Series สีดำ",
+     "code": "UR-C03AB",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "fu6bk51o",
+     "name": "แผงหน้ากากอะคริลิค 3 ช่อง Urban Series สีเทา",
+     "code": "UR-C03AG",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "9uwufdnm",
+     "name": "แผงหน้ากากอะคริลิค 3 ช่อง Urban Series สีขาว",
+     "code": "UR-C03AW",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "7761wy4u",
+     "name": "แผงหน้ากากสแตนเลส 3 ช่อง Urban Series",
+     "code": "UR-C03SS",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "6yhjs7ml",
+     "name": "ฝาปิดช่อง 1 ช่อง Urban Series สีดำ",
+     "code": "UR-COVER01B",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "gjacp65w",
+     "name": "ชุดฝา 1 ช่อง 1 สวิตช์พร้อมบล็อกลอย 3 x 3 นิ้ว Classic Series สีขาว",
+     "code": "CS86010-BW",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "yldsfvcy",
+     "name": "ชุดฝา 2 ช่อง 2 สวิตช์พร้อมบล็อกลอย 3 x 3 นิ้ว Classic Series สีขาว",
+     "code": "CS86101-BW",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "qyzakhng",
+     "name": "ชุดฝา 3 ช่อง 3 สวิตช์พร้อมบล็อกลอย 3 x 3 นิ้ว Classic Series สีขาว",
+     "code": "CS86111-BW",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "n7md79yp",
+     "name": "ชุดฝา 3 ช่อง 2 สวิตช์พร้อมบล็อกลอย 3 x 3 นิ้ว Classic Series สีขาว",
+     "code": "CS8611-BW",
+     "unit": "ชุด",
+     "qty": 0
+    },
+    {
+     "id": "5s4iha8p",
+     "name": "ปลั๊กพ่วงพกพา 2 เต้ารับ USB Type A + C 10A สายยาว 5 ม.",
+     "code": "PORT2-10A-5M-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "9pdvzx0s",
+     "name": "ปลั๊กพ่วงพกพา 2 เต้ารับ USB Type A + C 10A สายยาว 3 ม.",
+     "code": "PORT2-10A-3M-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "8sgtk3jo",
+     "name": "ปลั๊กพ่วงพกพา 2 เต้ารับ USB Type A + C 10A สายยาว 1 ม.",
+     "code": "PORT2-10A-1M-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "is9cn2sh",
+     "name": "ปลั๊กพ่วงพกพา 3 เต้ารับพร้อมสวิตช์ USB Type A + C 10A สายยาว 5 ม.",
+     "code": "PORT3S-10A-5M-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "mfvwnny2",
+     "name": "ปลั๊กพ่วงพกพา 3 เต้ารับพร้อมสวิตช์ USB Type A + C 10A สายยาว 3 ม.",
+     "code": "PORT3S-10A-3M-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "n0o9imct",
+     "name": "ปลั๊กพ่วงพกพา 3 เต้ารับพร้อมสวิตช์ USB Type A + C 10A สายยาว 1 ม.",
+     "code": "PORT3S-10A-1M-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "91l52zkw",
+     "name": "ปลั๊กอะแดปเตอร์ 2 เต้ารับ USB Type A + C 10A",
+     "code": "PORT2-10A-ADP-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "38buzdif",
+     "name": "ปลั๊กอะแดปเตอร์ 3 เต้ารับพร้อมสวิตช์ USB Type A + C 10A",
+     "code": "PORT3S-10A-ADP-W",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "wd3l9qy6",
+     "name": "ปลั๊กพ่วง NANO Lite 3 เต้ารับ 16A สายยาว 10 ม.",
+     "code": "ET03-16A-10M",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ko9g4adn",
+     "name": "ปลั๊กพ่วง NANO Lite 3 เต้ารับ 10A สายยาว 3 ม.",
+     "code": "ET03-10A-3M",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "qh8x1n7x",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 10kA 4P 1000V",
+     "code": "DC-PDC44C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "5a2yxwzl",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 10kA 3P 750V",
+     "code": "DC-PDC43C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "owlunai2",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 10kA 2P 500V",
+     "code": "DC-PDC42C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "y4tm0l04",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 10kA 1P 250V",
+     "code": "DC-PDC41C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ztsdm2s5",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 6kA 4P 1000V",
+     "code": "DC-PDC34C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "z879pxeg",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 6kA 3P 750V",
+     "code": "DC-PDC33C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "iii8g69f",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 6kA 2P 500V",
+     "code": "DC-PDC32C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "sma86tuz",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS DC 6kA 1P 250V",
+     "code": "DC-PDC31C",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "9djutw1c",
+     "name": "อุปกรณ์ป้องกันไฟกระชาก NANO DC 3P 1000V 20-40kA",
+     "code": "DC-SPD3P-1000V",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "fkjd5ugc",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 2P 125A 10kA",
+     "code": "PLE42C125",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "217v8ta1",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 2P 100A 10kA",
+     "code": "PLE42C100",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "pn0lut3j",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 2P 80A 10kA",
+     "code": "PLE42C80",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "hx0d6p90",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 2P 80A 10kA",
+     "code": "PMD42C80",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "hxub2xka",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 2P 100A 10kA",
+     "code": "PMD42C100",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "7zfa1b0g",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 2P 125A 10kA",
+     "code": "PMD42C125",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "nkc91adb",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 1P 40A 6kA",
+     "code": "PMD31C40",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "xhfpv19c",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 1P 50A 6kA",
+     "code": "PMD31C50",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "7c4jgz9t",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 1P 63A 6kA",
+     "code": "PMD31C63",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ljspu108",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 1P+N 40A 6kA",
+     "code": "PLE31C40",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "ftzzp2e9",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 1P+N 25A 6kA",
+     "code": "PLE31C25",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "yasubtr8",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 1P+N 10A 6kA",
+     "code": "PLE31C10",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "2vnkhhbi",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 2P 40A 10kA",
+     "code": "PLE42C40",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "al9xpuv3",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 2P 40A 10kA",
+     "code": "PMD42C40",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "d7vsifss",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 2P 25A 10kA",
+     "code": "PMD42C25",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "3aqlfqr4",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 2P 10A 10kA",
+     "code": "PMD42C10",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "71vb26b3",
+     "name": "เซอร์กิตเบรกเกอร์ NANO PLUS 1P 25A 6kA",
+     "code": "PMD31C25",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "pyqesne7",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 1P+N 50A 6kA",
+     "code": "PLE31C50",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "mu96eavg",
+     "name": "เซอร์กิตเบรกเกอร์กันดูด NANO PLUS 1P 10A 10kA",
+     "code": "PLE41C10",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "8si0ipx5",
+     "name": "อุปกรณ์ป้องกันไฟกระชาก NANO PLUS 3P+N 10-20kA",
+     "code": "NNSPD-03N",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "6plzny8r",
+     "name": "แผ่นปิดตู้คอนซูมเมอร์ NANO PLUS 1 ช่อง สีขาว",
+     "code": "NNP-CU-COVER",
+     "unit": "ชิ้น",
+     "qty": 0
+    },
+    {
+     "id": "ixmabpm4",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 2-4 ช่อง ตู้เปล่า ฝาขาว",
+     "code": "NNP-LS02W",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "tkbslag5",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 2-4 ช่อง ตู้เปล่า ฝาดำใส",
+     "code": "NNP-LS02CB",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "4k4rgwma",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 2 ช่อง พร้อม MCB และลูกย่อย ฝาขาว",
+     "code": "NNP-LS02W-CM",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "dzzn6riu",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 2 ช่อง พร้อม MCB และลูกย่อย ฝาดำใส",
+     "code": "NNP-LS02CB-CM",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "0xpfuors",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 2 ช่อง พร้อม RCBO และลูกย่อย ฝาขาว",
+     "code": "NNP-LS02W-CR",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "b5xz0u1n",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 2 ช่อง พร้อม RCBO และลูกย่อย ฝาดำใส",
+     "code": "NNP-LS02CB-CR",
+     "unit": "ตู้",
+     "qty": 0
+    },
+    {
+     "id": "dtf2tatn",
+     "name": "ตู้คอนซูมเมอร์ NANO PLUS LS 5-7 ช่อง ตู้เปล่า ฝาขาว",
+     "code": "NNP-LS05W",
+     "unit": "ตู้",
+     "qty": 0
+    }
+   ]
   },
   {
    "id": "cctv",
@@ -274,6 +1444,27 @@
      "id": "onurouter",
      "name": "เราเตอร์ไฟเบอร์ ONT GPON พร้อม Wi-Fi",
      "code": "ONT-GPON-WIFI",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "f4c6y3an",
+     "name": "เราเตอร์ 4G LTE TP-Link TL-MR100 พร้อม Wi-Fi 300 Mbps",
+     "code": "TP-LINK-TL-MR100",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "w8edordp",
+     "name": "เราเตอร์ Wi-Fi 6 AX3000 แบบ Dual-Band",
+     "code": "WIFI6-ROUTER-AX3000",
+     "unit": "ตัว",
+     "qty": 0
+    },
+    {
+     "id": "v4svcd6o",
+     "name": "เราเตอร์ Gigabit Dual-Band AC1200",
+     "code": "ROUTER-AC1200-GE",
      "unit": "ตัว",
      "qty": 0
     }
