@@ -159,13 +159,6 @@
    "icon": "network-wired",
    "items": [
     {
-     "id": "gigabitrouter",
-     "name": "เราเตอร์ Gigabit Dual-Band AC1200",
-     "code": "ROUTER-AC1200-GE",
-     "unit": "ตัว",
-     "qty": 0
-    },
-    {
      "id": "mesh2pack",
      "name": "ชุด Mesh Wi-Fi Dual-Band จำนวน 2 เครื่อง",
      "code": "MESH-WIFI-2PACK",
@@ -760,6 +753,21 @@
     "id": "wifi6router",
     "name": "เราเตอร์ Wi-Fi 6 AX3000 แบบ Dual-Band",
     "code": "WIFI6-ROUTER-AX3000",
+    "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "network",
+   "catName": "network",
+   "logs": []
+  },
+  {
+   "id": "ar4k9z66",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "gigabitrouter",
+    "name": "เราเตอร์ Gigabit Dual-Band AC1200",
+    "code": "ROUTER-AC1200-GE",
     "unit": "ตัว",
     "qty": 0
    },
