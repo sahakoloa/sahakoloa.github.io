@@ -123,13 +123,6 @@
      "code": "POWER-STRIP-6OUTLET",
      "unit": "ตัว",
      "qty": 0
-    },
-    {
-     "id": "groundrod5ft",
-     "name": "แท่งหลักดินทองแดง 5/8 นิ้ว ยาว 1.5 เมตร",
-     "code": "GROUND-ROD-5/8-1.5M",
-     "unit": "แท่ง",
-     "qty": 0
     }
    ]
   },
@@ -602,6 +595,21 @@
     "name": "เซฟตี้เบรกเกอร์พร้อมกล่อง HACO SB 20 แอมป์ 1 เฟส",
     "code": "HACO-SB-20A",
     "unit": "ชุด",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "dncm8g9x",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "groundrod5ft",
+    "name": "แท่งหลักดินทองแดง 5/8 นิ้ว ยาว 1.5 เมตร",
+    "code": "GROUND-ROD-5/8-1.5M",
+    "unit": "แท่ง",
     "qty": 0
    },
    "catId": "electrical",
