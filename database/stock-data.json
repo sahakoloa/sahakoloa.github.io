@@ -6,13 +6,6 @@
    "icon": "bolt",
    "items": [
     {
-     "id": "mcb2p32a",
-     "name": "เซอร์กิตเบรกเกอร์ MCB 2P 32A",
-     "code": "MCB-2P-32A",
-     "unit": "ตัว",
-     "qty": 0
-    },
-    {
      "id": "thw15rd100",
      "name": "สายไฟ THW 1 x 1.5 ตร.มม. สีแดง 100 เมตร",
      "code": "THW-1.5-RD-100M",
@@ -649,6 +642,21 @@
     "id": "rcbo1p20a",
     "name": "เบรกเกอร์กันดูด RCBO 1P 20A 30mA",
     "code": "RCBO-1P-20A-30MA",
+    "unit": "ตัว",
+    "qty": 0
+   },
+   "catId": "electrical",
+   "catName": "ไฟฟ้า",
+   "logs": []
+  },
+  {
+   "id": "eu8ebcna",
+   "kind": "item",
+   "at": "2026-10-09",
+   "data": {
+    "id": "mcb2p32a",
+    "name": "เซอร์กิตเบรกเกอร์ MCB 2P 32A",
+    "code": "MCB-2P-32A",
     "unit": "ตัว",
     "qty": 0
    },
