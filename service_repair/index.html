@@ -472,7 +472,7 @@ body>*:not(#printArea){display:none!important}
   <div><label>ค่าแรง (บาท)</label><input type="number" id="fLab" min="0" step="any"></div>
   <div class="fx fw ie gp2"><label class="claim"><input type="checkbox" id="fClaimL"><span><i class="fa-solid fa-hand-holding-dollar"></i> เคลมค่าแรง</span></label><label class="claim"><input type="checkbox" id="fClaimP"><span><i class="fa-solid fa-gears"></i> เคลมอะไหล่</span></label></div>
   <div class="full"><label>Remark</label><textarea id="fRem" rows="2"></textarea></div>
-  <div class="full"><label>รูปแบบการให้บริการ</label><div class="fx fw gp2"><label class="claim"><input type="radio" name="fSvc" value="" checked><span>ไม่ระบุ</span></label><label class="claim"><input type="radio" name="fSvc" value="claim"><span>ส่งเคลม</span></label><label class="claim"><input type="radio" name="fSvc" value="onsite"><span>Onsite</span></label></div></div>
+  <div class="full"><label>รูปแบบการให้บริการ</label><div class="fx fw gp2"><label class="claim"><input type="checkbox" id="fSvcClaim"><span>ส่งเคลมซับ</span></label><label class="claim"><input type="checkbox" id="fSvcOnsite"><span>Onsite</span></label></div></div>
  </div>
  <div class="mt5 fx je gp2"><button id="bCancel">ยกเลิก</button><button class="p" id="bSave">บันทึก</button></div>
 </dialog>
@@ -566,11 +566,14 @@ const FMAP=[['pages',/จำนวนแผ่น|pages|page.?count/i],['svc',/�
 const str=v=>String(v??'').trim();
 const yes=v=>/^(เคลม|y|yes|true|1|✓|x|ใช่)$/i.test(String(v??'').trim());
 const isPrinter=t=>/printer|ปริ้น|พริ้น|พริน|เครื่องพิมพ์/i.test(t||'');
-const svcName=v=>v==='claim'?'ส่งเคลม':v==='onsite'?'Onsite':'';
-const svcFrom=v=>{v=String(v??'');return /เคลม|claim/i.test(v)?'claim':/onsite|on-site|ออนไซต์/i.test(v)?'onsite':''};
-const svcTag=v=>v==='claim'?'<span class="tag claim-tag">ส่งเคลม</span>':v==='onsite'?'<span class="tag">Onsite</span>':'<span class="faint">–</span>';
-const getSvc=()=>(document.querySelector('input[name=fSvc]:checked')||{}).value||'';
-const setSvc=v=>{const e=document.querySelector('input[name=fSvc][value="'+v+'"]')||document.querySelector('input[name=fSvc][value=""]');e.checked=true};
+const svcHas=(v,k)=>String(v||'').split(',').includes(k);
+const svcName=v=>[svcHas(v,'claim')?'ส่งเคลมซับ':'',svcHas(v,'onsite')?'Onsite':''].filter(Boolean).join(', ');
+const svcFrom=v=>{v=String(v??'');return [/เคลม|claim/i.test(v)?'claim':'',/onsite|on-site|ออนไซต์/i.test(v)?'onsite':''].filter(Boolean).join(',')};
+const svcBadges=v=>(svcHas(v,'claim')?'<span class="tag claim-tag">ส่งเคลมซับ</span>':'')+(svcHas(v,'onsite')?'<span class="tag">Onsite</span>':'');
+const svcTag=v=>svcBadges(v)||'<span class="faint">–</span>';
+// รูปแบบการให้บริการเป็น Checkbox: ติ๊กได้ทั้งส่งเคลมและ Onsite (เก็บเป็น 'claim' / 'onsite' / 'claim,onsite')
+const getSvc=()=>[$('#fSvcClaim').checked?'claim':'',$('#fSvcOnsite').checked?'onsite':''].filter(Boolean).join(',');
+const setSvc=v=>{$('#fSvcClaim').checked=svcHas(v,'claim');$('#fSvcOnsite').checked=svcHas(v,'onsite')};
 function togglePages(){$('#pgWrap').style.display=isPrinter($('#fType').value)?'':'none'}
 function rowFromObj(o){
   if(o.id&&'cus' in o)return o; // เป็นรูปแบบของระบบอยู่แล้ว
@@ -813,7 +816,7 @@ function listTable(rows){
   return `<table class="ls"><thead><tr><th>ที่</th><th>วันที่</th><th>ลูกค้า</th><th>เครื่อง</th><th>อาการที่ส่งซ่อม</th><th>ช่าง</th><th class="n">ค่าแรง</th><th></th></tr></thead><tbody>`+
   rows.map(r=>{
     const np=(r.parts||[]).filter(p=>p.o||p.n).length;
-    const bd=(np?`<span class="tag"><i class="fa-solid fa-gears"></i> อะไหล่ ${np}</span>`:'')+(r.claimP?'<span class="tag claim-tag">เคลมอะไหล่</span>':'')+(r.claimL?'<span class="tag claim-tag">เคลมค่าแรง</span>':'')+(r.pages!==''&&r.pages!=null?`<span class="tag">${fmt(r.pages)} แผ่น</span>`:'')+(r.svc==='claim'?'<span class="tag claim-tag">ส่งเคลม</span>':r.svc==='onsite'?'<span class="tag">Onsite</span>':'');
+    const bd=(np?`<span class="tag"><i class="fa-solid fa-gears"></i> อะไหล่ ${np}</span>`:'')+(r.claimP?'<span class="tag claim-tag">เคลมอะไหล่</span>':'')+(r.claimL?'<span class="tag claim-tag">เคลมค่าแรง</span>':'')+(r.pages!==''&&r.pages!=null?`<span class="tag">${fmt(r.pages)} แผ่น</span>`:'')+svcBadges(r.svc);
     return `<tr class="rw" data-id="${r.id}" tabindex="0" title="คลิกเพื่อดูรายละเอียด"><td class="c-seq"><span class="no">${r.seq||'-'}</span></td><td class="c-dt">${fdate(r.date)}</td><td class="c-cu"><b>${esc(r.cus)}</b>${ci(r.cus)}</td>`+
     `<td class="c-mc">${r.type?`<span class="tag">${esc(r.type)}</span>`:''}${(r.brand||r.model)?`<div class="sub">${esc([r.brand,r.model].filter(Boolean).join(' '))}</div>`:''}</td>`+
     `<td class="c-sy"><div class="clamp">${esc(r.sym)||'<span class="faint">–</span>'}</div>${bd?`<div class="bd">${bd}</div>`:''}</td><td class="c-tk">${esc(r.tech)}</td><td class="n c-n">${r.labor?fmt(r.labor):''}</td><td class="c-go"><i class="fa-solid fa-chevron-down"></i></td></tr>`}).join('')+'</tbody></table>';
@@ -891,7 +894,7 @@ function pdate(v){
   let y=+m[3];if(y>2400)y-=543;else if(y<100){y+=2000;if(y>new Date().getFullYear()+20)y-=43}
   return iso(new Date(Date.UTC(y,+m[2]-1,+m[1])));
 }
-const KEYS=[['pages',/จำนวนแผ่น/],['svc',/รูปแบบการให้บริการ|ส่งเคลม\/onsite/i],['asset',/ครุภัณฑ์/],['claimL',/เคลมค่าแรง/],['claimP',/เคลมอะไหล่/],['seq',/ลำดับ/],['brand',/ยี่ห้อ/],['model',/รุ่น/],['date',/ว\/ด\/ป|วันที่/],['cus',/ลูกค้า/],['sv',/sv/i],['type',/ประเภท/],['sn',/s\/n|หมายเลข/i],['sym',/อาการ/],['work',/รายการซ่อม/],['o',/เก่า/],['n',/ใหม่/],['labor',/ค่าแรง/],['tech',/ช่าง/],['rem',/remark|หมายเหตุ/i]];
+const KEYS=[['pages',/จำนวนแผ่น/],['svc',/รูปแบบการให้บริการ|ส่งเคลมซับ\/onsite/i],['asset',/ครุภัณฑ์/],['claimL',/เคลมค่าแรง/],['claimP',/เคลมอะไหล่/],['seq',/ลำดับ/],['brand',/ยี่ห้อ/],['model',/รุ่น/],['date',/ว\/ด\/ป|วันที่/],['cus',/ลูกค้า/],['sv',/sv/i],['type',/ประเภท/],['sn',/s\/n|หมายเลข/i],['sym',/อาการ/],['work',/รายการซ่อม/],['o',/เก่า/],['n',/ใหม่/],['labor',/ค่าแรง/],['tech',/ช่าง/],['rem',/remark|หมายเหตุ/i]];
 function parseSheet(rows){
   const hi=rows.findIndex(r=>r.some(c=>/ลูกค้า/.test(c)));if(hi<0)return null;
   let start=hi+1,sub=rows[hi+1];
