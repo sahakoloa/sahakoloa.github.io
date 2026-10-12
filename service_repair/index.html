@@ -459,7 +459,7 @@ body>*:not(#printArea){display:none!important}
   <div><label>รุ่น (Model)</label><input id="fModel" placeholder="เช่น LaserJet Pro M404dn"></div>
   <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
   <div><label>เลขครุภัณฑ์</label><input id="fAsset"></div>
-  <div id="pgWrap" style="display:none"><label>จำนวนแผ่น (ตัวนับที่พิมพ์แล้ว)</label><input type="number" id="fPages" min="0" step="1" inputmode="numeric" placeholder="เช่น 12500"></div>
+  <div id="pgWrap" style="display:none"><label>จำนวนแผ่น (ตัวนับที่พิมพ์/ถ่ายแล้ว)</label><input type="number" id="fPages" min="0" step="1" inputmode="numeric" placeholder="เช่น 12500"></div>
   <div><label>ช่างผู้ซ่อม</label><select id="fTech"></select><div id="techNote" class="fs-s muted mt2" style="display:none"><i class="fa-solid fa-lock"></i> ล็อกเป็นชื่อของคุณ (เลือกช่างอื่นไม่ได้)</div></div>
   <div class="full"><label>อาการที่ส่งซ่อม</label><textarea id="fSym" rows="2"></textarea></div>
   <div class="full"><label>รายการซ่อม</label><textarea id="fWork" rows="2"></textarea></div>
@@ -565,7 +565,7 @@ function upCus(name,phone,line){
 const FMAP=[['pages',/จำนวนแผ่น|pages|page.?count/i],['svc',/รูปแบบการให้บริการ|service/i],['asset',/ครุภัณฑ์|asset/i],['claimL',/เคลมค่าแรง|claimL/i],['claimP',/เคลมอะไหล่|claimP/i],['seq',/ลำดับ|^no\.?$|^seq/i],['date',/ว\/ด\/ป|วันที่|date/i],['cus',/ลูกค้า|customer|^cus/i],['sv',/sv/i],['type',/ประเภท|type/i],['sn',/s\/n|หมายเลข|serial|^sn/i],['sym',/อาการ|symptom/i],['work',/รายการซ่อม|work/i],['o',/เก่า|old/i],['n',/ใหม่|new/i],['labor',/ค่าแรง|labor/i],['tech',/ช่าง|tech/i],['rem',/remark|หมายเหตุ|^rem/i]];
 const str=v=>String(v??'').trim();
 const yes=v=>/^(เคลม|y|yes|true|1|✓|x|ใช่)$/i.test(String(v??'').trim());
-const isPrinter=t=>/printer|ปริ้น|พริ้น|พริน|เครื่องพิมพ์/i.test(t||'');
+const isPrinter=t=>/printer|ปริ้น|พริ้น|พริน|เครื่องพิมพ์|ถ่ายเอกสาร|copier|photocopy|copy/i.test(t||''); // เครื่องปริ้นและเครื่องถ่ายเอกสารมีช่องจำนวนแผ่น
 const svcHas=(v,k)=>String(v||'').split(',').includes(k);
 const svcName=v=>[svcHas(v,'claim')?'ส่งเคลมซับ':'',svcHas(v,'onsite')?'Onsite':''].filter(Boolean).join(', ');
 const svcFrom=v=>{v=String(v??'');return [/เคลม|claim/i.test(v)?'claim':'',/onsite|on-site|ออนไซต์/i.test(v)?'onsite':''].filter(Boolean).join(',')};
