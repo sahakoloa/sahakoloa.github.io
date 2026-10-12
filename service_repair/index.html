@@ -460,7 +460,7 @@ body>*:not(#printArea){display:none!important}
   <div><label>หมายเลขเครื่อง S/N</label><input id="fSn"></div>
   <div><label>เลขครุภัณฑ์</label><input id="fAsset"></div>
   <div id="pgWrap" style="display:none"><label>จำนวนแผ่น (ตัวนับที่พิมพ์แล้ว)</label><input type="number" id="fPages" min="0" step="1" inputmode="numeric" placeholder="เช่น 12500"></div>
-  <div><label>ช่างผู้ซ่อม</label><select id="fTech"></select></div>
+  <div><label>ช่างผู้ซ่อม</label><select id="fTech"></select><div id="techNote" class="fs-s muted mt2" style="display:none"><i class="fa-solid fa-lock"></i> ล็อกเป็นชื่อของคุณ (เลือกช่างอื่นไม่ได้)</div></div>
   <div class="full"><label>อาการที่ส่งซ่อม</label><textarea id="fSym" rows="2"></textarea></div>
   <div class="full"><label>รายการซ่อม</label><textarea id="fWork" rows="2"></textarea></div>
  </div>
@@ -863,7 +863,7 @@ $('#bCancel').onclick=()=>$('#dlg').close();
 $('#bSave').onclick=async()=>{
   const parts=[...$('#parts').children].map(r=>{const i=r.querySelectorAll('input');return{o:i[0].value.trim(),op:i[1].value,n:i[2].value.trim(),np:i[3].value}}).filter(p=>p.o||p.n||p.op||p.np);
   const v={date:$('#fDate').value,cus:$('#fCus').value.trim(),sv:$('#fSv').value.trim(),type:$('#fType').value.trim(),brand:$('#fBrand').value==='__o'?$('#fBrandO').value.trim():$('#fBrand').value,model:$('#fModel').value.trim(),sn:$('#fSn').value.trim(),asset:$('#fAsset').value.trim(),
-    tech:$('#fTech').value.trim(),sym:$('#fSym').value.trim(),work:$('#fWork').value.trim(),parts,labor:$('#fLab').value,claimL:$('#fClaimL').checked,claimP:$('#fClaimP').checked,pages:isPrinter($('#fType').value)?$('#fPages').value:'',svc:getSvc(),rem:$('#fRem').value.trim(),upd:Date.now()};
+    tech:lockTech($('#fTech').value.trim()),sym:$('#fSym').value.trim(),work:$('#fWork').value.trim(),parts,labor:$('#fLab').value,claimL:$('#fClaimL').checked,claimP:$('#fClaimP').checked,pages:isPrinter($('#fType').value)?$('#fPages').value:'',svc:getSvc(),rem:$('#fRem').value.trim(),upd:Date.now()};
   const ph=$('#fPhone').value.trim(),ln=$('#fLine').value.trim();
   if(!v.cus){alert('กรุณากรอกชื่อลูกค้า');return}
   const ok=await commit(()=>{
@@ -1054,9 +1054,23 @@ function techTable(){
     L.map(t=>{const s=st[t.name]||{c:0,l:0},on=t.active!==false;
       return `<tr class="${on?'':'dim'}"><td><div class="cname"><span class="av">${esc([...t.name][0]||'?')}</span><b>${esc(t.name)}</b></div></td><td>${t.phone?`<a href="tel:${esc(t.phone)}">${esc(t.phone)}</a>`:'-'}</td><td><span class="tag">${on?'<i class="fa-solid fa-circle fs-xxs okc-t"></i> ใช้งาน':'<i class="fa-regular fa-circle fs-xxs"></i> ปิดใช้งาน'}</span></td><td>${t.ph?'<i class="fa-solid fa-key okc-t"></i> ตั้งแล้ว':'<span class="d"><i class="fa-solid fa-triangle-exclamation"></i> ยังไม่ตั้ง</span>'}</td><td><span class="no">${s.c}</span></td><td class="n">${fmt(s.l)}</td><td class="nw"><button class="s" data-ta="edit" data-id="${t.id}"><i class="fa-solid fa-pen"></i> แก้ไข</button> <button class="s" data-ta="tog" data-id="${t.id}">${on?'ปิดใช้งาน':'เปิดใช้งาน'}</button> <button class="s d" data-ta="del" data-id="${t.id}"><i class="fa-solid fa-trash"></i> ลบ</button></td></tr>`}).join('')+'</tbody></table>';
 }
+const ownName=()=>{const t=(D.meta.techList||[]).find(x=>user&&x.id===user.id);return t?t.name:(user?user.name:'')};
+// ช่างที่ล็อกอิน: ล็อกชื่อช่างเป็นของตัวเอง (งานของคนอื่นที่เปิดแก้ไข จะคงชื่อเดิมไว้ ไม่เปลี่ยนเป็นชื่อตัวเอง) / admin เลือกได้ทุกคน
+const lockTech=t=>{
+  if(admin||!user)return t;
+  const r=editId&&D.records.find(x=>x.id===editId),own=ownName();
+  return (r&&r.tech&&r.tech!==own)?r.tech:own;
+};
 function fillTech(v){
+  const sel=$('#fTech');
+  if(user&&!admin){
+    const val=lockTech(v||'');
+    sel.innerHTML=`<option value="${esc(val)}">${esc(val)}</option>`;sel.value=val;sel.disabled=true;$('#techNote').style.display='';
+    return;
+  }
+  sel.disabled=false;$('#techNote').style.display='none';
   const L=(D.meta.techList||[]).filter(t=>t.active!==false).map(t=>t.name);if(v&&!L.includes(v))L.push(v);
-  $('#fTech').innerHTML='<option value="">— เลือกช่าง —</option>'+L.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');$('#fTech').value=v;
+  sel.innerHTML='<option value="">— เลือกช่าง —</option>'+L.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');sel.value=v;
 }
 function techReset(){tEdit=null;$('#tName').value=$('#tPhone').value=$('#tPin').value=$('#tUser').value='';$('#tSave').textContent='+ เพิ่มช่าง';$('#tCancel').style.display='none'}
 $('#tCancel').onclick=techReset;
